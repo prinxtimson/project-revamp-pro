@@ -20,9 +20,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::withTrashed()->with(['roles', 'projects' => function ($query) {
-            $query->whereDate('end_at', '>', Carbon::now());
-        }])->paginate(20);
+        $users = User::withTrashed()->with(['roles'])->paginate(20);
 
         return $users;
     }
@@ -101,7 +99,7 @@ class UserController extends Controller
     public function show($id)
     {
         return User::find($id)
-                    ->load(['profile', 'roles', 'projects']);
+                    ->load(['profile', 'roles']);
     }
 
     /**
@@ -122,7 +120,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
         $fields = $request->validate([
@@ -130,7 +128,8 @@ class UserController extends Controller
             'lastname' => 'required|string',
         ]);
 
-        $user = User::find($id);
+        $user = Auth::user();
+        
         $user->update([
             'name' =>  $fields['firstname'] .' '. $fields['lastname'],
             'username' => strtolower($fields['firstname'].$fields['lastname']),
@@ -165,9 +164,7 @@ class UserController extends Controller
     {
         User::find($id)->delete();
 
-        $user = User::withTrashed()->find($id)->load(['profile', 'roles', 'projects' => function ($query) {
-            $query->whereDate('end_at', '>', Carbon::now());
-        }]);
+        $user = User::withTrashed()->find($id)->load(['profile', 'roles']);
 
         //Mail::to($user)->send(new UserDeactivate($user->profile));
 
@@ -178,9 +175,7 @@ class UserController extends Controller
     {
         User::withTrashed()->find($id)->restore();
 
-        $user = User::withTrashed()->find($id)->load(['profile', 'roles', 'projects' => function ($query) {
-            $query->whereDate('end_at', '>', Carbon::now());
-        }]);
+        $user = User::withTrashed()->find($id)->load(['profile', 'roles']);
 
         //Mail::to($user)->send(new UserReactivate($user->profile));
 
@@ -196,9 +191,19 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $user = User::withTrashed()->find($id)->load(['profile', 'roles', 'projects']);
+        $user = User::withTrashed()->find($id)->load(['profile', 'roles']);
 
-        $user->reports()->delete();
+        $deleted = $user->forceDelete($id);
+
+        //Mail::to($user)->send(new UserDelete($user->profile));
+
+        return $deleted;
+    }
+
+    public function delete()
+    {
+        //
+        $user = Auth::user();
 
         $deleted = $user->forceDelete($id);
 
