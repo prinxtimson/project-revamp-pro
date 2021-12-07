@@ -1,7 +1,63 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+
+import store from "./store";
+import { loadUser, onNewNotification } from "./actions/auth";
+
+import LoginPage from "./pages/LoginPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const App = () => {
-    return <div></div>;
+    const [auth, setAuth] = useState(store.getState().auth);
+
+    useEffect(() => {
+        store.dispatch(loadUser());
+    }, []);
+
+    useEffect(() => {
+        if (auth.isAuthenticated) {
+            // window.echo
+            //     .private(`App.Models.User.${auth.user?.id}`)
+            //     .notification((notification) => {
+            //         store.dispatch(onNewNotification(notification));
+            //     });
+        }
+    }, [auth]);
+
+    store.subscribe(() => {
+        setAuth(store.getState().auth);
+    });
+
+    return (
+        <Provider store={store}>
+            <Router>
+                <Routes>
+                    <Route exact path="/" element={<LoginPage />} />
+                    <Route
+                        exact
+                        path="/forgot-password"
+                        element={<ForgotPasswordPage />}
+                    />
+                    <Route
+                        exact
+                        path="/reset-password/:token"
+                        element={<ResetPasswordPage />}
+                    />
+                    {/* 
+                      
+                    <Route
+                        exact
+                        path="/dashboard/:routeName?/:id?"
+                        element={DashboardPage}
+                    />
+                        */}
+                </Routes>
+            </Router>
+        </Provider>
+    );
 };
 
 export default App;
