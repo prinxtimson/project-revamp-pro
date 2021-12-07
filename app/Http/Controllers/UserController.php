@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
@@ -135,7 +136,19 @@ class UserController extends Controller
             'username' => strtolower($fields['firstname'].$fields['lastname']),
         ]);
 
-        $user->profile()->update($request->all());
+        $user->profile()->update($request->except(['avatar', '_method' ]));
+
+        if ($request->hasFile('avatar')) {
+            $user->clearMediaCollection('avatars');
+
+            $user->addMediaFromRequest('avatar')->toMediaCollection('avatars');
+    
+            $mediaUrl = $user->getFirstMediaUrl('avatars');
+    
+            $user->update([
+                'avatar' => $mediaUrl,
+            ]);
+        }
 
         $user->refresh()->load(['profile', 'roles', 'projects']);
 
