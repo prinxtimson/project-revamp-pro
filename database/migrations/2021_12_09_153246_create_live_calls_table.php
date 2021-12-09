@@ -17,6 +17,7 @@ class CreateLiveCallsTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('query_type')->nullable();
+            $table->foreignId('agent_id')->nullable();
             $table->timestamp('left_at')->nullable();
             $table->timestamp('answered_at')->nullable();
             $table->timestamps();

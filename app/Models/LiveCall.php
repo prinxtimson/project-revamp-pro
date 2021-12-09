@@ -20,4 +20,9 @@ class LiveCall extends Model
         'left_at' => 'datetime',
         'answered_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'agent_id');
+    }
 }

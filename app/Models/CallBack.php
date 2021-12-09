@@ -19,4 +19,9 @@ class CallBack extends Model
     protected $casts = [
         'time' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'agent_id');
+    }
 }

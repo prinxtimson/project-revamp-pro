@@ -14,7 +14,7 @@ class CallBackController extends Controller
      */
     public function index()
     {
-        $callbacks = ModelsCallBack::orderBy('id', 'DESC')->get();
+        $callbacks = ModelsCallBack::orderBy('id', 'DESC')->paginate(20);
 
         return $callbacks;
     }

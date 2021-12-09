@@ -10,7 +10,7 @@ import {
 
 const initialState = {
     profile: null,
-    profiles: [],
+    profiles: null,
     loading: true,
     error: {},
 };
@@ -63,7 +63,7 @@ export default (state = initialState, actions) => {
         case CLEAR_PROFILE:
             return {
                 profile: null,
-                profiles: [],
+                profiles: null,
                 loading: true,
                 error: {},
             };

@@ -14,7 +14,7 @@ class LiveCallController extends Controller
      */
     public function index()
     {
-        $livecall = ModelsLiveCall::orderBy('id', 'DESC')->get();
+        $livecall = ModelsLiveCall::orderBy('id', 'DESC')->paginate(20);
 
         return $livecall;
     }

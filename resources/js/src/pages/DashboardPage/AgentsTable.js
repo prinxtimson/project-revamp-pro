@@ -11,15 +11,23 @@ import TableHead from "@mui/material/TableHead";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import Toolbar from "@mui/material/Toolbar";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
+import { connect } from "react-redux";
+import {
+    getAllProfiles,
+    enableUser,
+    disableUser,
+    delUser,
+    clearProfile,
+} from "../../actions/profile";
 
 const theme = createTheme();
 
@@ -41,22 +49,29 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const AgentsTable = () => {
-    const [user, setUser] = React.useState(null);
+const AgentsTable = ({
+    users,
+    loading,
+    getAllProfiles,
+    alerts,
+    enableUser,
+    disableUser,
+    delUser,
+    clearProfile,
+}) => {
     const [page, setPage] = React.useState(0);
-    const [role, setRole] = React.useState("");
-    const [state, setState] = React.useState({
-        rows: [],
-        loading: false,
-        error: null,
-        msg: null,
-    });
 
-    const handleDelete = (row) => {};
+    React.useEffect(() => {
+        getAllProfiles();
 
-    const handleDisable = (row) => {};
+        return clearProfile;
+    }, []);
 
-    const handleEnable = (row) => {};
+    const handleDelete = (row) => delUser(row);
+
+    const handleDisable = (row) => disableUser(row);
+
+    const handleEnable = (row) => enableUser(row);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -102,20 +117,20 @@ const AgentsTable = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {state.loading ? (
+                                {loading ? (
                                     <TableRow>
                                         <StyledTableCell scope="row">
                                             Loading.....
                                         </StyledTableCell>
                                     </TableRow>
-                                ) : state.rows.length === 0 ? (
+                                ) : !users || users.data.length === 0 ? (
                                     <TableRow>
                                         <StyledTableCell scope="row">
                                             No Data Available.
                                         </StyledTableCell>
                                     </TableRow>
                                 ) : (
-                                    state.rows.map((row) => (
+                                    users.data.map((row) => (
                                         <StyledTableRow key={row.email}>
                                             <StyledTableCell scope="row">
                                                 {row.name}
@@ -135,7 +150,7 @@ const AgentsTable = () => {
                                                     <Grid container spacing={2}>
                                                         <Grid item xs={6}>
                                                             {row.deleted_at ? (
-                                                                <EnableButton
+                                                                <Button
                                                                     size="small"
                                                                     variant="outlined"
                                                                     onClick={() =>
@@ -145,9 +160,9 @@ const AgentsTable = () => {
                                                                     }
                                                                 >
                                                                     Enable
-                                                                </EnableButton>
+                                                                </Button>
                                                             ) : (
-                                                                <DisableButton
+                                                                <Button
                                                                     size="small"
                                                                     variant="outlined"
                                                                     onClick={() =>
@@ -157,7 +172,7 @@ const AgentsTable = () => {
                                                                     }
                                                                 >
                                                                     Disable
-                                                                </DisableButton>
+                                                                </Button>
                                                             )}
                                                         </Grid>
                                                         <Grid item xs={6}>
@@ -167,7 +182,7 @@ const AgentsTable = () => {
                                                                 size="small"
                                                                 onClick={() =>
                                                                     handleDelete(
-                                                                        row
+                                                                        row.id
                                                                     )
                                                                 }
                                                             >
@@ -185,9 +200,9 @@ const AgentsTable = () => {
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[20]}
-                                        rowsPerPage={state.rows.length}
-                                        count={state.rows.length}
-                                        page={page}
+                                        rowsPerPage={users?.data.length || 0}
+                                        count={users?.total || 0}
+                                        page={users?.current_page - 1 || 0}
                                         onPageChange={handleChangePage}
                                     />
                                 </TableRow>
@@ -200,4 +215,18 @@ const AgentsTable = () => {
     );
 };
 
-export default AgentsTable;
+const mapStateToProps = (state) => ({
+    alerts: state.alert,
+    users: state.profile.profiles,
+    loading: state.profile.loading,
+});
+
+const mapDispatchToProps = {
+    enableUser,
+    disableUser,
+    getAllProfiles,
+    delUser,
+    clearProfile,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AgentsTable);

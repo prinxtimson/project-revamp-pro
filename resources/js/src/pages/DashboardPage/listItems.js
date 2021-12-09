@@ -37,6 +37,22 @@ export const mainListItems = (
                 <ListItemText primary="Agents" />
             </ListItem>
         </Link>
+        <Link to="livecall">
+            <ListItem button>
+                <ListItemIcon>
+                    <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Livecall" />
+            </ListItem>
+        </Link>
+        <Link to="callback">
+            <ListItem button>
+                <ListItemIcon>
+                    <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Callback" />
+            </ListItem>
+        </Link>
         <Link to="reports">
             <ListItem button>
                 <ListItemIcon>

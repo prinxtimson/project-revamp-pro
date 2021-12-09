@@ -54,4 +54,14 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasOne(Profile::class);
     }
+
+    public function callbacks()
+    {
+        return $this->hasMany(CallBack::class, 'agent_id');
+    }
+
+    public function livecalls()
+    {
+        return $this->hasMany(LiveCall::class, 'agent_id');
+    }
 }
