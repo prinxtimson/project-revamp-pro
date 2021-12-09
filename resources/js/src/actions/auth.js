@@ -156,7 +156,7 @@ export const changePassword = (data) => async (dispatch) => {
 
 // Request Password reset action
 export const requestPasswordReset =
-    (email, handleSuccess) => async (dispatch) => {
+    (email, handleSuccess, handleError) => async (dispatch) => {
         const config = {
             headers: {
                 "Content-Type": "application/json",
@@ -177,6 +177,7 @@ export const requestPasswordReset =
             handleSuccess();
         } catch (err) {
             console.log(err.response);
+            handleError();
             if (err.response.status == 500) {
                 return dispatch(
                     setAlert("Server errror, please try again.", "danger")

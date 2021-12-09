@@ -4,19 +4,30 @@ import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Container from "../../components/Container";
 import { connect } from "react-redux";
+import { requestPasswordReset } from "../../actions/auth";
+import { Link } from "react-router-dom";
 
-const ForgotPasswordForm = () => {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
+const ForgotPasswordForm = ({ alerts, requestPasswordReset }) => {
+    const [email, setEmail] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
+
+    const handleSuccess = () => {
+        setEmail("");
+        setLoading(false);
+    };
+
+    const handleError = () => {
+        setLoading(false);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        requestPasswordReset(email, handleSuccess, handleError);
     };
 
     return (
@@ -46,7 +57,7 @@ const ForgotPasswordForm = () => {
                     component="form"
                     onSubmit={handleSubmit}
                     noValidate
-                    sx={{ mt: 1 }}
+                    sx={{ mt: 1, width: "100%" }}
                 >
                     <TextField
                         margin="normal"
@@ -57,15 +68,27 @@ const ForgotPasswordForm = () => {
                         name="email"
                         autoComplete="email"
                         autoFocus
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
+                        disabled={loading}
                     >
                         Submit
                     </Button>
+                    <Grid container>
+                        <Grid item xs>
+                            Remember Password?{" "}
+                            <Link to="/" variant="body2">
+                                Login
+                            </Link>
+                        </Grid>
+                        <Grid item></Grid>
+                    </Grid>
                 </Box>
             </Box>
         </Container>
@@ -76,4 +99,6 @@ const mapStateToProps = (state) => ({
     alerts: state.alert,
 });
 
-export default connect(mapStateToProps)(ForgotPasswordForm);
+export default connect(mapStateToProps, { requestPasswordReset })(
+    ForgotPasswordForm
+);

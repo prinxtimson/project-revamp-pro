@@ -4,13 +4,13 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/auth";
 import Container from "../../components/Container";
@@ -91,7 +91,7 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="/forgot-password" variant="body2">
+                            <Link to="/forgot-password" variant="body2">
                                 Forgot password?
                             </Link>
                         </Grid>
