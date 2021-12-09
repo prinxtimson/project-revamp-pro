@@ -23,7 +23,6 @@ class UserSeeder extends Seeder
             'avatar' => 'https://www.gravatar.com/avatar/'.$hash,
             'email' => 'developertritek@gmail.com',
             'password' => Hash::make('Tritek@2021'),
-            'approved_at' =>Carbon::now()->format('Y-m-d H:i:s'),
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);

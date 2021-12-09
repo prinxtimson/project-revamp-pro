@@ -33,10 +33,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('change-password', function () {
         return view('welcome');
     });
-
-    Route::get('dashboard/{name?}/{id?}', function () {
+    Route::get('dashboard', function () {
         return view('welcome');
-    })->name('dashboard.rpa-folders');
+    })->name('dashboard');
+
+    Route::get('dashboard/{name?}', function () {
+        return view('welcome');
+    });
+
 
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });

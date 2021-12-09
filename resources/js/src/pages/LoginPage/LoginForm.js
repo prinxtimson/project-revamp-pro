@@ -12,6 +12,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { connect } from "react-redux";
+import { loginUser } from "../../actions/auth";
 
 function Copyright(props) {
     return (
@@ -33,7 +35,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-const LoginForm = () => {
+const LoginForm = ({ loginUser, alerts, loading }) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -42,6 +44,7 @@ const LoginForm = () => {
             email: data.get("email"),
             password: data.get("password"),
         });
+        loginUser(data.get("email"), data.get("password"));
     };
 
     return (
@@ -118,4 +121,10 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    loading: state.auth.loading,
+    alerts: state.alert,
+});
+
+export default connect(mapStateToProps, { loginUser })(LoginForm);

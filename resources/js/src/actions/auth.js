@@ -48,7 +48,7 @@ export const onNotificationRead = () => async (dispatch) => {
 };
 
 //Login user action
-export const loginUser = (email, password, history) => async (dispatch) => {
+export const loginUser = (email, password) => async (dispatch) => {
     dispatch({ type: AUTH_LOADING });
 
     //const body = JSON.stringify({ email, password });
@@ -63,7 +63,7 @@ export const loginUser = (email, password, history) => async (dispatch) => {
             payload: res.data,
         });
 
-        history.replace("/dashboard");
+        //history.replace("/dashboard");
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LOGIN_FAIL });
@@ -241,9 +241,10 @@ export const deleteAccount = () => async (dispatch) => {
 export const logoutUser = (history) => async (dispatch) => {
     try {
         await axios.post(`/logout`);
-        dispatch({ type: LOGOUT_USER });
-        dispatch({ type: CLEAR_PROFILE });
-        history.replace("/");
+        // dispatch({ type: LOGOUT_USER });
+        // dispatch({ type: CLEAR_PROFILE });
+        // history.replace("/");
+        window.location.reload();
     } catch (err) {
         console.log(err.response);
         if (err.response.status == 500) {

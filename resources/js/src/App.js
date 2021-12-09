@@ -9,6 +9,7 @@ import { loadUser, onNewNotification } from "./actions/auth";
 import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import DashboardPage from "./pages/DashboardPage";
 
 const App = () => {
     const [auth, setAuth] = useState(store.getState().auth);
@@ -38,22 +39,15 @@ const App = () => {
                     <Route exact path="/" element={<LoginPage />} />
                     <Route
                         exact
-                        path="/forgot-password"
+                        path="forgot-password"
                         element={<ForgotPasswordPage />}
                     />
                     <Route
                         exact
-                        path="/reset-password/:token"
+                        path="reset-password/:token"
                         element={<ResetPasswordPage />}
                     />
-                    {/* 
-                      
-                    <Route
-                        exact
-                        path="/dashboard/:routeName?/:id?"
-                        element={DashboardPage}
-                    />
-                        */}
+                    <Route path="dashboard/*" element={<DashboardPage />} />
                 </Routes>
             </Router>
         </Provider>

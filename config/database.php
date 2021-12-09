@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Str;
 
+$DATABASE_URL=parse_url(env('DATABASE_URL'));
+
 return [
 
     /*
@@ -15,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DATABASE_URL') ? env('DB_CONNECTION', 'pgsql') : env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
