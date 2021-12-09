@@ -51,8 +51,6 @@ export const onNotificationRead = () => async (dispatch) => {
 export const loginUser = (email, password) => async (dispatch) => {
     dispatch({ type: AUTH_LOADING });
 
-    //const body = JSON.stringify({ email, password });
-
     try {
         await axios.get(`/sanctum/csrf-cookie`);
 
@@ -63,7 +61,7 @@ export const loginUser = (email, password) => async (dispatch) => {
             payload: res.data,
         });
 
-        //history.replace("/dashboard");
+        window.location.reload();
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LOGIN_FAIL });
@@ -222,8 +220,7 @@ export const deleteAccount = () => async (dispatch) => {
     if (window.confirm("Are you sure? This can NOT be undone!")) {
         try {
             await axios.delete(`/delete-account`);
-            dispatch({ type: LOGOUT_USER });
-            history.replace("/");
+            window.location.reload();
         } catch (err) {
             console.log(err.response);
             if (err.response.status == 500) {
@@ -238,12 +235,9 @@ export const deleteAccount = () => async (dispatch) => {
 };
 
 // Logout user action
-export const logoutUser = (history) => async (dispatch) => {
+export const logoutUser = () => async (dispatch) => {
     try {
         await axios.post(`/logout`);
-        // dispatch({ type: LOGOUT_USER });
-        // dispatch({ type: CLEAR_PROFILE });
-        // history.replace("/");
         window.location.reload();
     } catch (err) {
         console.log(err.response);

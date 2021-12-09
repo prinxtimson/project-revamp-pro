@@ -11,8 +11,9 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
 import Link from "@mui/material/Link";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -94,11 +95,12 @@ const mdTheme = createTheme();
 
 const settings = [
     { name: "Profile", route: "profile" },
+    { name: "Change Password", route: "change-password" },
     { name: "Dashboard", route: "/dashboard" },
     { name: "Logout", route: "/logout" },
 ];
 
-const DrawerContainer = ({ children, logoutUser }) => {
+const DrawerContainer = ({ children, logoutUser, user, alerts }) => {
     const [open, setOpen] = React.useState(true);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -169,10 +171,11 @@ const DrawerContainer = ({ children, logoutUser }) => {
                                     onClick={handleOpenUserMenu}
                                     sx={{ p: 0 }}
                                 >
-                                    <Avatar
-                                        alt="Remy Sharp"
-                                        src="/static/images/avatar/2.jpg"
-                                    />
+                                    <Avatar alt={user?.name} src={user?.avatar}>
+                                        {`${user?.profile?.firstname.charAt(
+                                            0
+                                        )}${user?.profile?.lastname.charAt(0)}`}
+                                    </Avatar>
                                 </IconButton>
                             </Tooltip>
                             <Menu
@@ -194,11 +197,11 @@ const DrawerContainer = ({ children, logoutUser }) => {
                                 {settings.map((setting) =>
                                     setting.name === "Logout" ? (
                                         <Link
+                                            key={setting.name}
                                             href={setting.route}
                                             onClick={handleLogout}
                                         >
                                             <MenuItem
-                                                key={setting.name}
                                                 onClick={handleCloseNavMenu}
                                             >
                                                 <Typography textAlign="center">
@@ -207,9 +210,11 @@ const DrawerContainer = ({ children, logoutUser }) => {
                                             </MenuItem>
                                         </Link>
                                     ) : (
-                                        <RouterLink to={setting.route}>
+                                        <RouterLink
+                                            to={setting.route}
+                                            key={setting.name}
+                                        >
                                             <MenuItem
-                                                key={setting.name}
                                                 onClick={handleCloseNavMenu}
                                             >
                                                 <Typography textAlign="center">
@@ -253,7 +258,31 @@ const DrawerContainer = ({ children, logoutUser }) => {
                     }}
                 >
                     <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                    <Stack sx={{ width: "100%" }} spacing={2}>
+                        {alerts.map(
+                            (alert) =>
+                                alert.alertType === "success" && (
+                                    <Snackbar
+                                        anchorOrigin={{
+                                            vertical: "top",
+                                            horizontal: "right",
+                                        }}
+                                        open={Boolean(alert.id)}
+                                        key={alert.id}
+                                        autoHideDuration={6000}
+                                    >
+                                        <Alert
+                                            severity="success"
+                                            variant="filled"
+                                            sx={{ width: "100%" }}
+                                        >
+                                            {alert.msg}
+                                        </Alert>
+                                    </Snackbar>
+                                )
+                        )}
+                    </Stack>
+                    <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
                         {children}
                         <Copyright sx={{ pt: 4 }} />
                     </Container>
@@ -266,6 +295,7 @@ const DrawerContainer = ({ children, logoutUser }) => {
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     loading: state.auth.loading,
+    user: state.auth.user,
     alerts: state.alert,
 });
 

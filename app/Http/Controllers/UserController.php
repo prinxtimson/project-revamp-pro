@@ -149,7 +149,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user->refresh()->load(['profile', 'roles', 'projects']);
+        $user->refresh()->load(['profile', 'roles']);
 
         $response = [
             'user' => $user,

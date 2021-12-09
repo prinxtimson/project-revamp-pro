@@ -8,29 +8,26 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
-import Link from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { connect } from "react-redux";
 
 const theme = createTheme();
 
-const AddUserForm = () => {
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState(null);
-    const [msg, setMsg] = React.useState(null);
+const AddUserForm = ({ alerts, loading }) => {
     const [data, setData] = React.useState({
         firstname: "",
         lastname: "",
         email: "",
         role: "",
         password: "",
-        confirm_password: "",
         showPassword: false,
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setLoading(true);
     };
 
     const handleOnFocus = () => {
@@ -65,6 +62,16 @@ const AddUserForm = () => {
                     <Typography component="h1" variant="h5">
                         Add User
                     </Typography>
+                    <Stack sx={{ width: "100%" }} spacing={2}>
+                        {alerts.map(
+                            (alert) =>
+                                alert.alertType === "danger" && (
+                                    <Alert key={alert.id} severity="error">
+                                        {alert.msg}
+                                    </Alert>
+                                )
+                        )}
+                    </Stack>
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
@@ -161,4 +168,10 @@ const AddUserForm = () => {
     );
 };
 
-export default AddUserForm;
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    loading: state.auth.loading,
+    alerts: state.alert,
+});
+
+export default connect(mapStateToProps)(AddUserForm);
