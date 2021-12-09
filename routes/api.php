@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CallBackController;
+use App\Http\Controllers\LiveCallController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,11 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('livecall', [LiveCallController::class, 'store']);
+Route::post('callback', [CallBackController::class, 'store']);
+Route::put('livecall/{id}', [LiveCallController::class, 'update']);
+Route::put('callback/{id}', [CallBackController::class, 'update']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::delete('/delete', [UserController::class, 'delete']);
     Route::put('/update', [UserController::class, 'update']);
-    // Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('callback', [CallBackController::class, 'index']);
+    Route::get('livecall', [LiveCallController::class, 'index']);
+    Route::get('livecall/{id}', [LiveCallController::class, 'index']);
+    Route::get('callback/{id}', [CallBackController::class, 'index']);
+    Route::delete('livecall/{id}', [LiveCallController::class, 'delete']);
+    Route::delete('callback/{id}', [CallBackController::class, 'delete']);
     // Route::get('/mark-notification', [AuthController::class, 'markNotification']);
     // Route::get('users/activities', [UserController::class, 'user_activities']);
 });
