@@ -38,7 +38,7 @@ class LiveCallController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'query_type' => 'required',
         ]);
 
         $response = ModelsLiveCall::create($request->all());

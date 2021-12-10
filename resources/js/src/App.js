@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
+import LiveSupportPage from "./pages/LiveSupportPage";
 
 const App = () => {
     const [auth, setAuth] = useState(store.getState().auth);
@@ -36,18 +37,26 @@ const App = () => {
         <Provider store={store}>
             <Router>
                 <Routes>
-                    <Route exact path="/" element={<LoginPage />} />
                     <Route
                         exact
-                        path="forgot-password"
+                        path="live-support"
+                        element={<LiveSupportPage />}
+                    />
+                    <Route exact path="admin" element={<LoginPage />} />
+                    <Route
+                        exact
+                        path="admin/forgot-password"
                         element={<ForgotPasswordPage />}
                     />
                     <Route
                         exact
-                        path="reset-password/:token"
+                        path="admin/reset-password/:token"
                         element={<ResetPasswordPage />}
                     />
-                    <Route path="dashboard/*" element={<DashboardPage />} />
+                    <Route
+                        path="admin/dashboard/*"
+                        element={<DashboardPage />}
+                    />
                 </Routes>
             </Router>
         </Provider>

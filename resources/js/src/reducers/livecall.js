@@ -10,7 +10,7 @@ import {
 const initialState = {
     loading: true,
     livecalls: null,
-    livecall: {},
+    livecall: null,
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -46,7 +46,7 @@ export default (state = initialState, action) => {
             return {
                 loading: true,
                 livecalls: null,
-                livecall: {},
+                livecall: null,
             };
         case LIVECALL_ERROR:
             return {

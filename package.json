@@ -31,6 +31,7 @@
         "@mui/icons-material": "^5.2.0",
         "@mui/material": "^5.2.2",
         "popper.js": "^1.16.1",
+        "react-chatbot-kit": "^2.0.1",
         "react-redux": "^7.2.6",
         "react-router-dom": "^6.0.2",
         "redux": "^4.1.2",

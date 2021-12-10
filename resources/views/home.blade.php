@@ -1,23 +1,14 @@
-@extends('layouts.app')
+<script type="text/javascript">
+(function() {
+  let height = 878
+  let width = 496
+  let top = window.innerHeight - height;
+  let left = window.innerWidth - width;
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+  window.open('http://127.0.0.1:8000/live-support', '_blank',
+    `width=${width},height=${height},toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=0,left=${left},top=${top}`
+  );
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+  return false;
+})();
+</script>

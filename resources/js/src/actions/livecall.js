@@ -30,14 +30,17 @@ export const getLivecalls = () => async (dispatch) => {
     }
 };
 
-export const requestLivecall = (data, history) => async (dispatch) => {
+export const requestLivecall = (data) => async (dispatch) => {
     dispatch({ type: LIVECALL_LOADING });
     try {
         const res = await axios.post("/api/livecall", data);
 
-        dispatch(setAlert(res.data.message, "success"));
+        dispatch({
+            type: SET_LIVECALL,
+            payload: res.data,
+        });
 
-        history.goBack();
+        dispatch(setAlert("You are connected", "success"));
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });

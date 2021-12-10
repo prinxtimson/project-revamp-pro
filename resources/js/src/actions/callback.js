@@ -30,14 +30,19 @@ export const getCallbacks = () => async (dispatch) => {
     }
 };
 
-export const requestCallback = (data, history) => async (dispatch) => {
+export const requestCallback = (data, onSuccessful) => async (dispatch) => {
     dispatch({ type: CALLBACK_LOADING });
     try {
         const res = await axios.post("/api/callback", data);
 
-        dispatch(setAlert(res.data.message, "success"));
+        onSuccessful();
 
-        history.goBack();
+        dispatch(setAlert("Callback request received", "success"));
+
+        dispatch({
+            type: SET_CALLBACK,
+            payload: res.data,
+        });
     } catch (err) {
         console.log(err.response);
         dispatch({ type: CALLBACK_ERROR });

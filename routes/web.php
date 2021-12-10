@@ -16,13 +16,23 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['guest'])->group(function () {
     //
     //Route::post('/login', [LoginController::class, 'authenticate']);
-    Route::get('/', function () {
+    Route::get('admin', function () {
         return view('welcome');
     })->name('home');
-    Route::get('reset-password/{token}', function () {
+
+    Route::get('admin/reset-password/{token}', function () {
         return view('welcome');
     })->name('password.reset');
-    Route::get('forgot-password', function () {
+
+    Route::get('admin/forgot-password', function () {
+        return view('welcome');
+    });
+
+    Route::get('/', function () {
+        return view('home');
+    });
+
+    Route::get('live-support', function () {
         return view('welcome');
     });
 
@@ -30,17 +40,13 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('change-password', function () {
-        return view('welcome');
-    });
-    Route::get('dashboard', function () {
+    Route::get('admin/dashboard', function () {
         return view('welcome');
     })->name('dashboard');
 
-    Route::get('dashboard/{name?}', function () {
+    Route::get('admin/dashboard/{name?}', function () {
         return view('welcome');
     });
-
 
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });

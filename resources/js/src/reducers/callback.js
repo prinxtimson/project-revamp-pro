@@ -10,7 +10,7 @@ import {
 const initialState = {
     loading: true,
     callbacks: null,
-    callback: {},
+    callback: null,
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -46,7 +46,7 @@ export default (state = initialState, action) => {
             return {
                 loading: true,
                 callbacks: null,
-                callback: {},
+                callback: null,
             };
         case CALLBACK_ERROR:
             return {

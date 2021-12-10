@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CallBack as ModelsCallBack;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CallBackController extends Controller
@@ -37,14 +38,22 @@ class CallBackController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $fields = $request->validate([
             'name' => 'required',
             'phone' => 'required',
             'email' => 'required',
-            'time' => 'required'
+            'time' => 'required',
+            'date' => 'required'
         ]);
 
-        $response = ModelsCallBack::create($request->all());
+        $response = ModelsCallBack::create([
+            'name' => $fields['name'],
+            'phone' => $fields['phone'],
+            'email' => $fields['email'],
+            'time' => Carbon::now()
+        ]);
+
+        // Carbon::createFromDate($fields['date'], $fields['time'])
 
         return response($response, 201);
     }

@@ -120,7 +120,7 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
                                                 {row.email}
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
-                                                {row.roles[0]?.name}
+                                                {""}
                                             </StyledTableCell>
                                             <StyledTableCell align="center">
                                                 <Grid container spacing={2}>
