@@ -98,20 +98,15 @@ export const updateUser = (data) => async (dispatch) => {
 };
 
 // Register user action
-export const registerUser = (formData, handleSuccess) => async (dispatch) => {
+export const addUser = (formData, handleSuccess) => async (dispatch) => {
     dispatch({ type: AUTH_LOADING });
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-        },
-    };
-
-    const body = JSON.stringify(formData);
 
     try {
-        const res = await axios.post("/api/register", body, config);
+        const res = await axios.post("/api/users", formData);
 
-        dispatch(setAlert(res.data.message, "success"));
+        dispatch(setAlert("Agent added successfuly", "success"));
+
+        dispatch({ type: AUTH_LOADING });
 
         handleSuccess();
     } catch (err) {

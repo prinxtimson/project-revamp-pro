@@ -13,38 +13,57 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { connect } from "react-redux";
+import { addUser } from "../../actions/auth";
 
 const theme = createTheme();
 
-const AddUserForm = ({ alerts, loading }) => {
+const AddUserForm = ({ alerts, loading, addUser }) => {
     const [data, setData] = React.useState({
         firstname: "",
         lastname: "",
         email: "",
-        role: "",
+        role: "admin",
         password: "",
         showPassword: false,
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        addUser(data, onSuccessfull);
+    };
+
+    const onSuccessfull = () => {
+        setData({
+            firstname: "",
+            lastname: "",
+            email: "",
+            role: "admin",
+            password: "",
+            showPassword: false,
+        });
     };
 
     const handleOnFocus = () => {
-        // const generatedPass = generatePassword(8);
-        // setData({
-        //     ...data,
-        //     password: generatedPass,
-        //     confirm_password: generatedPass
-        // })
+        const password = generatePassword(8);
+
+        setData({ ...data, password });
+    };
+
+    const generatePassword = (len) => {
+        let result = [];
+        const characters =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@-%$#!&+?";
+        const charLength = characters.length;
+        for (let i = 0; i < len; i++) {
+            result.push(
+                characters.charAt(Math.floor(Math.random() * charLength))
+            );
+        }
+        return result.join("");
     };
 
     const handleClickShowPassword = () => {
         setData({ ...data, showPassword: !data.showPassword });
-    };
-
-    const handleMouseDownPassword = (e) => {
-        e.preventDefault();
     };
 
     return (
@@ -133,9 +152,6 @@ const AddUserForm = ({ alerts, loading }) => {
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={handleClickShowPassword}
-                                            onMouseDown={
-                                                handleMouseDownPassword
-                                            }
                                         >
                                             {data.showPassword ? (
                                                 <Visibility />
@@ -158,6 +174,7 @@ const AddUserForm = ({ alerts, loading }) => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            disabled={loading}
                         >
                             Submit
                         </Button>
@@ -174,4 +191,4 @@ const mapStateToProps = (state) => ({
     alerts: state.alert,
 });
 
-export default connect(mapStateToProps)(AddUserForm);
+export default connect(mapStateToProps, { addUser })(AddUserForm);

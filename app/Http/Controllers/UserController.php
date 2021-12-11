@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Mail\NewUser;
 
 class UserController extends Controller
 {
@@ -80,7 +81,7 @@ class UserController extends Controller
         $user->assignRole($fields['role']);
 
         //event(new NewUserAdded($fields));
-        //Mail::to($user)->send(new NewUser($fields));
+        Mail::to($user)->send(new NewUser($fields));
 
         $response = [
             'user' => $user,
