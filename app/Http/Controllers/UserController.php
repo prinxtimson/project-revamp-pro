@@ -192,7 +192,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $user = User::withTrashed()->find($id)->load(['profile', 'roles']);
+        $user = User::withTrashed()->find($id)->load(['roles']);
 
         $deleted = $user->forceDelete($id);
 
