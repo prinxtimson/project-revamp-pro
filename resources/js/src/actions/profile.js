@@ -131,7 +131,7 @@ export const delUser = (id) => async (dispatch) => {
 
             dispatch(setAlert("User had been deleted successfully", "success"));
         } catch (err) {
-            console.log(err.response);
+            console.log(err);
             if (err.response.status == 500) {
                 return dispatch(
                     setAlert("Server errror, please try again.", "danger")

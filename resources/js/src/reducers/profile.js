@@ -32,14 +32,14 @@ export default (state = initialState, actions) => {
                 loading: false,
             };
         case UPDATE_PROFILE:
-            let index = state.profiles.findIndex(
+            let index = state.profiles.data.findIndex(
                 (item) => item.id === payload.id
             );
-            state.profiles.splice(index, 1, payload);
+            state.profiles.data.splice(index, 1, payload);
             return {
                 ...state,
                 loading: false,
-                profiles: [...state.profiles],
+                profiles: { ...state.profiles },
             };
         case GET_PROFILES:
             return {
@@ -48,11 +48,13 @@ export default (state = initialState, actions) => {
                 loading: false,
             };
         case DELETE_PROFILE:
-            let profiles = state.profiles.filter((item) => item.id !== payload);
+            let data = state.profiles.data.filter(
+                (item) => item.id !== payload
+            );
             return {
                 ...state,
                 loading: false,
-                profiles,
+                profiles: { ...state.profiles, data },
             };
         case PROFILE_ERROR:
             return {
