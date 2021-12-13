@@ -51,4 +51,8 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });
 
+Route::get('basecamp', function ($request) {
+    var_dump($request);
+});
+
 Auth::routes();
