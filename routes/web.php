@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,8 +52,9 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });
 
-Route::get('basecamp', function ($request) {
+Route::get('basecamp', function (Request $request) {
     var_dump($request);
+    return;
 });
 
 Auth::routes();
