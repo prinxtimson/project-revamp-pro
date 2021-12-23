@@ -121,11 +121,9 @@ export const leaveLivecall = (id) => async (dispatch) => {
     }
 };
 
-export const answerLivecall = (id, handleLoading) => async (dispatch) => {
-    handleLoading();
+export const answerLivecall = (id) => async (dispatch) => {
     try {
         const res = await axios.get(`/api/livecall/connect/${id}`);
-        handleLoading();
 
         let newWindow = window.open(`/confrencing/${res.data.room}`);
         newWindow[`${res.data.room}_token`] = res.data.token;
