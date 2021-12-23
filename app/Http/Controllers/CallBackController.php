@@ -50,7 +50,8 @@ class CallBackController extends Controller
             'name' => $fields['name'],
             'phone' => $fields['phone'],
             'email' => $fields['email'],
-            'time' => Carbon::now()
+            'date' => $fields['date'],
+            'time' => $fields['time']
         ]);
 
         // Carbon::createFromDate($fields['date'], $fields['time'])

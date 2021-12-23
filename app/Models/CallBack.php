@@ -14,10 +14,11 @@ class CallBack extends Model
         'phone',
         'email',
         'time',
+        'date',
     ];
 
     protected $casts = [
-        'time' => 'datetime',
+        'date' => 'datetime',
     ];
 
     public function user()

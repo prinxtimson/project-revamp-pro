@@ -5,12 +5,14 @@ import { Provider } from "react-redux";
 
 import store from "./store";
 import { loadUser, onNewNotification } from "./actions/auth";
+import { updateLivecalls } from "./actions/livecall";
 
 import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import LiveSupportPage from "./pages/LiveSupportPage";
+import VideoChat from "./pages/VideoChat";
 
 const App = () => {
     const [auth, setAuth] = useState(store.getState().auth);
@@ -20,14 +22,10 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        if (auth.isAuthenticated) {
-            // window.echo
-            //     .private(`App.Models.User.${auth.user?.id}`)
-            //     .notification((notification) => {
-            //         store.dispatch(onNewNotification(notification));
-            //     });
-        }
-    }, [auth]);
+        window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
+            store.dispatch(updateLivecalls(e.livecall));
+        });
+    }, []);
 
     store.subscribe(() => {
         setAuth(store.getState().auth);
@@ -43,6 +41,11 @@ const App = () => {
                         element={<LiveSupportPage />}
                     />
                     <Route exact path="admin" element={<LoginPage />} />
+                    <Route
+                        exact
+                        path="confrencing/:URLRoomName"
+                        element={<VideoChat />}
+                    />
                     <Route
                         exact
                         path="admin/forgot-password"

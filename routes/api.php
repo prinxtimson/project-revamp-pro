@@ -21,6 +21,8 @@ Route::post('livecall', [LiveCallController::class, 'store']);
 Route::post('callback', [CallBackController::class, 'store']);
 Route::put('livecall/{id}', [LiveCallController::class, 'update']);
 Route::put('callback/{id}', [CallBackController::class, 'update']);
+Route::get('livecall/on', [LiveCallController::class, 'on']);
+Route::get('livecall/leave/{id}', [LiveCallController::class, 'leave']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/me', [UserController::class, 'me']);
@@ -28,10 +30,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/update', [UserController::class, 'update']);
     Route::get('callback', [CallBackController::class, 'index']);
     Route::get('livecall', [LiveCallController::class, 'index']);
-    Route::get('livecall/{id}', [LiveCallController::class, 'index']);
-    Route::get('callback/{id}', [CallBackController::class, 'index']);
+    Route::get('livecall/connect/{id}', [LiveCallController::class, 'connect']);
+    Route::get('livecall/{id}', [LiveCallController::class, 'show']);
+    Route::get('callback/{id}', [CallBackController::class, 'show']);
     Route::delete('livecall/{id}', [LiveCallController::class, 'delete']);
     Route::delete('callback/{id}', [CallBackController::class, 'delete']);
+    Route::get('livecall/search/{query_type}', [LiveCallController::class, 'search_by_query_type']);
     // Route::get('/mark-notification', [AuthController::class, 'markNotification']);
     // Route::get('users/activities', [UserController::class, 'user_activities']);
 });

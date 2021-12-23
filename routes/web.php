@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use App\Broadcasting\LivecallChannel;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,9 +54,10 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });
 
-Route::get('basecamp', function (Request $request) {
-    var_dump($request);
-    return;
+Route::get('confrencing/{URLRoomName?}', function () {
+    return view('welcome');
 });
 
 Auth::routes();
+
+//Broadcast::channel('livecall', LivecallChannel::class);

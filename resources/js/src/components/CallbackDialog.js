@@ -7,6 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
+import moment from "moment";
 
 const CallbackDialog = ({
     open,
@@ -16,6 +17,9 @@ const CallbackDialog = ({
     handleOnChange,
     loading,
 }) => {
+    let minDate = new Date().toISOString();
+    let maxDate = new Date(moment().weekday(5)).toISOString();
+
     return (
         <div>
             <Dialog open={open} onClose={handleClose}>
@@ -63,16 +67,29 @@ const CallbackDialog = ({
                             autoComplete="phone"
                         />
                         <TextField
+                            id="time"
+                            select
                             margin="normal"
                             required
                             fullWidth
                             name="time"
                             label="Time"
-                            id="time"
-                            type="time"
                             value={data.time}
                             onChange={handleOnChange}
-                        />
+                            helperText="available time is week days between 8am - 4pm"
+                            SelectProps={{
+                                native: true,
+                            }}
+                            variant="outlined"
+                        >
+                            <option />
+                            <option value="10:00 - 11:00">10:00 - 11:00</option>
+                            <option value="11:00 - 12:00">11:00 - 12:00</option>
+                            <option value="12:00 - 13:00">12:00 - 13:00</option>
+                            <option value="13:00 - 14:00">13:00 - 14:00</option>
+                            <option value="14:00 - 15:00">14:00 - 15:00</option>
+                            <option value="15:00 - 16:00">15:00 - 16:00</option>
+                        </TextField>
                         <TextField
                             margin="normal"
                             required
@@ -80,9 +97,13 @@ const CallbackDialog = ({
                             name="date"
                             label="Date"
                             id="date"
-                            value={data.date}
+                            value={data.date || minDate.split("T")[0]}
                             onChange={handleOnChange}
                             type="date"
+                            inputProps={{
+                                min: minDate.split("T")[0],
+                                max: maxDate.split("T")[0],
+                            }}
                         />
                     </Box>
                 </DialogContent>

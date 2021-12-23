@@ -10,21 +10,28 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Container from "../../components/Container";
 import { connect } from "react-redux";
-import { requestLivecall, getLivecalls } from "../../actions/livecall";
+import {
+    requestLivecall,
+    getLivecalls,
+    leaveLivecall,
+} from "../../actions/livecall";
 import { requestCallback, getCallbacks } from "../../actions/callback";
 import CallbackDialog from "../../components/CallbackDialog";
 
 const LiveSupport = ({
     livecall,
+    livecalls,
     loading,
     requestLivecall,
     getLivecalls,
     requestCallback,
     callbackLoading,
     getCallbacks,
+    leaveLivecall,
 }) => {
     const d = new Date();
     const [open, setOpen] = React.useState(false);
+    const [min, setMin] = React.useState(0);
     const [data, setData] = React.useState({
         query_type: "",
     });
@@ -44,10 +51,35 @@ const LiveSupport = ({
         setFormData({ name: "", email: "", phone: "", time: "", date: "" });
     };
 
-    React.useState(() => {
+    React.useEffect(() => {
+        if (livecalls) {
+            let count = livecalls.filter(
+                (val) => val.answered_at === null && val.left_at === null
+            ).length;
+            console.log(count);
+
+            let total = count * 5;
+
+            setMin(total);
+        }
+    }, [livecalls]);
+
+    React.useEffect(() => {
         getLivecalls();
         getCallbacks();
     }, []);
+
+    React.useEffect(() => {
+        if (livecall) {
+            window.addEventListener("beforeunload", (e) => {
+                e.preventDefault();
+                e.returnValue = "Are you sure you want to close?";
+            });
+            window.addEventListener("unload", () => {
+                leaveLivecall(livecall.id);
+            });
+        }
+    }, [livecall]);
 
     const handleConnect = () => {
         requestLivecall(data);
@@ -64,12 +96,13 @@ const LiveSupport = ({
     const handleSubmit = () => {
         //console.log(formData);
 
-        requestCallback(formData, onSuccessful);
+        requestCallback(livecall.id, formData, onSuccessful);
     };
 
     const scrollToBottom = () => {
         window.scrollTo({});
     };
+
     return (
         <Container>
             <Box
@@ -366,9 +399,9 @@ const LiveSupport = ({
                             }}
                         >
                             <Typography component="p" variant="p">
-                                Thank you! it will take approximately 4 minutes
-                                to connect you to a live agent via audio and/or
-                                video call.
+                                Thank you! it will take approximately {min}{" "}
+                                minutes to connect you to a live agent via audio
+                                and/or video call.
                             </Typography>
                             <Typography component="p" variant="p">
                                 Would you like to request a call back instead?
@@ -384,6 +417,7 @@ const LiveSupport = ({
                                         color="primary"
                                         onClick={handleClickOpen}
                                         size="small"
+                                        disabled={Boolean(livecall.left_at)}
                                     >
                                         Request Call Back
                                     </Button>
@@ -393,6 +427,7 @@ const LiveSupport = ({
                                         variant="contained"
                                         color="primary"
                                         size="small"
+                                        disabled={Boolean(livecall.left_at)}
                                     >
                                         Wait to speak to agent
                                     </Button>
@@ -408,6 +443,7 @@ const LiveSupport = ({
 
 const mapStateToProps = (state) => ({
     livecall: state.livecall.livecall,
+    livecalls: state.livecall.livecalls,
     loading: state.livecall.loading,
     callbackLoading: state.callback.loading,
 });
@@ -417,4 +453,5 @@ export default connect(mapStateToProps, {
     getLivecalls,
     requestCallback,
     getCallbacks,
+    leaveLivecall,
 })(LiveSupport);

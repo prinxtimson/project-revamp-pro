@@ -14,8 +14,20 @@ import TableRow from "@mui/material/TableRow";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import { getLivecalls, clearLivecall } from "../../actions/livecall";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import TextField from "@mui/material/TextField";
+import {
+    getLivecalls,
+    clearLivecall,
+    delLivecall,
+    answerLivecall,
+    setLivecalls,
+} from "../../actions/livecall";
 import { connect } from "react-redux";
+import Moment from "react-moment";
+import moment from "moment";
 
 const theme = createTheme();
 
@@ -37,8 +49,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
+const LiveCallTable = ({
+    livecalls,
+    loading,
+    getLivecalls,
+    clearLivecall,
+    delLivecall,
+    answerLivecall,
+    setLivecalls,
+    alerts,
+}) => {
     const [page, setPage] = React.useState(0);
+    const [queryType, setQueryType] = React.useState("");
 
     React.useEffect(() => {
         getLivecalls();
@@ -46,16 +68,74 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
         return clearLivecall;
     }, []);
 
-    const handleDelete = (row) => {};
+    React.useEffect(() => {
+        if (queryType)
+            window.history.replaceState(null, "", `?query_type="${queryType}"`);
+        else window.history.replaceState(null, "", "/admin/dashboard/livecall");
+    }, [queryType]);
 
-    const handleEnable = (row) => {};
+    const handleDelete = (id) => delLivecall(id);
+
+    const handleConnect = (id) => {
+        answerLivecall(id);
+    };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
+    const handleOnSelectChange = (text) => {
+        if (text) {
+            setQueryType(text);
+
+            window.axios
+                .get(`/api/livecall/search/${text}`)
+                .then((res) => {
+                    setLivecalls(res.data);
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        } else {
+            setQueryType("");
+
+            window.axios
+                .get(`/api/livecall`)
+                .then((res) => {
+                    setLivecalls(res.data);
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        }
+    };
+
     return (
         <ThemeProvider theme={theme}>
+            <Stack sx={{ width: "100%" }} spacing={2}>
+                {alerts.map(
+                    (alert) =>
+                        alert.alertType === "danger" && (
+                            <Snackbar
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                open={Boolean(alert.id)}
+                                key={alert.id}
+                                autoHideDuration={6000}
+                            >
+                                <Alert
+                                    key={alert.id}
+                                    variant="filled"
+                                    severity="error"
+                                >
+                                    {alert.msg}
+                                </Alert>
+                            </Snackbar>
+                        )
+                )}
+            </Stack>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
                 <Box
@@ -63,9 +143,66 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
                         marginTop: 8,
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center",
+                        backgroundColor: "white",
+                        borderRadius: 2,
+                        padding: 3,
                     }}
                 >
+                    <div style={{ margin: 10 }}>
+                        <Grid container spacing={5}>
+                            <Grid item xs />
+                            <Grid item xs>
+                                <TextField
+                                    id="query_type"
+                                    select
+                                    fullWidth
+                                    margin="dense"
+                                    label="Select Query Type"
+                                    value={queryType}
+                                    onChange={(e) =>
+                                        handleOnSelectChange(e.target.value)
+                                    }
+                                    SelectProps={{
+                                        native: true,
+                                    }}
+                                    variant="outlined"
+                                >
+                                    <option />
+                                    <option value="Mentor Request">
+                                        Mentor Request
+                                    </option>
+                                    <option value="Second Project Request">
+                                        Second Project Request
+                                    </option>
+                                    <option value="Referencing">
+                                        Referencing
+                                    </option>
+                                    <option value="Developer Request">
+                                        Developer Request
+                                    </option>
+                                    <option value="Taster Session">
+                                        Taster Session
+                                    </option>
+                                    <option value="Enquiry">Enquiry</option>
+                                    <option value="New Candidate Support">
+                                        New Candidate Support
+                                    </option>
+                                    <option value="Software issues">
+                                        Software issues
+                                    </option>
+                                    <option value="LMS queries">
+                                        LMS queries
+                                    </option>
+                                    <option value="Access issue">
+                                        Access issue
+                                    </option>
+                                    <option value="Other IT issues">
+                                        Other IT issues
+                                    </option>
+                                </TextField>
+                            </Grid>
+                        </Grid>
+                    </div>
                     <TableContainer
                         variant="elevation"
                         style={{
@@ -78,7 +215,7 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
                         <Table aria-label="customized table">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell>Name</StyledTableCell>
+                                    <StyledTableCell>ID</StyledTableCell>
                                     <StyledTableCell align="left">
                                         Query Type
                                     </StyledTableCell>
@@ -111,16 +248,33 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
                                     livecalls?.data.map((row) => (
                                         <StyledTableRow key={row.id}>
                                             <StyledTableCell scope="row">
-                                                {row.name}
+                                                {row.id}
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
                                                 {row.query_type}
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
-                                                {row.email}
+                                                {row.answered_at ||
+                                                row.left_at ? (
+                                                    <Moment
+                                                        from={row.created_at}
+                                                        ago
+                                                    >
+                                                        {row.answered_at ||
+                                                            row.left_at}
+                                                    </Moment>
+                                                ) : (
+                                                    <Moment fromNow ago>
+                                                        {row.created_at}
+                                                    </Moment>
+                                                )}
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
-                                                {""}
+                                                {row.answered_at
+                                                    ? "Answered"
+                                                    : row.left_at
+                                                    ? "Left"
+                                                    : "Waiting"}
                                             </StyledTableCell>
                                             <StyledTableCell align="center">
                                                 <Grid container spacing={2}>
@@ -129,8 +283,16 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
                                                             size="small"
                                                             variant="outlined"
                                                             onClick={() =>
-                                                                handleEnable(
+                                                                handleConnect(
                                                                     row.id
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                Boolean(
+                                                                    row.answered_at
+                                                                ) ||
+                                                                Boolean(
+                                                                    row.left_at
                                                                 )
                                                             }
                                                         >
@@ -144,7 +306,7 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
                                                             size="small"
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    row
+                                                                    row.id
                                                                 )
                                                             }
                                                         >
@@ -181,8 +343,13 @@ const LiveCallTable = ({ livecalls, loading, getLivecalls, clearLivecall }) => {
 const mapStateToProps = (state) => ({
     loading: state.livecall.loading,
     livecalls: state.livecall.livecalls,
+    alerts: state.alert,
 });
 
-export default connect(mapStateToProps, { getLivecalls, clearLivecall })(
-    LiveCallTable
-);
+export default connect(mapStateToProps, {
+    getLivecalls,
+    clearLivecall,
+    delLivecall,
+    answerLivecall,
+    setLivecalls,
+})(LiveCallTable);

@@ -14,6 +14,7 @@ import TableRow from "@mui/material/TableRow";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
+import Moment from "react-moment";
 import { connect } from "react-redux";
 import { getCallbacks, clearCallback } from "../../actions/callback";
 
@@ -86,7 +87,10 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
                                         Phone
                                     </StyledTableCell>
                                     <StyledTableCell align="left">
-                                        Date/Time
+                                        Date
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        Time
                                     </StyledTableCell>
                                     <StyledTableCell align="center">
                                         Actions
@@ -118,6 +122,11 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
                                                 {row.phone}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="left">
+                                                <Moment format="ll">
+                                                    {row.date}
+                                                </Moment>
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
                                                 {row.time}

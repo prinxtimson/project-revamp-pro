@@ -18,7 +18,8 @@ class CreateCallBacksTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('phone');
-            $table->timestamp('time');
+            $table->string('time');
+            $table->date('date');
             $table->foreignId('agent_id')->nullable();
             $table->timestamp('called_at')->nullable();
             $table->timestamps();

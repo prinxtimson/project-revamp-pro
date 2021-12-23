@@ -1,5 +1,6 @@
 const axios = window.axios;
 import { setAlert } from "./alert";
+import { leaveLivecall } from "./livecall";
 import {
     CLEAR_CALLBACK,
     DELETE_CALLBACK,
@@ -30,7 +31,7 @@ export const getCallbacks = () => async (dispatch) => {
     }
 };
 
-export const requestCallback = (data, onSuccessful) => async (dispatch) => {
+export const requestCallback = (id, data, onSuccessful) => async (dispatch) => {
     dispatch({ type: CALLBACK_LOADING });
     try {
         const res = await axios.post("/api/callback", data);
@@ -38,6 +39,8 @@ export const requestCallback = (data, onSuccessful) => async (dispatch) => {
         onSuccessful();
 
         dispatch(setAlert("Callback request received", "success"));
+
+        dispatch(leaveLivecall(id));
 
         dispatch({
             type: SET_CALLBACK,
