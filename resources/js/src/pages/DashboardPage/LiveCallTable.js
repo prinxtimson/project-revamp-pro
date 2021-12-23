@@ -60,6 +60,7 @@ const LiveCallTable = ({
     alerts,
 }) => {
     const [page, setPage] = React.useState(0);
+    const [actionLoading, setActionLoading] = React.useState(false);
     const [queryType, setQueryType] = React.useState("");
 
     React.useEffect(() => {
@@ -77,8 +78,10 @@ const LiveCallTable = ({
     const handleDelete = (id) => delLivecall(id);
 
     const handleConnect = (id) => {
-        answerLivecall(id);
+        answerLivecall(id, handleLoading);
     };
+
+    const handleLoading = () => setActionLoading(!actionLoading);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -293,7 +296,8 @@ const LiveCallTable = ({
                                                                 ) ||
                                                                 Boolean(
                                                                     row.left_at
-                                                                )
+                                                                ) ||
+                                                                actionLoading
                                                             }
                                                         >
                                                             Connect
