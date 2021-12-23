@@ -78,7 +78,7 @@ const LiveCallTable = ({
     const handleDelete = (id) => delLivecall(id);
 
     const handleConnect = (id) => {
-        answerLivecall(id, handleLoading);
+        answerLivecall(id);
     };
 
     const handleLoading = () => setActionLoading(!actionLoading);
@@ -296,8 +296,7 @@ const LiveCallTable = ({
                                                                 ) ||
                                                                 Boolean(
                                                                     row.left_at
-                                                                ) ||
-                                                                actionLoading
+                                                                )
                                                             }
                                                         >
                                                             Connect
