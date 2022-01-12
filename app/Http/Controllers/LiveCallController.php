@@ -125,6 +125,7 @@ class LiveCallController extends Controller
         $roomName = 'call_'.$id;
         $identity = $user->username;
         $token = $user->createToken('access_token')->plainTextToken;
+        $baseUrl = getenv('APP_URL');
 
         $livecall = ModelsLiveCall::find($id);
 
@@ -142,7 +143,7 @@ class LiveCallController extends Controller
 
         LivecallUpdate::dispatch($livecall);
 
-        $data = Http::withToken($token)->post('http://localhost:5000/twilio/connect', ['roomName' => $roomName, 'identity' => $identity, 'role' => 'host'])->throw()->json();
+        $data = Http::withToken($token)->post($baseUrl.'/twilio/connect', ['roomName' => $roomName, 'identity' => $identity, 'role' => 'host'])->throw()->json();
 
         return $data;
     }
