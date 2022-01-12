@@ -24,6 +24,7 @@ Route::put('callback/{id}', [CallBackController::class, 'update']);
 Route::get('livecall/on', [LiveCallController::class, 'on']);
 Route::get('livecall/leave/{id}', [LiveCallController::class, 'leave']);
 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::delete('/delete', [UserController::class, 'delete']);
@@ -33,8 +34,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('livecall/connect/{id}', [LiveCallController::class, 'connect']);
     Route::get('livecall/{id}', [LiveCallController::class, 'show']);
     Route::get('callback/{id}', [CallBackController::class, 'show']);
-    Route::delete('livecall/{id}', [LiveCallController::class, 'delete']);
-    Route::delete('callback/{id}', [CallBackController::class, 'delete']);
+    Route::delete('livecall/{id}', [LiveCallController::class, 'destroy']);
+    Route::delete('callback/{id}', [CallBackController::class, 'destroy']);
     Route::get('livecall/search/{query_type}', [LiveCallController::class, 'search_by_query_type']);
     // Route::get('/mark-notification', [AuthController::class, 'markNotification']);
     // Route::get('users/activities', [UserController::class, 'user_activities']);
@@ -47,6 +48,11 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin']], funct
     Route::delete('users/{id}', [UserController::class, 'destroy']);
     Route::put('users/disable/{id}', [UserController::class, 'disable']);
     Route::put('users/enable/{id}', [UserController::class, 'enable']);
+
+    Route::post('livecall/remove_participant', [LiveCallController::class, 'remove_participant']);
+    
+    Route::post('livecall/opentok/{id}', [LiveCallController::class, 'con']);
+    Route::post('livecall/on_connected/{id}', [LiveCallController::class, 'on_connected']);
     //Route::put('users/approved/{id}', [UserController::class, 'approved']);
 
 });

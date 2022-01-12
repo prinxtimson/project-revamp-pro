@@ -7,7 +7,7 @@ const AudioTrack = ({ track }) => {
 
     useEffect(() => {
         audioEl.current = track.attach();
-        audioEl.current.setAttribute("");
+        audioEl.current.setAttribute("data-cy-audio-track-name", track.name);
         document.body.appendChild(audioEl.current);
 
         return () =>

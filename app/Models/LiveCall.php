@@ -14,6 +14,8 @@ class LiveCall extends Model
         'query_type',
         'left_at',
         'answered_at',
+        'session_id',
+        'agent_id'
     ];
 
     protected $casts = [

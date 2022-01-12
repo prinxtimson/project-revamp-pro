@@ -54,6 +54,13 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });
 
+Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
+
+    Route::get('authenticate', function () {
+        return true;
+    });
+});
+
 Route::get('confrencing/{URLRoomName?}', function () {
     return view('welcome');
 });

@@ -24,11 +24,14 @@ export const getLivecalls = () => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
         }
+        // if (err.response.status === 401 || err.response.status === 403) {
+        //     window.location.reload();
+        // }
 
         dispatch(setAlert(err.response.data.message, "danger"));
     }
@@ -45,7 +48,7 @@ export const getConnectedLivecalls = () => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
@@ -60,6 +63,22 @@ export const requestLivecall = (data) => async (dispatch) => {
     try {
         const res = await axios.post("/api/livecall", data);
 
+        window.Echo.channel(`livecall.${res.data.id}`).listen(
+            "AgentConnected",
+            (e) => {
+                console.log(e);
+                if (window.confirm("You will now be transfer to an agent.")) {
+                    let newWindow = window.open(`/confrencing/${e.data.room}`);
+                    newWindow[`${e.data.room}_token`] = e.data.token;
+                    //newWindow[`${e.data.room}_api_key`] = e.data.apiKey;
+                    //newWindow[`${e.data.room}_session_id`] = e.data.sessionId;
+                    newWindow[
+                        `${e.data.room}_identity`
+                    ] = `Caller ${res.data.id}`;
+                }
+            }
+        );
+
         dispatch({
             type: SET_LIVECALL,
             payload: res.data,
@@ -70,7 +89,7 @@ export const requestLivecall = (data) => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
@@ -91,7 +110,7 @@ export const getLivecallById = (id) => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
@@ -110,7 +129,7 @@ export const leaveLivecall = (id) => async (dispatch) => {
         } catch (err) {
             console.log(err.response);
             dispatch({ type: LIVECALL_ERROR });
-            if (err.response.status == 500) {
+            if (err.response.status === 500) {
                 return dispatch(
                     setAlert("Server errror, please try again.", "danger")
                 );
@@ -125,18 +144,27 @@ export const answerLivecall = (id) => async (dispatch) => {
     try {
         const res = await axios.get(`/api/livecall/connect/${id}`);
 
+        await axios.post(`/api/livecall/on_connected/${id}`, {
+            identity: `Caller ${id}`,
+            roomName: res.data.room,
+        });
+
         let newWindow = window.open(`/confrencing/${res.data.room}`);
         newWindow[`${res.data.room}_token`] = res.data.token;
+        //newWindow[`${res.data.room}_api_key`] = res.data.apiKey;
+        //newWindow[`${res.data.room}_session_id`] = res.data.sessionId;
         newWindow[`${res.data.room}_identity`] = res.data.identity;
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status === 401 || err.response.status === 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.msg, "danger"));
     }
 };
@@ -176,12 +204,14 @@ export const delLivecall = (id) => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status === 401 || err.response.status === 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };

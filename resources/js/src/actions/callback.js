@@ -21,12 +21,14 @@ export const getCallbacks = () => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: CALLBACK_ERROR });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        // if (err.response.status === 401 || err.response.status === 403) {
+        //     window.location.reload();
+        // }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -75,7 +77,9 @@ export const getCallbackById = (id) => async (dispatch) => {
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -96,7 +100,9 @@ export const delCallback = (id) => async (dispatch) => {
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };

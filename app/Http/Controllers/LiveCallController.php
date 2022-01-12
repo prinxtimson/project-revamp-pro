@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 //require_once '/path/to/vendor/autoload.php'; // Loads the library
+
+use App\Events\AgentConnected;
+use OpenTok\OpenTok;
 use Twilio\Rest\Client;
-use Twilio\Jwt\AccessToken;
-use Twilio\Jwt\Grants\VideoGrant;
 use App\Events\LivecallUpdate;
 use App\Models\LiveCall as ModelsLiveCall;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 class LiveCallController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -99,15 +102,29 @@ class LiveCallController extends Controller
         return $livecall;
     }
 
+    public function remove_participant(Request $request)
+    {
+        $fields = $request->validate([
+            'roomName' => 'required|string',
+            'participant' => 'required|string'
+        ]);
+
+        $api_key = getenv('TWILIO_API_KEY');
+        $api_secret = getenv('TWILIO_API_SECRET');
+        $client = new Client($api_key, $api_secret);
+
+        
+        $participant = $client->video->rooms($fields['roomName'])->participants($fields['participant'])->update(array("status" => "disconnected"));
+
+        return $participant;
+    }
+
     public function connect($id)
     {
         $user = auth()->user();
-        $twilioAccountSid = getenv('TWILIO_ACCOUNT_SID');
-        $twilioAuthToken = getenv('TWILIO_AUTH_TOKEN');
-        $twilioApiKey = getenv('TWILIO_API_KEY');
-        $twilioApiSecret = getenv('TWILIO_API_KEY_SECRET');
         $roomName = 'call_'.$id;
         $identity = $user->username;
+        $token = $user->createToken('access_token')->plainTextToken;
 
         $livecall = ModelsLiveCall::find($id);
 
@@ -115,39 +132,8 @@ class LiveCallController extends Controller
             $response = [
                 'msg' => 'Livecall request no longer available'
             ];
-
             return response($response, 400);
         }
-
-        $client = new Client($twilioAccountSid, $twilioAuthToken);
-
-        try {
-            $client->video->v1->rooms($roomName)
-            ->fetch();
-          
-          } catch (\Exception $e) {
-          
-            $client->video->v1->rooms
-            ->create([
-                "uniqueName" => $roomName,
-                "type" => "go",
-            ]);
-          }
-
-        $token = new AccessToken(
-            $twilioAccountSid,
-            $twilioApiKey,
-            $twilioApiSecret,
-            3600,
-            $identity
-        );
-
-        // Create Video grant
-        $videoGrant = new VideoGrant();
-        $videoGrant->setRoom($roomName);
-
-        // Add grant to token
-        $token->addGrant($videoGrant);
 
         $livecall->update([
             'agent_id' => $user->id,
@@ -156,11 +142,64 @@ class LiveCallController extends Controller
 
         LivecallUpdate::dispatch($livecall);
 
-        return [
-            'token' => $token->toJWT(),
-            'room' => $roomName,
-            'identity' => $identity
-        ];
+        $data = Http::withToken($token)->post('http://localhost:5000/twilio/connect', ['roomName' => $roomName, 'identity' => $identity, 'role' => 'host'])->throw()->json();
+
+        return $data;
+    }
+
+    public function on_connected(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'roomName' => 'required|string',
+            'identity' => 'required|string'
+        ]);
+        $livecall = ModelsLiveCall::find($id);
+
+        $data = Http::post('http://localhost:5000/twilio/connect', $fields)->throw()->json();
+
+        AgentConnected::dispatch($livecall, $data);
+
+        return response('', 200);
+    }
+
+    public function con($id) 
+    {
+        $user = auth()->user();   
+        $roomName = 'call_'.$id;
+        $api_key = getenv('OPENTOK_API_KEY');
+        $api_secret = getenv('OPENTOK_API_SECRET');
+    
+        $opentok = new OpenTok($api_key, $api_secret);
+
+        $livecall = ModelsLiveCall::find($id);
+
+        // if($livecall->answered_at || $livecall->left_at){
+        //     $response = [
+        //         'msg' => 'Livecall request no longer available'
+        //     ];
+        //     return response($response, 400);
+        // }
+
+            $session = $opentok->createSession();
+            $sessionId = $session->getSessionId();
+            $token = $opentok->generateToken($sessionId);
+
+            $livecall->update([
+                'agent_id' => $user->id,
+                'answered_at' => Carbon::now(),
+                'session_id' => $sessionId
+            ]);
+    
+            LivecallUpdate::dispatch($livecall); 
+
+            return [
+                'apiKey' => $api_key,
+                'sessionId' => $sessionId,
+                'token' => $token,
+                'room' => $roomName,
+                'id' => $user->username
+            ];
+        
     }
 
     /**

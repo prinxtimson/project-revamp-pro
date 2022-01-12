@@ -65,7 +65,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LOGIN_FAIL });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
@@ -87,12 +87,14 @@ export const updateUser = (data) => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: AUTH_LOADING });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status === 401 || err.response.status === 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -112,12 +114,14 @@ export const addUser = (formData, handleSuccess) => async (dispatch) => {
     } catch (err) {
         console.log(err.response);
         dispatch({ type: AUTH_LOADING });
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status === 401 || err.response.status === 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -144,7 +148,9 @@ export const changePassword = (data) => async (dispatch) => {
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status === 401 || err.response.status === 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -202,7 +208,7 @@ export const resetPassword = (data, token, history) => async (dispatch) => {
         history.replace("/");
     } catch (err) {
         console.log(err.response);
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );
@@ -219,12 +225,14 @@ export const deleteAccount = () => async (dispatch) => {
             window.location.reload();
         } catch (err) {
             console.log(err.response);
-            if (err.response.status == 500) {
+            if (err.response.status === 500) {
                 return dispatch(
                     setAlert("Server errror, please try again.", "danger")
                 );
             }
-
+            if (err.response.status === 401 || err.response.status === 403) {
+                window.location.reload();
+            }
             dispatch(setAlert(err.response.data.message, "danger"));
         }
     }
@@ -237,7 +245,7 @@ export const logoutUser = () => async (dispatch) => {
         window.location.reload();
     } catch (err) {
         console.log(err.response);
-        if (err.response.status == 500) {
+        if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")
             );

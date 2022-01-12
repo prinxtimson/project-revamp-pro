@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\AgentConnected;
 use App\Events\LivecallUpdate;
 use App\Listeners\SendLivecallNotification;
 use Illuminate\Auth\Events\Registered;
@@ -23,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         LivecallUpdate::class => [
             SendLivecallNotification::class,
         ],
+        AgentConnected::class => [
+            
+        ]
     ];
 
     /**

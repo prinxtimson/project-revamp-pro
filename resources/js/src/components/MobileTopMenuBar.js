@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 
 import React from "react";
 import useVideoContext from "../hooks/useVideoContext";
+import EndCallButton from "./Buttons/EndCallButton";
 import Menu from "./MenuBar/Menu";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,7 +45,7 @@ const MobileTopMenuBar = () => {
         >
             <Typography variant="subtitle1">{room?.name}</Typography>
             <div>
-                <Button className={classes.endCallButton}>End</Button>
+                <EndCallButton className={classes.endCallButton} />
                 <Menu buttonClassName={classes.settingsButton} />
             </div>
         </Grid>

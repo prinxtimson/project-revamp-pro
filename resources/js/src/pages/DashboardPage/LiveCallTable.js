@@ -19,8 +19,6 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import {
-    getLivecalls,
-    clearLivecall,
     delLivecall,
     answerLivecall,
     setLivecalls,
@@ -52,8 +50,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const LiveCallTable = ({
     livecalls,
     loading,
-    getLivecalls,
-    clearLivecall,
     delLivecall,
     answerLivecall,
     setLivecalls,
@@ -62,12 +58,6 @@ const LiveCallTable = ({
     const [page, setPage] = React.useState(0);
     const [actionLoading, setActionLoading] = React.useState(false);
     const [queryType, setQueryType] = React.useState("");
-
-    React.useEffect(() => {
-        getLivecalls();
-
-        return clearLivecall;
-    }, []);
 
     React.useEffect(() => {
         if (queryType)
@@ -350,8 +340,6 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-    getLivecalls,
-    clearLivecall,
     delLivecall,
     answerLivecall,
     setLivecalls,

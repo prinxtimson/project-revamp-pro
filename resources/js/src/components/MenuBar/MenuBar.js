@@ -2,11 +2,19 @@ import React from "react";
 import { makeStyles, createStyles } from "@mui/styles";
 
 import Button from "@mui/material/Button";
+import Badge from "@mui/material/Badge";
 import { isMobile } from "../../utils";
 import Menu from "./Menu";
 import useRoomState from "../../hooks/useRoomState";
 import useVideoContext from "../../hooks/useVideoContext";
 import { Typography, Grid, Hidden } from "@mui/material";
+
+import useParticipants from "../../hooks/useParticipants";
+import EndCallButton from "../Buttons/EndCallButton";
+import ToggleAudioButton from "../Buttons/ToggleAudioButton";
+import ToggleVideoButton from "../Buttons/ToggleVideoButton";
+import ToggleScreenShareButton from "../Buttons/ToggleScreenShareButton";
+import ParticipantListDialog from "../ParticipantListDialog";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -59,6 +67,8 @@ const useStyles = makeStyles((theme) =>
 
 const MenuBar = () => {
     const classes = useStyles();
+    const participants = useParticipants();
+    const [open, setOpen] = React.useState(false);
     const { isSharingScreen, toggleScreenShare } = useVideoContext();
     const roomState = useRoomState();
     const isReconnecting = roomState === "reconnecting";
@@ -81,6 +91,7 @@ const MenuBar = () => {
                     </Button>
                 </Grid>
             )}
+            <ParticipantListDialog open={open} onClose={() => setOpen(false)} />
             <footer className={classes.container}>
                 <Grid
                     container
@@ -96,11 +107,21 @@ const MenuBar = () => {
                     </Hidden>
                     <Grid item>
                         <Grid container justifyContent="center">
-                            <Button disabled={isReconnecting}>Audio</Button>
-                            <Button disabled={isReconnecting}>Video</Button>
+                            <ToggleAudioButton disabled={isReconnecting} />
+                            <ToggleVideoButton disabled={isReconnecting} />
                             {!isSharingScreen && !isMobile && (
-                                <Button disabled={isReconnecting}>Share</Button>
+                                <ToggleScreenShareButton
+                                    disabled={isReconnecting}
+                                />
                             )}
+                            <Button onClick={() => setOpen(true)}>
+                                <Badge
+                                    badgeContent={participants.length + 1}
+                                    color="success"
+                                >
+                                    Participants
+                                </Badge>
+                            </Button>
                             <Hidden smDown>
                                 <Menu />
                             </Hidden>
@@ -109,7 +130,7 @@ const MenuBar = () => {
                     <Hidden smDown>
                         <Grid style={{ flex: 1 }}>
                             <Grid container justifyContent="flex-end">
-                                <Button>End</Button>
+                                <EndCallButton />
                             </Grid>
                         </Grid>
                     </Hidden>

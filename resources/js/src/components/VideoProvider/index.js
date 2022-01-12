@@ -52,6 +52,10 @@ export const VideoProvider = ({ options, children, onError = () => {} }) => {
     useHandleTrackPublicationFailed(room, onError);
     useRestartAudioTrackOnDeviceChange(localTracks);
 
+    const videoTrack = localTracks.find(
+        (track) => !track.name.includes("screen") && track.kind === "video"
+    );
+
     return (
         <VideoContext.Provider
             value={{

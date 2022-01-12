@@ -18,11 +18,13 @@ export default function useRoom(localTracks, onError, options) {
     const connect = useCallback(
         (token, roomName) => {
             setIsConnecting(true);
+            console.log(token);
             return Video.connect(token, {
                 room: roomName,
                 tracks: localTracks,
             }).then(
                 (newRoom) => {
+                    console.log(newRoom);
                     setRoom(newRoom);
                     VideoRoomMonitor.registerVideoRoom(newRoom);
                     const disconnect = () => newRoom.disconnect();
@@ -54,6 +56,7 @@ export default function useRoom(localTracks, onError, options) {
                     }
                 },
                 (error) => {
+                    console.log(error);
                     onError(error);
                     setIsConnecting(false);
                 }

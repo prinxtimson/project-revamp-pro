@@ -12,7 +12,7 @@ import Container from "../../components/Container";
 import { connect } from "react-redux";
 import {
     requestLivecall,
-    getLivecalls,
+    getConnectedLivecalls,
     leaveLivecall,
 } from "../../actions/livecall";
 import { requestCallback, getCallbacks } from "../../actions/callback";
@@ -23,7 +23,7 @@ const LiveSupport = ({
     livecalls,
     loading,
     requestLivecall,
-    getLivecalls,
+    getConnectedLivecalls,
     requestCallback,
     callbackLoading,
     getCallbacks,
@@ -65,7 +65,7 @@ const LiveSupport = ({
     }, [livecalls]);
 
     React.useEffect(() => {
-        getLivecalls();
+        getConnectedLivecalls();
         getCallbacks();
     }, []);
 
@@ -450,7 +450,7 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
     requestLivecall,
-    getLivecalls,
+    getConnectedLivecalls,
     requestCallback,
     getCallbacks,
     leaveLivecall,

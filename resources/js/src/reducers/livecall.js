@@ -49,7 +49,7 @@ export default (state = initialState, action) => {
                 livecalls: { ...state.livecalls },
             };
         case UPDATE_LIVECALL:
-            let ind = state.livecalls.findIndex(
+            let ind = state.livecalls?.findIndex(
                 (item) => item.id === payload.id
             );
             if (ind > -1) state.livecalls[ind] = payload;
@@ -59,13 +59,11 @@ export default (state = initialState, action) => {
                 livecalls: [...state.livecalls],
             };
         case DELETE_LIVECALL:
-            let livecalls = state.livecalls.data.filter(
-                (val) => val.id !== payload
-            );
+            let data = state.livecalls.data.filter((val) => val.id !== payload);
             return {
                 ...state,
                 loading: false,
-                livecalls,
+                livecalls: { ...state.livecalls, data },
             };
         case CLEAR_LIVECALL:
             return {

@@ -23,7 +23,10 @@ export default function EndCallButton(props) {
 
     return (
         <Button
-            onClick={() => room?.disconnect()}
+            onClick={() => {
+                console.log(room);
+                room?.disconnect();
+            }}
             className={clsx(classes.button, props.className)}
             data-cy-disconnect
         >

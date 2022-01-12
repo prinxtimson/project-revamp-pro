@@ -22,10 +22,11 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems } from "./listItems";
+import MainListItems from "./ListItems";
 import { Link as RouterLink } from "react-router-dom";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/auth";
+import { getLivecalls, clearLivecall } from "../../actions/livecall";
 
 function Copyright(props) {
     return (
@@ -100,10 +101,23 @@ const settings = [
     { name: "Logout", route: "/logout" },
 ];
 
-const DrawerContainer = ({ children, logoutUser, user, alerts }) => {
+const DrawerContainer = ({
+    children,
+    logoutUser,
+    user,
+    alerts,
+    getLivecalls,
+    clearLivecall,
+}) => {
     const [open, setOpen] = React.useState(true);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    React.useEffect(() => {
+        getLivecalls();
+
+        return clearLivecall;
+    }, []);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -242,7 +256,9 @@ const DrawerContainer = ({ children, logoutUser, user, alerts }) => {
                         </IconButton>
                     </Toolbar>
                     <Divider />
-                    <List>{mainListItems}</List>
+                    <List>
+                        <MainListItems />
+                    </List>
                 </Drawer>
                 <Box
                     component="main"
@@ -299,4 +315,8 @@ const mapStateToProps = (state) => ({
     alerts: state.alert,
 });
 
-export default connect(mapStateToProps, { logoutUser })(DrawerContainer);
+export default connect(mapStateToProps, {
+    logoutUser,
+    getLivecalls,
+    clearLivecall,
+})(DrawerContainer);

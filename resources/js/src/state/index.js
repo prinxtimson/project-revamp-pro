@@ -30,8 +30,6 @@ export default function AppStateProvider(props) {
         getToken: async (name, room) => {
             let token = window[`${room}_token`];
 
-            console.log(token);
-
             return { token };
         },
         updateRecordingRules: async (room_sid, rules) => {

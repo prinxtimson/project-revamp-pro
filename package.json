@@ -35,17 +35,26 @@
         "@mui/styles": "^5.2.3",
         "@twilio/video-room-monitor": "^1.0.0",
         "d3-timer": "^3.0.1",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.2",
         "is-plain-object": "^2.0.4",
         "moment": "^2.29.1",
+        "opentok-accelerator-core": "^2.0.18",
+        "opentok-annotation": "^2.0.59",
+        "opentok-archiving": "^1.0.19",
+        "opentok-screen-sharing": "^1.0.35",
+        "opentok-solutions-css": "^0.0.43",
+        "opentok-text-chat": "^1.0.36",
         "popper.js": "^1.16.1",
         "react-chatbot-kit": "^2.0.1",
         "react-moment": "^1.1.1",
         "react-redux": "^7.2.6",
         "react-router-dom": "^6.0.2",
+        "react-spinner": "^0.2.7",
         "redux": "^4.1.2",
         "redux-devtools-extension": "^2.13.9",
         "redux-thunk": "^2.4.1",
         "twilio": "^3.72.0",
-        "twilio-video": "^2.18.2"
+        "twilio-video": "^2.18.1"
     }
 }

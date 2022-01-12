@@ -47,7 +47,9 @@ export const getAllProfiles = () => async (dispatch) => {
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -69,7 +71,9 @@ export const enableUser = (id) => async (dispatch) => {
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -91,7 +95,9 @@ export const disableUser = (id) => async (dispatch) => {
                 setAlert("Server errror, please try again.", "danger")
             );
         }
-
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
@@ -137,7 +143,9 @@ export const delUser = (id) => async (dispatch) => {
                     setAlert("Server errror, please try again.", "danger")
                 );
             }
-
+            if (err.response.status == 401 || err.response.status == 403) {
+                window.location.reload();
+            }
             dispatch(setAlert(err.response.data.message, "danger"));
         }
     }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Callback;
 use App\Models\CallBack as ModelsCallBack;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CallBackController extends Controller
 {
@@ -55,6 +57,8 @@ class CallBackController extends Controller
         ]);
 
         // Carbon::createFromDate($fields['date'], $fields['time'])
+
+        Mail::to($fields['email'])->send(new Callback($fields['name']));
 
         return response($response, 201);
     }

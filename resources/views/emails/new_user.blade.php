@@ -11,7 +11,7 @@ Please be sure to change your password on your first login to the platform.
 # Password: {{ $user['password'] }}
 @endcomponent
 
-@component('mail::button', ['url' => 'https://tritek.herokuapp.com', 'color' => 'success'])
+@component('mail::button', ['url' => 'https://tritekexcel.herokuapp.com/admin', 'color' => 'success'])
 Visit Website
 @endcomponent
 

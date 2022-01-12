@@ -7,10 +7,13 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 
+import { useAppState } from "../state";
+
 import Video from "twilio-video";
 
 const AboutDialog = ({ open, onClose }) => {
-    const roomType = "";
+    const { roomType } = useAppState();
+
     return (
         <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="xs">
             <DialogTitle>About</DialogTitle>
