@@ -143,7 +143,7 @@ class LiveCallController extends Controller
 
         LivecallUpdate::dispatch($livecall);
 
-        $data = Http::withToken($token)->post($baseUrl.'/twilio/connect', ['roomName' => $roomName, 'identity' => $identity, 'role' => 'host'])->throw()->json();
+        $data = Http::withToken($token)->post('https://tritekexcel.herokuapp.com/twilio/connect', ['roomName' => $roomName, 'identity' => $identity, 'role' => 'host'])->throw()->json();
 
         return $data;
     }
