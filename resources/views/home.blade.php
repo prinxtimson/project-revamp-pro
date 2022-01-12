@@ -5,7 +5,7 @@
   let top = window.innerHeight - height;
   let left = window.innerWidth - width;
 
-  window.open('http://127.0.0.1:8000/live-support', '_blank',
+  window.open('https://tritekexcel.herokuapp.com/live-support', '_blank',
     `width=${width},height=${height},toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=0,left=${left},top=${top}`
   );
 

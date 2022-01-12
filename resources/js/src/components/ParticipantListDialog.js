@@ -28,6 +28,7 @@ const ITEM_HEIGHT = 48;
 const ParticipantListDialog = ({ open, onClose }) => {
     const participants = useParticipants();
     const { room } = useVideoContext();
+    let role = window[`${room}_role`];
     const localParticipant = room?.localParticipant;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openMenu = Boolean(anchorEl);
@@ -69,57 +70,61 @@ const ParticipantListDialog = ({ open, onClose }) => {
                         <ListItem
                             key={participant.sid}
                             secondaryAction={
-                                <IconButton
-                                    edge="end"
-                                    aria-label="more"
-                                    id="long-button"
-                                    aria-controls={
-                                        openMenu ? "long-menu" : undefined
-                                    }
-                                    aria-expanded={
-                                        openMenu ? "true" : undefined
-                                    }
-                                    aria-haspopup="true"
-                                    onClick={handleClick}
-                                >
-                                    <MoreIcon />
-                                </IconButton>
+                                role === "host" && (
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="more"
+                                        id="long-button"
+                                        aria-controls={
+                                            openMenu ? "long-menu" : undefined
+                                        }
+                                        aria-expanded={
+                                            openMenu ? "true" : undefined
+                                        }
+                                        aria-haspopup="true"
+                                        onClick={handleClick}
+                                    >
+                                        <MoreIcon />
+                                    </IconButton>
+                                )
                             }
                         >
-                            <Menu
-                                id="long-menu"
-                                MenuListProps={{
-                                    "aria-labelledby": "long-button",
-                                }}
-                                anchorEl={anchorEl}
-                                open={openMenu}
-                                onClose={handleClose}
-                                PaperProps={{
-                                    style: {
-                                        maxHeight: ITEM_HEIGHT * 4.5,
-                                        width: "20ch",
-                                    },
-                                }}
-                                transformOrigin={{
-                                    horizontal: "right",
-                                    vertical: "top",
-                                }}
-                                anchorOrigin={{
-                                    horizontal: "right",
-                                    vertical: "bottom",
-                                }}
-                            >
-                                <MenuItem
-                                    onClick={() => {
-                                        handleRemoveParticipant(
-                                            participant.identity
-                                        );
-                                        handleClose();
+                            {role === "host" && (
+                                <Menu
+                                    id="long-menu"
+                                    MenuListProps={{
+                                        "aria-labelledby": "long-button",
+                                    }}
+                                    anchorEl={anchorEl}
+                                    open={openMenu}
+                                    onClose={handleClose}
+                                    PaperProps={{
+                                        style: {
+                                            maxHeight: ITEM_HEIGHT * 4.5,
+                                            width: "20ch",
+                                        },
+                                    }}
+                                    transformOrigin={{
+                                        horizontal: "right",
+                                        vertical: "top",
+                                    }}
+                                    anchorOrigin={{
+                                        horizontal: "right",
+                                        vertical: "bottom",
                                     }}
                                 >
-                                    Remove Caller
-                                </MenuItem>
-                            </Menu>
+                                    <MenuItem
+                                        onClick={() => {
+                                            handleRemoveParticipant(
+                                                participant.identity
+                                            );
+                                            handleClose();
+                                        }}
+                                    >
+                                        Remove Caller
+                                    </MenuItem>
+                                </Menu>
+                            )}
                             <ListItemAvatar>
                                 <Avatar>
                                     <PersonIcon />

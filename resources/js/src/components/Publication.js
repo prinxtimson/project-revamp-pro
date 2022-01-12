@@ -13,8 +13,6 @@ const Publication = ({
 
     if (!track) return null;
 
-    console.log(track);
-
     switch (track.kind) {
         case "video":
             return (

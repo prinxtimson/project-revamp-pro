@@ -151,7 +151,7 @@ export const answerLivecall = (id) => async (dispatch) => {
 
         let newWindow = window.open(`/confrencing/${res.data.room}`);
         newWindow[`${res.data.room}_token`] = res.data.token;
-        //newWindow[`${res.data.room}_api_key`] = res.data.apiKey;
+        newWindow[`${res.data.room}_role`] = res.data.role;
         //newWindow[`${res.data.room}_session_id`] = res.data.sessionId;
         newWindow[`${res.data.room}_identity`] = res.data.identity;
     } catch (err) {
