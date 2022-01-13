@@ -155,7 +155,7 @@ class LiveCallController extends Controller
         ]);
         $livecall = ModelsLiveCall::find($id);
 
-        $data = Http::post('http://localhost:5000/twilio/connect', $fields)->throw()->json();
+        $data = Http::post('https://excelnode.herokuapp.com/twilio/connect', $fields)->throw()->json();
 
         AgentConnected::dispatch($livecall, $data);
 
