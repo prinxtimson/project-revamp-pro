@@ -17,6 +17,7 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import PersonIcon from "@mui/icons-material/Person";
+import { useParams } from "react-router-dom";
 
 import useParticipants from "../hooks/useParticipants";
 import useVideoContext from "../hooks/useVideoContext";
@@ -27,8 +28,9 @@ const ITEM_HEIGHT = 48;
 
 const ParticipantListDialog = ({ open, onClose }) => {
     const participants = useParticipants();
+    const { URLRoomName } = useParams();
     const { room } = useVideoContext();
-    let role = window[`${room}_role`];
+    let role = window[`${URLRoomName}_role`];
     const localParticipant = room?.localParticipant;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openMenu = Boolean(anchorEl);
@@ -64,7 +66,9 @@ const ParticipantListDialog = ({ open, onClose }) => {
                                 <PersonIcon />
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={localParticipant.identity} />
+                        <ListItemText
+                            primary={`${localParticipant.identity} (You)`}
+                        />
                     </ListItem>
                     {participants.map((participant) => (
                         <ListItem
