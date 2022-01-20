@@ -6,9 +6,9 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Container from "../../components/Container";
+import Rating from "@mui/material/Rating";
 import { connect } from "react-redux";
 import {
     requestLivecall,
@@ -17,6 +17,22 @@ import {
 } from "../../actions/livecall";
 import { requestCallback, getCallbacks } from "../../actions/callback";
 import CallbackDialog from "../../components/CallbackDialog";
+
+const axios = window.axios;
+
+const Steps = {
+    welcome: "welcome",
+    connect: "connect",
+    waiting: "waiting",
+    faq: "faq",
+    survey: "survey",
+};
+
+const SurveyQuestions = [
+    "How would you rate the support you received today?",
+    "How happy are you with our Live Support System?",
+    "How likely are you to recommend this service to a friend or colleague?",
+];
 
 const LiveSupport = ({
     livecall,
@@ -29,7 +45,7 @@ const LiveSupport = ({
     getCallbacks,
     leaveLivecall,
 }) => {
-    const d = new Date();
+    const [step, setStep] = React.useState([Steps.welcome]);
     const [open, setOpen] = React.useState(false);
     const [min, setMin] = React.useState(0);
     const [data, setData] = React.useState({
@@ -42,6 +58,36 @@ const LiveSupport = ({
         time: "",
         date: "",
     });
+    const [survey, setSurvey] = React.useState({
+        ratings: [],
+        loading: false,
+        successfull: false,
+        error: null,
+    });
+
+    const handleSubmitSurvey = () => {
+        setSurvey({ ...survey, loading: true });
+        let surveyData = {
+            ratings: survey.ratings,
+            livecall: livecall.id,
+        };
+
+        axios
+            .post("/api/survey", surveyData)
+            .then((res) => {
+                console.log(res.data);
+                setSurvey({ ...survey, loading: false, successfull: true });
+            })
+            .catch((err) => {
+                console.log(err);
+                setSurvey({ ...survey, loading: false });
+            });
+    };
+
+    const handleOnClick = (query) => {
+        setData({ query_type: query });
+        setStep([...step, Steps.connect]);
+    };
 
     const handleOnChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,7 +102,6 @@ const LiveSupport = ({
             let count = livecalls.filter(
                 (val) => val.answered_at === null && val.left_at === null
             ).length;
-            console.log(count);
 
             let total = count * 5;
 
@@ -75,14 +120,27 @@ const LiveSupport = ({
                 e.preventDefault();
                 e.returnValue = "Are you sure you want to close?";
             });
-            window.addEventListener("unload", () => {
+            window.addEventListener("unload", (e) => {
+                e.preventDefault();
                 leaveLivecall(livecall.id);
             });
         }
     }, [livecall]);
 
     const handleConnect = () => {
-        requestLivecall(data);
+        requestLivecall(data, onLivecallRequest, showSurveyForm);
+    };
+
+    const onLivecallRequest = () => {
+        setStep([...step, Steps.waiting]);
+
+        setTimeout(() => {
+            setStep([...step, Steps.waiting, Steps.faq]);
+        }, 5000);
+    };
+
+    const showSurveyForm = () => {
+        setStep([...step, Steps.survey]);
     };
 
     const handleClickOpen = () => {
@@ -95,12 +153,7 @@ const LiveSupport = ({
 
     const handleSubmit = () => {
         //console.log(formData);
-
         requestCallback(livecall.id, formData, onSuccessful);
-    };
-
-    const scrollToBottom = () => {
-        window.scrollTo({});
     };
 
     return (
@@ -169,11 +222,9 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type:
-                                                    "Second Project Request",
-                                            })
+                                            handleOnClick(
+                                                "Second Project Request"
+                                            )
                                         }
                                     >
                                         <ListItemText secondary="Second Project Request" />
@@ -183,10 +234,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Mentor Request",
-                                            })
+                                            handleOnClick("Mentor Request")
                                         }
                                     >
                                         <ListItemText secondary="Mentor Request" />
@@ -196,10 +244,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Developer Request",
-                                            })
+                                            handleOnClick("Developer Request")
                                         }
                                     >
                                         <ListItemText secondary="Developer Request" />
@@ -209,10 +254,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Referencing",
-                                            })
+                                            handleOnClick("Referencing")
                                         }
                                     >
                                         <ListItemText secondary="Referencing" />
@@ -241,10 +283,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Taster Session",
-                                            })
+                                            handleOnClick("Taster Session")
                                         }
                                     >
                                         <ListItemText secondary="Taster Session" />
@@ -254,7 +293,10 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({ ...data, query_type: "" })
+                                            handleOnClick({
+                                                ...data,
+                                                query_type: "",
+                                            })
                                         }
                                     >
                                         <ListItemText secondary="" />
@@ -263,12 +305,7 @@ const LiveSupport = ({
                                         alignItems="center"
                                         button
                                         disabled={Boolean(data.query_type)}
-                                        onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Enquiry",
-                                            })
-                                        }
+                                        onClick={() => handleOnClick("Enquiry")}
                                     >
                                         <ListItemText secondary="Enquiry" />
                                     </ListItem>
@@ -277,11 +314,9 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type:
-                                                    "New Candidate Support",
-                                            })
+                                            handleOnClick(
+                                                "New Candidate Support"
+                                            )
                                         }
                                     >
                                         <ListItemText secondary="New Candidate Support" />
@@ -310,10 +345,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Software issues",
-                                            })
+                                            handleOnClick("Software issues")
                                         }
                                     >
                                         <ListItemText secondary="Software issues" />
@@ -323,10 +355,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "LMS queries",
-                                            })
+                                            handleOnClick("LMS queries")
                                         }
                                     >
                                         <ListItemText secondary="LMS queries" />
@@ -336,10 +365,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Access issue",
-                                            })
+                                            handleOnClick("Access issue")
                                         }
                                     >
                                         <ListItemText secondary="Access issue" />
@@ -349,10 +375,7 @@ const LiveSupport = ({
                                         button
                                         disabled={Boolean(data.query_type)}
                                         onClick={() =>
-                                            setData({
-                                                ...data,
-                                                query_type: "Other IT issues",
-                                            })
+                                            handleOnClick("Other IT issues")
                                         }
                                     >
                                         <ListItemText secondary="Other IT issues" />
@@ -361,7 +384,7 @@ const LiveSupport = ({
                             </Box>
                         </Grid>
                     </Grid>
-                    {data.query_type && (
+                    {step.includes("connect") && (
                         <Box
                             sx={{
                                 padding: 2,
@@ -389,7 +412,7 @@ const LiveSupport = ({
                         </Box>
                     )}
 
-                    {data.query_type && livecall && (
+                    {step.includes("waiting") && livecall && (
                         <Box
                             sx={{
                                 padding: 2,
@@ -428,11 +451,140 @@ const LiveSupport = ({
                                         color="primary"
                                         size="small"
                                         disabled={Boolean(livecall.left_at)}
+                                        onClick={() => {
+                                            setStep([...step, Steps.faq]);
+                                        }}
                                     >
                                         Wait to speak to agent
                                     </Button>
                                 </Grid>
                             </Grid>
+                        </Box>
+                    )}
+
+                    {step.includes("faq") && livecall && (
+                        <Box
+                            sx={{
+                                padding: 2,
+                                backgroundColor: "#fff",
+                                borderRadius: 1.5,
+                                marginTop: 5,
+                            }}
+                        >
+                            <Typography component="p" variant="p">
+                                You can access our FAQ page by clicking on this
+                                button. You will be redirected to our FAQ page
+                                as you wait to be connected to an agent.
+                            </Typography>
+                            <Typography component="p" variant="p">
+                                Thank you.
+                            </Typography>
+                            <Grid
+                                sx={{ marginTop: 2 }}
+                                container
+                                justifyContent="center"
+                                alignItems="center"
+                                spacing={3}
+                            >
+                                <Grid item xs={4}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{
+                                            "&:hover": {
+                                                color: "#fff",
+                                            },
+                                        }}
+                                        href="https://tritekconsulting.co.uk/faq"
+                                        target="_blank"
+                                        size="small"
+                                        fullWidth
+                                    >
+                                        FAQ
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        disabled={Boolean(livecall.left_at)}
+                                        onClick={() => {
+                                            setStep([...step, Steps.survey]);
+                                        }}
+                                    >
+                                        Wait to be connected
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    )}
+                    {step.includes("survey") && livecall && (
+                        <Box
+                            sx={{
+                                padding: 2,
+                                borderWidth: 0.5,
+                                borderRadius: 1,
+                                marginTop: 5,
+                            }}
+                        >
+                            {!survey.loading && survey.successfull ? (
+                                <div>
+                                    <Typography component="p" variant="h5">
+                                        Thank you for completing our survey.
+                                    </Typography>
+                                </div>
+                            ) : (
+                                <>
+                                    {SurveyQuestions.map((question, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                marginBottom: 10,
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Typography component="legend">
+                                                {question}
+                                            </Typography>
+                                            <Rating
+                                                name={question}
+                                                value={
+                                                    survey.ratings[index]
+                                                        ?.rating || 0
+                                                }
+                                                onChange={(event, newValue) => {
+                                                    let currentRatings =
+                                                        survey.ratings;
+                                                    currentRatings[index] = {
+                                                        question,
+                                                        rating: newValue,
+                                                    };
+                                                    setSurvey({
+                                                        ...survey,
+                                                        ratings: currentRatings,
+                                                    });
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        disabled={
+                                            Boolean(livecall.left_at) ||
+                                            survey.ratings.length < 3 ||
+                                            survey.successfull
+                                        }
+                                        onClick={handleSubmitSurvey}
+                                    >
+                                        Submit Rating
+                                    </Button>
+                                </>
+                            )}
                         </Box>
                     )}
                 </Box>

@@ -8,6 +8,7 @@ import useLocalTracks from "./useLocalTracks";
 import useRestartAudioTrackOnDeviceChange from "./useRestartAudioTrackOnDeviceChange";
 import useRoom from "./useRoom";
 import useScreenShareToggle from "./useScreenShareToggle";
+import useMainRoom from "./useMainRoom";
 
 export const VideoContext = createContext();
 
@@ -34,6 +35,7 @@ export const VideoProvider = ({ options, children, onError = () => {} }) => {
         onErrorCallback,
         options
     );
+    const { mainRoom, getMainRoom } = useMainRoom();
 
     const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(
         room,
@@ -71,6 +73,8 @@ export const VideoProvider = ({ options, children, onError = () => {} }) => {
                 isSharingScreen,
                 toggleScreenShare,
                 getAudioAndVideoTracks,
+                mainRoom,
+                getMainRoom,
             }}
         >
             <SelectedParticipantProvider room={room}>

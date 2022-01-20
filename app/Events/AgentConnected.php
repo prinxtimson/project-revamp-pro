@@ -17,16 +17,18 @@ class AgentConnected implements ShouldBroadcast
 
     public $livecall;
     public $data;
+    public $password;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(LiveCall $livecall, $data)
+    public function __construct(LiveCall $livecall, $data, $password)
     {
         $this->livecall = $livecall;
         $this->data = $data;
+        $this->password = $password;
     }
 
     /**

@@ -13,11 +13,10 @@ const twilioApiKey = process.env.TWILIO_API_KEY;
 const twilioApiSecret = process.env.TWILIO_API_SECRET;
 
 app.post("/twilio/connect", (req, res) => {
-    const { roomName, identity, role } = req.body;
-    const authToken = req.headers.authorization;
+    const { roomId, identity } = req.body;
     // Create Video Grant
     const videoGrant = new VideoGrant({
-        room: roomName,
+        room: roomId,
     });
 
     const token = new AccessToken(
@@ -32,10 +31,6 @@ app.post("/twilio/connect", (req, res) => {
 
     return res.json({
         token: tokenJson,
-        room: roomName,
-        identity,
-        role,
-        roomType: "peer-to-peer",
     });
 });
 

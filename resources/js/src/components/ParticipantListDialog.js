@@ -21,16 +21,15 @@ import { useParams } from "react-router-dom";
 
 import useParticipants from "../hooks/useParticipants";
 import useVideoContext from "../hooks/useVideoContext";
+import { connect } from "react-redux";
 
 const axios = window.axios;
 
 const ITEM_HEIGHT = 48;
 
-const ParticipantListDialog = ({ open, onClose }) => {
+const ParticipantListDialog = ({ open, onClose, user }) => {
     const participants = useParticipants();
-    const { URLRoomName } = useParams();
-    const { room } = useVideoContext();
-    let role = window[`${URLRoomName}_role`];
+    const { room, mainRoom } = useVideoContext();
     const localParticipant = room?.localParticipant;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openMenu = Boolean(anchorEl);
@@ -44,7 +43,7 @@ const ParticipantListDialog = ({ open, onClose }) => {
     const handleRemoveParticipant = (name) => {
         console.log(room.name);
         axios
-            .post("/api/livecall/remove_participant", {
+            .post("/api/room/remove_participant", {
                 roomName: room.name,
                 participant: name,
             })
@@ -58,87 +57,85 @@ const ParticipantListDialog = ({ open, onClose }) => {
                 Participants {`(${participants.length + 1})`}
             </DialogTitle>
             <Divider />
-            <DialogContent>
-                <List dense={true}>
-                    <ListItem>
+            <List dense={true}>
+                <ListItem>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <PersonIcon />
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={`${localParticipant.identity} (You)`}
+                    />
+                </ListItem>
+                {participants.map((participant) => (
+                    <ListItem
+                        key={participant.sid}
+                        secondaryAction={
+                            mainRoom?.host == user?.id && (
+                                <IconButton
+                                    edge="end"
+                                    aria-label="more"
+                                    id="long-button"
+                                    aria-controls={
+                                        openMenu ? "long-menu" : undefined
+                                    }
+                                    aria-expanded={
+                                        openMenu ? "true" : undefined
+                                    }
+                                    aria-haspopup="true"
+                                    onClick={handleClick}
+                                >
+                                    <MoreIcon />
+                                </IconButton>
+                            )
+                        }
+                    >
+                        {mainRoom?.host == user?.id && (
+                            <Menu
+                                id="long-menu"
+                                MenuListProps={{
+                                    "aria-labelledby": "long-button",
+                                }}
+                                anchorEl={anchorEl}
+                                open={openMenu}
+                                onClose={handleClose}
+                                PaperProps={{
+                                    style: {
+                                        maxHeight: ITEM_HEIGHT * 4.5,
+                                        width: "20ch",
+                                    },
+                                }}
+                                transformOrigin={{
+                                    horizontal: "right",
+                                    vertical: "top",
+                                }}
+                                anchorOrigin={{
+                                    horizontal: "right",
+                                    vertical: "bottom",
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        handleRemoveParticipant(
+                                            participant.identity
+                                        );
+                                        handleClose();
+                                    }}
+                                >
+                                    Remove Caller
+                                </MenuItem>
+                            </Menu>
+                        )}
                         <ListItemAvatar>
                             <Avatar>
                                 <PersonIcon />
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText
-                            primary={`${localParticipant.identity} (You)`}
-                        />
+                        <ListItemText primary={participant.identity} />
                     </ListItem>
-                    {participants.map((participant) => (
-                        <ListItem
-                            key={participant.sid}
-                            secondaryAction={
-                                role === "host" && (
-                                    <IconButton
-                                        edge="end"
-                                        aria-label="more"
-                                        id="long-button"
-                                        aria-controls={
-                                            openMenu ? "long-menu" : undefined
-                                        }
-                                        aria-expanded={
-                                            openMenu ? "true" : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        onClick={handleClick}
-                                    >
-                                        <MoreIcon />
-                                    </IconButton>
-                                )
-                            }
-                        >
-                            {role === "host" && (
-                                <Menu
-                                    id="long-menu"
-                                    MenuListProps={{
-                                        "aria-labelledby": "long-button",
-                                    }}
-                                    anchorEl={anchorEl}
-                                    open={openMenu}
-                                    onClose={handleClose}
-                                    PaperProps={{
-                                        style: {
-                                            maxHeight: ITEM_HEIGHT * 4.5,
-                                            width: "20ch",
-                                        },
-                                    }}
-                                    transformOrigin={{
-                                        horizontal: "right",
-                                        vertical: "top",
-                                    }}
-                                    anchorOrigin={{
-                                        horizontal: "right",
-                                        vertical: "bottom",
-                                    }}
-                                >
-                                    <MenuItem
-                                        onClick={() => {
-                                            handleRemoveParticipant(
-                                                participant.identity
-                                            );
-                                            handleClose();
-                                        }}
-                                    >
-                                        Remove Caller
-                                    </MenuItem>
-                                </Menu>
-                            )}
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <PersonIcon />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText primary={participant.identity} />
-                        </ListItem>
-                    ))}
-                </List>
-            </DialogContent>
+                ))}
+            </List>
             <Divider />
             <DialogActions>
                 <Button
@@ -154,4 +151,8 @@ const ParticipantListDialog = ({ open, onClose }) => {
     );
 };
 
-export default ParticipantListDialog;
+const mapStateToProps = (state) => ({
+    user: state.auth.user,
+});
+
+export default connect(mapStateToProps)(ParticipantListDialog);

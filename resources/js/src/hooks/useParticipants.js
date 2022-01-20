@@ -18,6 +18,7 @@ export default function useParticipants() {
                 ),
             ]);
         }
+        return () => setParticipants(null);
     }, [dominantSpeaker]);
 
     useEffect(() => {

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 import DeviceSelectionScreen from "./DeviceSelectionScreen";
+import RoomNameScreen from "./RoomNameScreen";
 import IntroContainer from "../IntroContainer";
 import MediaErrorSnackbar from "./MediaErrorSnackbar";
-import { useParams } from "react-router-dom";
 import useVideoContext from "../../hooks/useVideoContext";
 import { connect } from "react-redux";
 
@@ -11,24 +13,28 @@ export const Steps = {
     deviceSelectionStep: 2,
 };
 
-const PreJoinScreens = ({ user }) => {
-    const { getAudioAndVideoTracks } = useVideoContext();
-    const { URLRoomName } = useParams();
-    const [step, setStep] = useState(Steps.deviceSelectionStep);
+const PreJoinScreens = ({ user, URLRoomID, password, loading }) => {
+    const { getAudioAndVideoTracks, room } = useVideoContext();
 
-    const [name, setName] = useState(user?.name);
-    const [roomName, setRoomName] = useState("");
+    const [roomId, setRoomId] = useState("");
+    const [step, setStep] = useState(Steps.roomNameStep);
+
+    const [name, setName] = useState("");
 
     const [mediaError, setMediaError] = useState();
 
     useEffect(() => {
-        if (URLRoomName) {
-            setRoomName(URLRoomName);
-            if (user?.name) {
-                setStep(Steps.deviceSelectionStep);
-            }
+        if (user) {
+            setName(user?.name);
+            setStep(Steps.deviceSelectionStep);
         }
-    }, [user, URLRoomName]);
+        if (URLRoomID) {
+            setRoomId(URLRoomID);
+        }
+        if (name) {
+            setStep(Steps.deviceSelectionStep);
+        }
+    }, [user, URLRoomID, room]);
 
     useEffect(() => {
         if (step === Steps.deviceSelectionStep && !mediaError) {
@@ -40,15 +46,44 @@ const PreJoinScreens = ({ user }) => {
         }
     }, [getAudioAndVideoTracks, step, mediaError]);
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setStep(Steps.deviceSelectionStep);
+    };
+
     return (
         <IntroContainer>
             <MediaErrorSnackbar error={mediaError} />
-            {step === Steps.deviceSelectionStep && (
-                <DeviceSelectionScreen
-                    name={name}
-                    roomName={roomName}
-                    setStep={setStep}
-                />
+            {loading ? (
+                <Grid
+                    container
+                    justifyContent="center"
+                    alignItems="center"
+                    direction="column"
+                    style={{ height: "100%" }}
+                >
+                    <div>
+                        <CircularProgress variant="indeterminate" />
+                    </div>
+                </Grid>
+            ) : (
+                <>
+                    {step === Steps.roomNameStep && (
+                        <RoomNameScreen
+                            name={name}
+                            setName={setName}
+                            handleSubmit={handleSubmit}
+                        />
+                    )}
+                    {step === Steps.deviceSelectionStep && (
+                        <DeviceSelectionScreen
+                            name={name}
+                            roomId={roomId}
+                            password={password}
+                            setStep={setStep}
+                        />
+                    )}
+                </>
             )}
         </IntroContainer>
     );
@@ -56,6 +91,7 @@ const PreJoinScreens = ({ user }) => {
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
+    loading: state.auth.loading,
 });
 
 export default connect(mapStateToProps)(PreJoinScreens);

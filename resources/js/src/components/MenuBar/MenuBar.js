@@ -15,6 +15,8 @@ import ToggleAudioButton from "../Buttons/ToggleAudioButton";
 import ToggleVideoButton from "../Buttons/ToggleVideoButton";
 import ToggleScreenShareButton from "../Buttons/ToggleScreenShareButton";
 import ParticipantListDialog from "../ParticipantListDialog";
+import BreakoutRoomsDialog from "../BreakoutRoomsDialog";
+import { useAppState } from "../../state";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -65,14 +67,52 @@ const useStyles = makeStyles((theme) =>
     })
 );
 
-const MenuBar = () => {
+const MenuBar = ({ URLRoomID, password }) => {
     const classes = useStyles();
     const participants = useParticipants();
     const [open, setOpen] = React.useState(false);
-    const { isSharingScreen, toggleScreenShare } = useVideoContext();
+    const [breakoutOpen, setBreakoutOpen] = React.useState(false);
+    const { getToken, isFetching } = useAppState();
+    const {
+        isSharingScreen,
+        toggleScreenShare,
+        room,
+        connect: videoConnect,
+        isAcquiringLocalTracks,
+        isConnecting,
+    } = useVideoContext();
     const roomState = useRoomState();
     const isReconnecting = roomState === "reconnecting";
-    const { room } = useVideoContext();
+
+    const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
+
+    const toggleBreakoutRoom = () => setBreakoutOpen(!breakoutOpen);
+
+    const joinRoom = async (roomSid = null) => {
+        console.log(`Breakout Room ${roomSid}`);
+        try {
+            const participant = room?.localParticipant;
+            const identity = participant.identity;
+            // If you're already in another video room, disconnect from that room first
+            if (room) {
+                await room.disconnect();
+            }
+
+            if (roomSid) {
+                getToken(identity, URLRoomID, password, roomSid).then(
+                    ({ token }) => {
+                        videoConnect(token);
+                    }
+                );
+            } else {
+                getToken(identity, URLRoomID, password).then(({ token }) => {
+                    videoConnect(token);
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     return (
         <>
@@ -92,6 +132,12 @@ const MenuBar = () => {
                 </Grid>
             )}
             <ParticipantListDialog open={open} onClose={() => setOpen(false)} />
+            <BreakoutRoomsDialog
+                open={breakoutOpen}
+                onClose={() => setBreakoutOpen(false)}
+                disableButtons={disableButtons}
+                joinRoom={joinRoom}
+            />
             <footer className={classes.container}>
                 <Grid
                     container
@@ -123,7 +169,7 @@ const MenuBar = () => {
                                 </Badge>
                             </Button>
                             <Hidden smDown>
-                                <Menu />
+                                <Menu toggleBreakoutRoom={toggleBreakoutRoom} />
                             </Hidden>
                         </Grid>
                     </Grid>

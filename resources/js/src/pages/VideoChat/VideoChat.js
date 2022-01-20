@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "@mui/styles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const theme = createTheme();
 
@@ -31,6 +32,9 @@ const Main = styled("main")(({ theme }) => ({
 }));
 
 export default function VideoChat() {
+    const { URLRoomID } = useParams();
+    let [urlSearchParams] = useSearchParams();
+    const [password] = React.useState(urlSearchParams.get("pwd"));
     const roomState = useRoomState();
 
     const height = useHeight();
@@ -39,14 +43,14 @@ export default function VideoChat() {
         <ThemeProvider theme={theme}>
             <Container style={{ height, flexGrow: 1 }}>
                 {roomState === "disconnected" ? (
-                    <PreJoinScreens />
+                    <PreJoinScreens URLRoomID={URLRoomID} password={password} />
                 ) : (
                     <Main>
                         <ReconnectingNotification />
                         <RecordingNotifications />
                         <MobileTopMenuBar />
                         <Room />
-                        <MenuBar />
+                        <MenuBar URLRoomID={URLRoomID} password={password} />
                     </Main>
                 )}
             </Container>

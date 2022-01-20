@@ -44,7 +44,7 @@ const App = () => {
                     <Route exact path="admin" element={<LoginPage />} />
                     <Route
                         exact
-                        path="confrencing/:URLRoomName"
+                        path="confrencing/:URLRoomID"
                         element={<VideoChat />}
                     />
                     <Route
