@@ -21,6 +21,7 @@ class VideoRoom extends Model
         'host',
         'co_host',
         'password',
+        'live_call_id'
     ];
 
     /**

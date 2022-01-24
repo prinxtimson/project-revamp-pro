@@ -83,11 +83,12 @@ class VideoRoomController extends Controller
 
         $encrptPassword = Crypt::encryptString($password);
 
-        $videoRoom = $livecall->video_room()->create([
+        $videoRoom = VideoRoom::create([
             'id' => $room->sid,
             'name' => $room->uniqueName,
             'host' => $user->id,
-            'password' => $hashPassword
+            'password' => $hashPassword,
+            'live_call_id' => $livecall->id
         ]);
 
         $videoRoom->toArray();
