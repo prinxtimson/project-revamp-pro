@@ -34,7 +34,7 @@ class VideoRoom extends Model
 
     protected $casts = [
         'co_host' => 'array',
-        'id' => 'string'
+        'id' => 'uuid'
     ];
 
     public function breakouts()
