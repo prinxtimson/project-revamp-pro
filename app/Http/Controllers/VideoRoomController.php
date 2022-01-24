@@ -56,6 +56,13 @@ class VideoRoomController extends Controller
 
         $livecall = LiveCall::find($fields['livecall']);
 
+        if(!$livecall){
+            $response = [
+                'msg' => 'Invalid ID'
+            ];
+            return response($response, 400);
+        }
+
         if($livecall->answered_at || $livecall->left_at){
             $response = [
                 'msg' => 'Livecall request no longer available'

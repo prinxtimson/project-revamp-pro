@@ -25,7 +25,8 @@ import {
 } from "../../actions/livecall";
 import { connect } from "react-redux";
 import Moment from "react-moment";
-import moment from "moment";
+import Typography from "@mui/material/Typography";
+//import moment from "@mui/material/TextField";
 
 const theme = createTheme();
 
@@ -58,6 +59,10 @@ const LiveCallTable = ({
     const [page, setPage] = React.useState(0);
     const [actionLoading, setActionLoading] = React.useState(false);
     const [queryType, setQueryType] = React.useState("");
+    const [data, setData] = React.useState({
+        from: "",
+        to: "",
+    });
 
     React.useEffect(() => {
         if (queryType)
@@ -72,6 +77,10 @@ const LiveCallTable = ({
     };
 
     const handleLoading = () => setActionLoading(!actionLoading);
+
+    const handleOnDownload = () => {
+        window.location.href = `/livecall/download?from=${data.from}&to=${data.to}`;
+    };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -131,6 +140,84 @@ const LiveCallTable = ({
             </Stack>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: "flex",
+                        flexDirection: "column",
+                        backgroundColor: "white",
+                        borderRadius: 2,
+                        padding: 3,
+                    }}
+                >
+                    <Typography
+                        component="p"
+                        variant="h4"
+                        sx={{
+                            marginY: 2,
+                        }}
+                    >
+                        Download Report
+                    </Typography>
+                    <Grid
+                        container
+                        spacing={3}
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Grid item xs={12} sm={5}>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                id="start"
+                                label="Start Date"
+                                type="date"
+                                value={data.from}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                onChange={(e) =>
+                                    setData({
+                                        ...data,
+                                        from: e.target.value,
+                                    })
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={5}>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                margin="dense"
+                                id="end"
+                                label="End Date"
+                                type="date"
+                                value={data.to}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                onChange={(e) =>
+                                    setData({
+                                        ...data,
+                                        to: e.target.value,
+                                    })
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                onClick={handleOnDownload}
+                                disabled={!data.from || !data.to}
+                            >
+                                Download
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
                 <Box
                     sx={{
                         marginTop: 8,

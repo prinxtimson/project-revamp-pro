@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Broadcasting\LivecallChannel;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LiveCallController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +25,7 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     })->name('home');
 
-    Route::get('admin/reset-password/{token}', function () {
+    Route::get('admin/password/reset/{token}', function () {
         return view('welcome');
     })->name('password.reset');
 
@@ -39,6 +41,10 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     });
 
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('password/email', [AuthController::class, 'forgotPass']);
+    Route::post('password/update', [AuthController::class, 'resetPass']);
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -51,7 +57,11 @@ Route::middleware(['auth'])->group(function () {
         return view('welcome');
     });
 
-    //Route::get('customer-analytics/download', [MailController::class, 'download']);
+    Route::put('/change-password', [AuthController::class, 'changePass']);
+    Route::put('/update', [AuthController::class, 'update']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('livecall/download', [LiveCallController::class, 'download']);
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
@@ -64,7 +74,3 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 Route::get('confrencing/{URLRoomName?}', function () {
     return view('welcome');
 });
-
-Auth::routes();
-
-//Broadcast::channel('livecall', LivecallChannel::class);

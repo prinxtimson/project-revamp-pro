@@ -14,8 +14,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "../../components/Container";
 import { connect } from "react-redux";
+import { resetPassword } from "../../actions/auth";
+import { setAlert } from "../../actions/alert";
 
-const ResetPsswordForm = ({ alerts }) => {
+const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
     const { token } = useParams();
     const search = new URLSearchParams(useLocation().search);
     const [data, setData] = React.useState({
@@ -24,8 +26,6 @@ const ResetPsswordForm = ({ alerts }) => {
         password_confirmation: "",
     });
     const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState(null);
-    const [msg, setMsg] = React.useState(null);
     const passwordValidation = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
     const [show, setShow] = React.useState(false);
 
@@ -33,13 +33,23 @@ const ResetPsswordForm = ({ alerts }) => {
         setShow(!show);
     };
 
+    const { password, password_confirmation } = data;
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
         // eslint-disable-next-line no-console
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
+        if (password !== password_confirmation) {
+            setAlert("Password do not match", "danger");
+            return;
+        }
+        resetPassword({ ...data, token }, onSuccessful, setLoading);
+    };
+
+    const onSuccessful = () => {
+        setData({
+            ...data,
+            password: "",
+            password_confirmation: "",
         });
     };
 
@@ -78,7 +88,7 @@ const ResetPsswordForm = ({ alerts }) => {
                     <Typography
                         component="h1"
                         variant="h6"
-                        className={classes.headerText}
+                        sx={{ textAlign: "center", paddingY: 2 }}
                     >
                         {data.email}
                     </Typography>
@@ -106,7 +116,6 @@ const ResetPsswordForm = ({ alerts }) => {
                                     <IconButton
                                         aria-label="toggle password visibility"
                                         onClick={handleClickShow}
-                                        onMouseDown={handleMouseDown}
                                     >
                                         {show ? (
                                             <Visibility />
@@ -140,8 +149,6 @@ const ResetPsswordForm = ({ alerts }) => {
                         fullWidth
                         variant="contained"
                         color="primary"
-                        size="large"
-                        className={classes.submit}
                         disabled={
                             loading ||
                             !data.password ||
@@ -162,4 +169,6 @@ const mapStateToProps = (state) => ({
     alerts: state.alert,
 });
 
-export default connect(mapStateToProps)(ResetPsswordForm);
+export default connect(mapStateToProps, { setAlert, resetPassword })(
+    ResetPsswordForm
+);

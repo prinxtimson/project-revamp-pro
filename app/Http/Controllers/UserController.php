@@ -212,4 +212,18 @@ class UserController extends Controller
 
         return $deleted;
     }
+
+    public function markNotification()
+    {
+        $user = auth()->user();
+
+        $user->unreadNotifications->markAsRead();
+
+        $response = [
+            'data' => $user->notifications,
+            'count' => $user->unreadNotifications->count(),
+        ];
+
+        return $response;
+    }
 }

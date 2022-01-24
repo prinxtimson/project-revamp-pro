@@ -54,7 +54,7 @@ const App = () => {
                     />
                     <Route
                         exact
-                        path="admin/reset-password/:token"
+                        path="admin/password/reset/:token"
                         element={<ResetPasswordPage />}
                     />
                     <Route

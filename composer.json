@@ -12,6 +12,7 @@
         "laravel/sanctum": "^2.12",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
+        "maatwebsite/excel": "^3.1",
         "opentok/opentok": "^4.0",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-medialibrary": "^9.0.0",

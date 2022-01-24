@@ -143,21 +143,11 @@ export const leaveLivecall = (id) => async (dispatch) => {
 };
 
 export const answerLivecall = (id) => async (dispatch) => {
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-        },
-    };
-
     try {
-        const res = await axios.post(
-            `/api/room`,
-            {
-                livecall: `${id}`,
-                roomName: `call_${id}`,
-            },
-            config
-        );
+        const res = await axios.post(`/api/room`, {
+            livecall: `${id}`,
+            roomName: `call_${id}`,
+        });
         console.log(res.data);
         window.open(`/confrencing/${res.data.id}?pwd=${res.data.pwd}`);
     } catch (err) {

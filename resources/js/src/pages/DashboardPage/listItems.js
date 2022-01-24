@@ -66,14 +66,6 @@ const ListItems = ({ livecalls }) => {
                     <ListItemText primary="Callback" />
                 </ListItem>
             </Link>
-            <Link to="reports">
-                <ListItem button>
-                    <ListItemIcon>
-                        <BarChartIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Reports" />
-                </ListItem>
-            </Link>
         </div>
     );
 };

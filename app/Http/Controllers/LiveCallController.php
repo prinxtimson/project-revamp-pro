@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 //require_once '/path/to/vendor/autoload.php'; // Loads the library
 
-use App\Events\AgentConnected;
-use OpenTok\OpenTok;
-use Twilio\Rest\Client;
+use Maatwebsite\Excel\Excel;
 use App\Events\LivecallUpdate;
+use App\Exports\LiveCallExport;
 use App\Models\LiveCall as ModelsLiveCall;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -15,6 +14,12 @@ use Carbon\Carbon;
 
 class LiveCallController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
 
     /**
      * Display a listing of the resource.
@@ -49,9 +54,12 @@ class LiveCallController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function download(Request $request)
     {
-        //
+        $from = $request->from;
+        $to = $request->to;
+
+        return $this->excel->download(new LiveCallExport($from, $to), 'live_support_call.xlsx');
     }
 
     /**
