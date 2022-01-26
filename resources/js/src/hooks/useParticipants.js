@@ -24,14 +24,9 @@ export default function useParticipants() {
     useEffect(() => {
         if (room) {
             const participantConnected = (participant) =>
-                setParticipants((prevParticipants) => [
-                    ...prevParticipants,
-                    participant,
-                ]);
+                setParticipants([...participants, participant]);
             const participantDisconnected = (participant) =>
-                setParticipants((prevParticipants) =>
-                    prevParticipants?.filter((p) => p !== participant)
-                );
+                setParticipants(participants?.filter((p) => p !== participant));
             room.on("participantConnected", participantConnected);
             room.on("participantDisconnected", participantDisconnected);
             return () => {

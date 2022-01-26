@@ -29,6 +29,7 @@ export default function AttachVisibilityHandler() {
                     "visibilitychange",
                     handleVisibilityChange
                 );
+                shouldRepublishVideoOnForeground.current = false;
             };
         }
     }, [isVideoEnabled, room, toggleVideoEnabled]);

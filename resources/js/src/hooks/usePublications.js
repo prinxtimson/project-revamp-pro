@@ -8,14 +8,9 @@ export default function usePublications(participant) {
         setPublications(Array.from(participant.tracks.values()));
 
         const publicationAdded = (publication) =>
-            setPublications((prevPublications) => [
-                ...prevPublications,
-                publication,
-            ]);
+            setPublications([...publications, publication]);
         const publicationRemoved = (publication) =>
-            setPublications((prevPublications) =>
-                prevPublications?.filter((p) => p !== publication)
-            );
+            setPublications(publications?.filter((p) => p !== publication));
 
         participant.on("trackPublished", publicationAdded);
         participant.on("trackUnpublished", publicationRemoved);
