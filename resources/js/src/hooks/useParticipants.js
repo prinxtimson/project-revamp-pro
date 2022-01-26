@@ -11,9 +11,9 @@ export default function useParticipants() {
 
     useEffect(() => {
         if (dominantSpeaker) {
-            setParticipants((prevParticipants) => [
+            setParticipants([
                 dominantSpeaker,
-                ...prevParticipants?.filter(
+                ...participants?.filter(
                     (participant) => participant !== dominantSpeaker
                 ),
             ]);
