@@ -71,6 +71,7 @@ export const requestLivecall =
                     if (
                         window.confirm("You will now be transfer to an agent.")
                     ) {
+                        showSurveyForm();
                         window.open(
                             `/confrencing/${e.data.id}?pwd=${e.password}`
                         );
