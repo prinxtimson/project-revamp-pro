@@ -18,7 +18,7 @@ export default function useParticipants() {
                 : [];
             setParticipants([dominantSpeaker, ...prevParticipants]);
         }
-        return () => setParticipants(null);
+        return () => setParticipants([]);
     }, [dominantSpeaker]);
 
     useEffect(() => {
