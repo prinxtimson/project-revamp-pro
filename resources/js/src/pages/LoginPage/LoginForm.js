@@ -28,12 +28,31 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
         <Container>
             <Box
                 sx={{
-                    marginTop: 8,
+                    marginTop: 5,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    backgroundColor: "white",
+                    padding: 3,
                 }}
             >
+                <Box
+                    component="span"
+                    sx={{
+                        margin: 2,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Avatar
+                        variant="square"
+                        alt="Dev Arena"
+                        src="/images/logo.png"
+                        sx={{ width: 128, height: 32 }}
+                    >
+                        Dev Arena
+                    </Avatar>
+                </Box>
                 <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
                     <LockOutlinedIcon />
                 </Avatar>
@@ -91,7 +110,7 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link to="/forgot-password" variant="body2">
+                            <Link to="forgot-password" variant="body2">
                                 Forgot password?
                             </Link>
                         </Grid>

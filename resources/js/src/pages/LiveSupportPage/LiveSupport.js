@@ -95,6 +95,7 @@ const LiveSupport = ({
     const onSuccessful = () => {
         handleClose();
         setFormData({ name: "", email: "", phone: "", time: "", date: "" });
+        showSurveyForm();
     };
 
     React.useEffect(() => {
@@ -174,6 +175,25 @@ const LiveSupport = ({
                     handleOnChange={handleOnChange}
                     loading={callbackLoading}
                 />
+                <Box
+                    component="span"
+                    sx={{
+                        margin: 2,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "white",
+                        padding: 2,
+                    }}
+                >
+                    <Avatar
+                        variant="square"
+                        alt="Dev Arena"
+                        src="/images/logo.png"
+                        sx={{ width: 128, height: 32 }}
+                    >
+                        Dev Arena
+                    </Avatar>
+                </Box>
                 <Typography component="h2" variant="h5">
                     Tritek Live Support
                 </Typography>
@@ -292,22 +312,9 @@ const LiveSupport = ({
                                         alignItems="center"
                                         button
                                         disabled={Boolean(data.query_type)}
-                                        onClick={() =>
-                                            handleOnClick({
-                                                ...data,
-                                                query_type: "",
-                                            })
-                                        }
-                                    >
-                                        <ListItemText secondary="" />
-                                    </ListItem>
-                                    <ListItem
-                                        alignItems="center"
-                                        button
-                                        disabled={Boolean(data.query_type)}
                                         onClick={() => handleOnClick("Enquiry")}
                                     >
-                                        <ListItemText secondary="Enquiry" />
+                                        <ListItemText secondary="Course Enquiry" />
                                     </ListItem>
                                     <ListItem
                                         alignItems="center"

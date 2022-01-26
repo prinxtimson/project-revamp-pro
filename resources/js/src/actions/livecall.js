@@ -71,11 +71,18 @@ export const requestLivecall =
                     if (
                         window.confirm("You will now be transfer to an agent.")
                     ) {
-                        showSurveyForm();
                         window.open(
                             `/confrencing/${e.data.id}?pwd=${e.password}`
                         );
                     }
+                }
+            );
+
+            window.Echo.channel(`livecall.${res.data.id}`).listen(
+                "CallEnded",
+                (e) => {
+                    console.log(e);
+                    showSurveyForm();
                 }
             );
 

@@ -37,8 +37,8 @@ function Copyright(props) {
             {...props}
         >
             {"Copyright © "}
-            <Link color="inherit" href="#">
-                Your Website
+            <Link color="inherit" href="https://tritekconsulting.co.uk">
+                Tritek Consulting Ltd
             </Link>{" "}
             {new Date().getFullYear()}
             {"."}
@@ -153,6 +153,27 @@ const DrawerContainer = ({
                             pr: "24px", // keep right padding when drawer closed
                         }}
                     >
+                        <Box
+                            component="span"
+                            sx={{
+                                ...(open && { display: "none" }),
+                                marginX: 2,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "white",
+                                borderRadius: 2,
+                                padding: 1,
+                            }}
+                        >
+                            <Avatar
+                                variant="square"
+                                alt="Dev Arena"
+                                src="/images/logo.png"
+                                sx={{ width: 128, height: 32 }}
+                            >
+                                Dev Arena
+                            </Avatar>
+                        </Box>
                         <IconButton
                             edge="start"
                             color="inherit"
@@ -174,11 +195,11 @@ const DrawerContainer = ({
                         >
                             Dashboard
                         </Typography>
-                        <IconButton color="inherit">
+                        {/*<IconButton color="inherit">
                             <Badge badgeContent={0} color="secondary">
                                 <NotificationsIcon />
                             </Badge>
-                        </IconButton>
+                        </IconButton>*/}
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title="Open settings">
                                 <IconButton
@@ -243,18 +264,38 @@ const DrawerContainer = ({
                     </Toolbar>
                 </AppBar>
                 <Drawer variant="permanent" open={open}>
-                    <Toolbar
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            px: [1],
-                        }}
-                    >
-                        <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </Toolbar>
+                    <Box sx={{ display: "flex" }}>
+                        <Box
+                            component="span"
+                            sx={{
+                                flexGrow: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Avatar
+                                variant="square"
+                                alt="Dev Arena"
+                                src="/images/logo.png"
+                                sx={{ width: 128, height: 32 }}
+                            >
+                                Dev Arena
+                            </Avatar>
+                        </Box>
+                        <Toolbar
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-end",
+                                px: [1],
+                            }}
+                        >
+                            <IconButton onClick={toggleDrawer}>
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        </Toolbar>
+                    </Box>
                     <Divider />
                     <List>
                         <MainListItems />
