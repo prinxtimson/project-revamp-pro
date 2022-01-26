@@ -14,7 +14,7 @@ export default function usePublications(participant) {
             ]);
         const publicationRemoved = (publication) =>
             setPublications((prevPublications) =>
-                prevPublications.filter((p) => p !== publication)
+                prevPublications?.filter((p) => p !== publication)
             );
 
         participant.on("trackPublished", publicationAdded);

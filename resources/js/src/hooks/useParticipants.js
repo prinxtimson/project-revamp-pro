@@ -13,7 +13,7 @@ export default function useParticipants() {
         if (dominantSpeaker) {
             setParticipants((prevParticipants) => [
                 dominantSpeaker,
-                ...prevParticipants.filter(
+                ...prevParticipants?.filter(
                     (participant) => participant !== dominantSpeaker
                 ),
             ]);
@@ -30,7 +30,7 @@ export default function useParticipants() {
                 ]);
             const participantDisconnected = (participant) =>
                 setParticipants((prevParticipants) =>
-                    prevParticipants.filter((p) => p !== participant)
+                    prevParticipants?.filter((p) => p !== participant)
                 );
             room.on("participantConnected", participantConnected);
             room.on("participantDisconnected", participantDisconnected);
