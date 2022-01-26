@@ -11,12 +11,12 @@ export default function useParticipants() {
 
     useEffect(() => {
         if (dominantSpeaker) {
-            setParticipants([
-                dominantSpeaker,
-                ...participants?.filter(
-                    (participant) => participant !== dominantSpeaker
-                ),
-            ]);
+            let prevParticipants = participants
+                ? participants?.filter(
+                      (participant) => participant !== dominantSpeaker
+                  )
+                : [];
+            setParticipants([dominantSpeaker, ...prevParticipants]);
         }
         return () => setParticipants(null);
     }, [dominantSpeaker]);
