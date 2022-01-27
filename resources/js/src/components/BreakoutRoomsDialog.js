@@ -125,9 +125,9 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
                 await room.disconnect();
             }
 
-            await getLocalVideoTrack();
-            await getLocalAudioTrack();
-            await getAudioAndVideoTracks();
+            // await getLocalVideoTrack();
+            // await getLocalAudioTrack();
+            // await getAudioAndVideoTracks();
 
             if (roomSid) {
                 getToken(identity, URLRoomID, password, roomSid).then(
