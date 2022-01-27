@@ -35,6 +35,9 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
         connect: videoConnect,
         isAcquiringLocalTracks,
         isConnecting,
+        getLocalVideoTrack,
+        getLocalAudioTrack,
+        getAudioAndVideoTracks,
     } = useVideoContext();
     const localParticipant = room?.localParticipant;
     const [loading, setLoading] = React.useState(false);
@@ -110,6 +113,10 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
             if (room) {
                 await room.disconnect();
             }
+
+            await getLocalVideoTrack();
+            await getLocalAudioTrack();
+            await getAudioAndVideoTracks();
 
             if (roomSid) {
                 getToken(identity, URLRoomID, password, roomSid).then(
