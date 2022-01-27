@@ -39,6 +39,19 @@ export default function VideoChat() {
 
     const height = useHeight();
 
+    // React.useEffect(() => {
+    //     if (livecall) {
+    //         window.addEventListener("beforeunload", (e) => {
+    //             e.preventDefault();
+    //             e.returnValue = "Are you sure you want to close?";
+    //         });
+    //         window.addEventListener("unload", (e) => {
+    //             e.preventDefault();
+    //             leaveLivecall(livecall.id);
+    //         });
+    //     }
+    // }, [livecall]);
+
     return (
         <ThemeProvider theme={theme}>
             <Container style={{ height, flexGrow: 1 }}>

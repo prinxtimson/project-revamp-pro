@@ -5,6 +5,8 @@ import { Button } from "@mui/material";
 
 import useVideoContext from "../../hooks/useVideoContext";
 
+const axios = window.axios;
+
 const useStyles = makeStyles((theme) =>
     createStyles({
         button: {
@@ -24,8 +26,8 @@ export default function EndCallButton(props) {
     return (
         <Button
             onClick={() => {
-                console.log(room);
                 room?.disconnect();
+                // axios.get('callended')
             }}
             className={clsx(classes.button, props.className)}
             data-cy-disconnect
