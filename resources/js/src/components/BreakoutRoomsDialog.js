@@ -21,19 +21,21 @@ import { useParams } from "react-router-dom";
 import useVideoContext from "../hooks/useVideoContext";
 import useParticipants from "../hooks/useParticipants";
 import { connect } from "react-redux";
+import { useAppState } from "../state";
 
 const axios = window.axios;
 
-const BreakoutRoomsDialog = ({
-    open,
-    onClose,
-    joinRoom,
-    disableButtons,
-    user,
-}) => {
+const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
     const participants = useParticipants();
     const { URLRoomID } = useParams();
-    const { room, mainRoom, getMainRoom } = useVideoContext();
+    const { getToken, isFetching } = useAppState();
+    const {
+        room,
+        mainRoom,
+        connect: videoConnect,
+        isAcquiringLocalTracks,
+        isConnecting,
+    } = useVideoContext();
     const localParticipant = room?.localParticipant;
     const [loading, setLoading] = React.useState(false);
     const [breakouts, setBreakouts] = React.useState([]);
@@ -42,6 +44,8 @@ const BreakoutRoomsDialog = ({
         roomName: "",
         participants: [],
     });
+
+    const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
     const handleClick = () => {
         setFormOpen(!formOpen);
@@ -95,8 +99,32 @@ const BreakoutRoomsDialog = ({
         }
     };
 
-    const changeRoom = (sid = null) => {
+    const changeRoom = (sid) => {
         joinRoom(sid);
+    };
+
+    const joinRoom = async (roomSid) => {
+        try {
+            const identity = localParticipant.identity;
+            // If you're already in another video room, disconnect from that room first
+            if (room) {
+                await room.disconnect();
+            }
+
+            if (roomSid) {
+                getToken(identity, URLRoomID, password, roomSid).then(
+                    ({ token }) => {
+                        videoConnect(token);
+                    }
+                );
+            } else {
+                getToken(identity, URLRoomID, password).then(({ token }) => {
+                    videoConnect(token);
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (

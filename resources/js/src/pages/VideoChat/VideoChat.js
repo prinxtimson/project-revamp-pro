@@ -61,9 +61,9 @@ export default function VideoChat() {
                     <Main>
                         <ReconnectingNotification />
                         <RecordingNotifications />
-                        <MobileTopMenuBar />
+                        <MobileTopMenuBar password={password} />
                         <Room />
-                        <MenuBar URLRoomID={URLRoomID} password={password} />
+                        <MenuBar password={password} />
                     </Main>
                 )}
             </Container>

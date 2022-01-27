@@ -67,52 +67,16 @@ const useStyles = makeStyles((theme) =>
     })
 );
 
-const MenuBar = ({ URLRoomID, password }) => {
+const MenuBar = ({ password }) => {
     const classes = useStyles();
     const participants = useParticipants();
     const [open, setOpen] = React.useState(false);
     const [breakoutOpen, setBreakoutOpen] = React.useState(false);
-    const { getToken, isFetching } = useAppState();
-    const {
-        isSharingScreen,
-        toggleScreenShare,
-        room,
-        connect: videoConnect,
-        isAcquiringLocalTracks,
-        isConnecting,
-    } = useVideoContext();
+    const { isSharingScreen, toggleScreenShare, room } = useVideoContext();
     const roomState = useRoomState();
     const isReconnecting = roomState === "reconnecting";
 
-    const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
-
     const toggleBreakoutRoom = () => setBreakoutOpen(!breakoutOpen);
-
-    const joinRoom = async (roomSid = null) => {
-        console.log(`Breakout Room ${roomSid}`);
-        try {
-            const participant = room?.localParticipant;
-            const identity = participant.identity;
-            // If you're already in another video room, disconnect from that room first
-            if (room) {
-                await room.disconnect();
-            }
-
-            if (roomSid) {
-                getToken(identity, URLRoomID, password, roomSid).then(
-                    ({ token }) => {
-                        videoConnect(token);
-                    }
-                );
-            } else {
-                getToken(identity, URLRoomID, password).then(({ token }) => {
-                    videoConnect(token);
-                });
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    };
 
     return (
         <>
@@ -135,8 +99,7 @@ const MenuBar = ({ URLRoomID, password }) => {
             <BreakoutRoomsDialog
                 open={breakoutOpen}
                 onClose={() => setBreakoutOpen(false)}
-                disableButtons={disableButtons}
-                joinRoom={joinRoom}
+                password={password}
             />
             <footer className={classes.container}>
                 <Grid
