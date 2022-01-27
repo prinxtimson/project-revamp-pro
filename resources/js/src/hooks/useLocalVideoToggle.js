@@ -47,6 +47,7 @@ export default function useLocalVideoToggle() {
         isPublishing,
         onError,
         removeLocalVideoTrack,
+        room,
     ]);
 
     return [videoTrack, toggleVideoEnabled];
