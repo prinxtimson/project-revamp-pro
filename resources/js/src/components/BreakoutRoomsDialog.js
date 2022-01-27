@@ -111,23 +111,12 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
             const identity = localParticipant.identity;
             // If you're already in another video room, disconnect from that room first
             if (room) {
-                room.localParticipant.tracks.forEach((publication) => {
-                    if (
-                        publication.track.kind === "audio" ||
-                        publication.track.kind === "video"
-                    ) {
-                        publication.track.stop();
-                        const attachedElements = publication.track.detach();
-                        attachedElements.forEach((element) => element.remove());
-                    }
-                });
-
                 await room.disconnect();
             }
 
-            // await getLocalVideoTrack();
-            // await getLocalAudioTrack();
-            // await getAudioAndVideoTracks();
+            await getLocalVideoTrack();
+            await getLocalAudioTrack();
+            await getAudioAndVideoTracks();
 
             if (roomSid) {
                 getToken(identity, URLRoomID, password, roomSid).then(
