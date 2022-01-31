@@ -16,7 +16,11 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Moment from "react-moment";
 import { connect } from "react-redux";
-import { getCallbacks, clearCallback } from "../../actions/callback";
+import {
+    getCallbacks,
+    clearCallback,
+    delCallback,
+} from "../../actions/callback";
 
 const theme = createTheme();
 
@@ -38,7 +42,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
+const CallBackTable = ({
+    loading,
+    callbacks,
+    getCallbacks,
+    clearCallback,
+    delCallback,
+}) => {
     const [page, setPage] = React.useState(0);
 
     React.useEffect(() => {
@@ -47,7 +57,9 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
         return clearCallback;
     }, []);
 
-    const handleDelete = (row) => {};
+    const handleDelete = (row) => {
+        delCallback(row.id);
+    };
 
     const handleDisable = (row) => {};
 
@@ -192,6 +204,8 @@ const mapStateToProps = (state) => ({
     callbacks: state.callback.callbacks,
 });
 
-export default connect(mapStateToProps, { getCallbacks, clearCallback })(
-    CallBackTable
-);
+export default connect(mapStateToProps, {
+    getCallbacks,
+    clearCallback,
+    delCallback,
+})(CallBackTable);

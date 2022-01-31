@@ -36,11 +36,11 @@ export default (state = initialState, action) => {
                 callback: payload,
             };
         case DELETE_CALLBACK:
-            let callbacks = state.callbacks.filter((val) => val.id !== payload);
+            let data = state.callbacks.data.filter((val) => val.id !== payload);
             return {
                 ...state,
                 loading: false,
-                callbacks,
+                callbacks: { ...state.callbacks, data },
             };
         case CLEAR_CALLBACK:
             return {
