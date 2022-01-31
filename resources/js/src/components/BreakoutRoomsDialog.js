@@ -115,6 +115,8 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
                 room.disconnect();
             }
 
+            getAudioAndVideoTracks();
+
             if (roomSid) {
                 getToken(identity, URLRoomID, password, roomSid).then(
                     ({ token }) => {
