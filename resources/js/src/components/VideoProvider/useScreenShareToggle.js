@@ -19,7 +19,10 @@ export default function useScreenShareToggle(room, onError) {
                 const track = new Video.LocalVideoTrack(stream.getTracks()[0]);
 
                 room?.localParticipant
-                    .publishTrack(track)
+                    .publishTrack(track, {
+                        name: "screen", // Tracks can be named to easily find them later
+                        priority: "low",
+                    })
                     .then((trackPublication) => {
                         stopScreenShareRef.current = () => {
                             room?.localParticipant.unpublishTrack(track);
