@@ -20,7 +20,7 @@ export default function useLocalVideoToggle() {
             if (videoTrack) {
                 const localTrackPublication =
                     localParticipant?.unpublishTrack(videoTrack);
-                // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
+
                 localParticipant?.emit(
                     "trackUnpublished",
                     localTrackPublication
