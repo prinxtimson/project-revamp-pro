@@ -23,7 +23,6 @@ export default function useScreenShareToggle(room, onError) {
                         priority: "low",
                     })
                     .then((trackPublication) => {
-                        console.log(trackPublication);
                         stopScreenShareRef.current = () => {
                             room?.localParticipant.unpublishTrack(track);
                             // TODO: remove this if the SDK is updated to emit this event

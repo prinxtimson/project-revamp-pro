@@ -26,6 +26,8 @@ const ParticipantTracks = ({
         );
     }
 
+    console.log(filteredPublications);
+
     return (
         <>
             {filteredPublications.map((publication) => (
