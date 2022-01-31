@@ -7,7 +7,7 @@ export default function useScreenShareToggle(room, onError) {
     const shareScreen = useCallback(() => {
         navigator.mediaDevices
             .getDisplayMedia({
-                audio: false,
+                audio: true,
                 video: {
                     frameRate: 10,
                     height: 1080,
@@ -23,6 +23,7 @@ export default function useScreenShareToggle(room, onError) {
                         priority: "low",
                     })
                     .then((trackPublication) => {
+                        console.log(trackPublication);
                         stopScreenShareRef.current = () => {
                             room?.localParticipant.unpublishTrack(track);
                             // TODO: remove this if the SDK is updated to emit this event
