@@ -13,7 +13,6 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import LiveSupportPage from "./pages/LiveSupportPage";
 import VideoChat from "./pages/VideoChat";
-import OpenTok from "./pages/OpenTok";
 
 const App = () => {
     const [auth, setAuth] = useState(store.getState().auth);

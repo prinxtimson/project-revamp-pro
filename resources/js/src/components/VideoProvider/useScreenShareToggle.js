@@ -7,7 +7,7 @@ export default function useScreenShareToggle(room, onError) {
     const shareScreen = useCallback(() => {
         navigator.mediaDevices
             .getDisplayMedia({
-                audio: false,
+                audio: true,
                 video: {
                     frameRate: 10,
                     height: 1080,
