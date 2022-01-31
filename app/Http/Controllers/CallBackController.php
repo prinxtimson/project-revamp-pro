@@ -82,7 +82,13 @@ class CallBackController extends Controller
      */
     public function edit($id)
     {
-        //
+        $callback = ModelsCallBack::find($id);
+        $callback->update([
+            'called_at' => Carbon::now()
+        ]);
+
+
+        return $callback;
     }
 
     /**

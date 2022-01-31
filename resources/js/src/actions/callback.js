@@ -8,6 +8,7 @@ import {
     CALLBACK_LOADING,
     SET_CALLBACK,
     SET_CALLBACKS,
+    UPDATE_CALLBACK,
 } from "./types";
 
 export const getCallbacks = () => async (dispatch) => {
@@ -91,6 +92,29 @@ export const delCallback = (id) => async (dispatch) => {
         dispatch({
             type: DELETE_CALLBACK,
             payload: id,
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: CALLBACK_ERROR });
+        if (err.response.status == 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
+export const closeCallback = (id) => async (dispatch) => {
+    try {
+        const res = await axios.put(`/api/callback/close/${id}`);
+
+        dispatch({
+            type: UPDATE_CALLBACK,
+            payload: res.data,
         });
     } catch (err) {
         console.log(err.response);

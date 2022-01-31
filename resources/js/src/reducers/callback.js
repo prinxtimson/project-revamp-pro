@@ -5,6 +5,7 @@ import {
     CALLBACK_LOADING,
     SET_CALLBACK,
     SET_CALLBACKS,
+    UPDATE_CALLBACK,
 } from "../actions/types";
 
 const initialState = {
@@ -34,6 +35,17 @@ export default (state = initialState, action) => {
                 ...state,
                 loading: false,
                 callback: payload,
+            };
+        case UPDATE_CALLBACK:
+            let i = state.callbacks.data.findIndex(
+                (item) => item.id === payload.id
+            );
+            if (i > -1) state.callbacks.data[i] = payload;
+            else state.callbacks.data.unshift(payload);
+            return {
+                ...state,
+                loading: false,
+                callbacks: { ...state.callbacks },
             };
         case DELETE_CALLBACK:
             let data = state.callbacks.data.filter((val) => val.id !== payload);

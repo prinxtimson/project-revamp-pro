@@ -58,7 +58,7 @@ const CallBackTable = ({
     }, []);
 
     const handleDelete = (row) => {
-        delCallback(row.id);
+        delCallback(row);
     };
 
     const handleDisable = (row) => {};
@@ -125,7 +125,7 @@ const CallBackTable = ({
                                     </TableRow>
                                 ) : (
                                     callbacks?.data.map((row) => (
-                                        <StyledTableRow key={row.email}>
+                                        <StyledTableRow key={row.id}>
                                             <StyledTableCell scope="row">
                                                 {row.name}
                                             </StyledTableCell>
@@ -149,6 +149,9 @@ const CallBackTable = ({
                                                         <Button
                                                             size="small"
                                                             variant="outlined"
+                                                            disabled={
+                                                                !row.called_at
+                                                            }
                                                             onClick={() =>
                                                                 handleDisable(
                                                                     row.id
@@ -165,7 +168,7 @@ const CallBackTable = ({
                                                             size="small"
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    row
+                                                                    row.id
                                                                 )
                                                             }
                                                         >

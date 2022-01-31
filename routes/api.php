@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('callback/{id}', [CallBackController::class, 'show']);
     Route::get('callback', [CallBackController::class, 'index']);
+    Route::put('callback/close/{id}', [CallBackController::class, 'edit']);
     Route::delete('callback/{id}', [CallBackController::class, 'destroy']);
 
     Route::get('survey', [SurveyController::class, 'index']);
