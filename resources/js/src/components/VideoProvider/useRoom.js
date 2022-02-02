@@ -28,7 +28,7 @@ export default function useRoom(localTracks, onError, options) {
                     VideoRoomMonitor.registerVideoRoom(newRoom);
                     const disconnect = () => newRoom.disconnect();
 
-                    newRoom.setMaxListeners(25);
+                    newRoom.setMaxListeners(50);
 
                     newRoom.once("disconnected", () => {
                         setTimeout(() => setRoom(null));
