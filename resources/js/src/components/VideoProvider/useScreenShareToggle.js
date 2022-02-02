@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from "react";
+import Video from "twilio-video";
 
 export default function useScreenShareToggle(room, onError) {
     const [isSharing, setIsSharing] = useState(false);
@@ -15,7 +16,7 @@ export default function useScreenShareToggle(room, onError) {
                 },
             })
             .then((stream) => {
-                const track = stream.getTracks()[0];
+                const track = new Video.LocalVideoTrack(stream.getTracks()[0]);
 
                 room?.localParticipant
                     .publishTrack(track, {
