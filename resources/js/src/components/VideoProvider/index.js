@@ -39,6 +39,7 @@ export const VideoProvider = ({ options, children, onError = () => {} }) => {
 
     const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(
         room,
+        localTracks,
         onError
     );
 
