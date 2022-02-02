@@ -22,7 +22,7 @@ export default function useScreenShareToggle(room, localTracks, onError) {
                 });
 
                 room?.localParticipant
-                    .publishTrack(track)
+                    .publishTracks([...localTracks, track])
                     .then((trackPublication) => {
                         stopScreenShareRef.current = () => {
                             room?.localParticipant.unpublishTrack(track);
