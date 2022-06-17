@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin',
             'username' => 'superadmin',
             'avatar' => 'https://www.gravatar.com/avatar/'.$hash,
+            'phone' => '2349013473259',
             'email' => 'developertritek@gmail.com',
             'password' => Hash::make('Tritek@2021'),
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),

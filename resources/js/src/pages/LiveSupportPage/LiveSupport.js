@@ -40,7 +40,7 @@ const LiveSupport = ({
         email: "",
         phone: "",
         time: "",
-        date: "",
+        date: new Date.now(),
     });
 
     const handleOnChange = (e) =>

@@ -194,25 +194,31 @@ export const updateLivecalls = (data) => (dispatch) => {
 };
 
 export const delLivecall = (id) => async (dispatch) => {
-    try {
-        await axios.delete(`/api/livecall/${id}`);
+    if (
+        window.confirm(
+            "Are you sure you want to delete livecall? This can NOT be undone!"
+        )
+    ) {
+        try {
+            await axios.delete(`/api/livecall/${id}`);
 
-        dispatch({
-            type: DELETE_LIVECALL,
-            payload: id,
-        });
-    } catch (err) {
-        console.log(err.response);
-        dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status === 500) {
-            return dispatch(
-                setAlert("Server errror, please try again.", "danger")
-            );
+            dispatch({
+                type: DELETE_LIVECALL,
+                payload: id,
+            });
+        } catch (err) {
+            console.log(err.response);
+            dispatch({ type: LIVECALL_ERROR });
+            if (err.response.status === 500) {
+                return dispatch(
+                    setAlert("Server errror, please try again.", "danger")
+                );
+            }
+            if (err.response.status === 401 || err.response.status === 403) {
+                window.location.reload();
+            }
+            dispatch(setAlert(err.response.data.message, "danger"));
         }
-        if (err.response.status === 401 || err.response.status === 403) {
-            window.location.reload();
-        }
-        dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
 

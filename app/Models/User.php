@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Mail\TwoFactorAuth;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,8 +10,10 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Mail;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Twilio\Rest\Client;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -25,6 +28,7 @@ class User extends Authenticatable implements HasMedia
         'name',
         'avatar',
         'email',
+        'phone',
         'username',
         'password',
     ];
@@ -55,6 +59,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(Profile::class);
     }
 
+    public function user_code ()
+    {
+        return $this->hasOne(UserCode::class);
+    }
+
     public function callbacks()
     {
         return $this->hasMany(CallBack::class, 'agent_id');
@@ -63,5 +72,32 @@ class User extends Authenticatable implements HasMedia
     public function livecalls()
     {
         return $this->hasMany(LiveCall::class, 'agent_id');
+    }
+
+    public function generate_code ()
+    {
+        $code = rand(100000, 999999);
+
+        $this->user_code()->updateOrCreate([
+            'code' => $code
+        ]);
+
+        $receiverNum = $this->phone;
+        $message = "Your Login OTP code is ". $code;
+
+        try {
+            // $account_sid = getenv("TWILIO_ACCOUNT_SID");
+            // $auth_token = getenv("TWILIO_AUTH_TOKEN");
+            // $number = getenv("TWILIO_FROM");
+    
+            // $client = new Client($account_sid, $auth_token);
+            // $client->messages->create($receiverNum, [
+            //     'from' => $number, 
+            //     'body' => $message]);
+            Mail::to($this)->send(new TwoFactorAuth($code, $this));
+    
+        } catch (\Exception $e) {
+            error_log($e);
+        }
     }
 }

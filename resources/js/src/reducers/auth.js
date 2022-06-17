@@ -36,7 +36,6 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 ...payload,
-                isAuthenticated: true,
                 loading: false,
             };
         case AUTH_ERROR:

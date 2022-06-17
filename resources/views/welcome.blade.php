@@ -409,7 +409,12 @@
 </head>
 
 <body class="antialiased">
-  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
+  @if (!empty($user))
+  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0" data-user="{{$user}}">
+  @else
+  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0" >
+  @endif
+  
     <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
     <script src="{{asset('js/app.js')}}"></script>
   </div>

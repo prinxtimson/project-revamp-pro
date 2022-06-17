@@ -56,11 +56,6 @@ export const loginUser = (email, password) => async (dispatch) => {
 
         const res = await axios.post("/login", { email, password });
 
-        dispatch({
-            type: LOGIN_SUCCESS,
-            payload: res.data,
-        });
-
         window.location.reload();
     } catch (err) {
         console.log(err.response);
@@ -71,6 +66,47 @@ export const loginUser = (email, password) => async (dispatch) => {
             );
         }
 
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
+export const verifyCode = (data) => async (dispatch) => {
+    dispatch({ type: AUTH_LOADING });
+    try {
+        await axios.post("/two-factor-auth", data);
+        dispatch({ type: AUTH_LOADING });
+        dispatch(setAlert("Verification successful", "success"));
+        window.location.reload();
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: AUTH_LOADING });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+
+        dispatch(setAlert(err.response.data, "danger"));
+    }
+};
+
+export const resendCode = () => async (dispatch) => {
+    dispatch({ type: AUTH_LOADING });
+    try {
+        await axios.get("/two-factor-auth/resent");
+        dispatch({ type: AUTH_LOADING });
+        dispatch(setAlert("New verification code sent", "success"));
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: AUTH_LOADING });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+        if (err.response.status === 401 || err.response.status === 403) {
+            window.location.reload();
+        }
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };

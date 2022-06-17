@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -36,5 +38,24 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+             
+        if (Auth::attempt($validated)) {
+  
+            auth()->user()->generate_code();
+  
+            return redirect()->route('2fa.index');
+        }
+    
+        return redirect()
+            ->route('login')
+            ->with('error', 'You have entered invalid credentials');
     }
 }

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Broadcasting\LivecallChannel;
+use App\Http\Controllers\TwoFactorAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +17,8 @@ use App\Broadcasting\LivecallChannel;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
 
 Route::middleware(['guest'])->group(function () {
     //
@@ -41,7 +45,13 @@ Route::middleware(['guest'])->group(function () {
 
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::get('admin/two-factor-auth', [TwoFactorAuthController::class, 'index'])->name('2fa.index');
+
+Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name('2fa.store');
+
+Route::get('two-factor-auth/resent', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend');
+
+Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('admin/dashboard', function () {
         return view('welcome');
@@ -49,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('admin/dashboard/{name?}', function () {
         return view('welcome');
-    });
+    })->where('name', '.*')->name('dashboard');
 
     //Route::get('customer-analytics/download', [MailController::class, 'download']);
 });

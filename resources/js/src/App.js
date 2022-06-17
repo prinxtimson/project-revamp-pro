@@ -13,9 +13,10 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import LiveSupportPage from "./pages/LiveSupportPage";
 import VideoChat from "./pages/VideoChat";
+import TwoFactorAuthPage from "./pages/TwoFactorAuthPage";
 import OpenTok from "./pages/OpenTok";
 
-const App = () => {
+const App = (props) => {
     const [auth, setAuth] = useState(store.getState().auth);
 
     useEffect(() => {
@@ -40,6 +41,11 @@ const App = () => {
                         exact
                         path="live-support"
                         element={<LiveSupportPage />}
+                    />
+                    <Route
+                        exact
+                        path="admin/two-factor-auth"
+                        element={<TwoFactorAuthPage {...props} />}
                     />
                     <Route exact path="admin" element={<LoginPage />} />
                     <Route
@@ -70,5 +76,9 @@ const App = () => {
 export default App;
 
 if (document.getElementById("app")) {
-    ReactDOM.render(<App />, document.getElementById("app"));
+    const element = document.getElementById("app");
+
+    const props = Object.assign({}, element.dataset);
+
+    ReactDOM.render(<App {...props} />, element);
 }

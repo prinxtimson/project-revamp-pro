@@ -85,25 +85,31 @@ export const getCallbackById = (id) => async (dispatch) => {
 };
 
 export const delCallback = (id) => async (dispatch) => {
-    try {
-        await axios.delete(`/api/callback/${id}`);
+    if (
+        window.confirm(
+            "Are you sure you want to delete callback? This can NOT be undone!"
+        )
+    ) {
+        try {
+            await axios.delete(`/api/callback/${id}`);
 
-        dispatch({
-            type: DELETE_CALLBACK,
-            payload: id,
-        });
-    } catch (err) {
-        console.log(err.response);
-        dispatch({ type: CALLBACK_ERROR });
-        if (err.response.status == 500) {
-            return dispatch(
-                setAlert("Server errror, please try again.", "danger")
-            );
+            dispatch({
+                type: DELETE_CALLBACK,
+                payload: id,
+            });
+        } catch (err) {
+            console.log(err.response);
+            dispatch({ type: CALLBACK_ERROR });
+            if (err.response.status == 500) {
+                return dispatch(
+                    setAlert("Server errror, please try again.", "danger")
+                );
+            }
+            if (err.response.status == 401 || err.response.status == 403) {
+                window.location.reload();
+            }
+            dispatch(setAlert(err.response.data.message, "danger"));
         }
-        if (err.response.status == 401 || err.response.status == 403) {
-            window.location.reload();
-        }
-        dispatch(setAlert(err.response.data.message, "danger"));
     }
 };
 
