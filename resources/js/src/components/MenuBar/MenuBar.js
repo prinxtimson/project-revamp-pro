@@ -15,6 +15,8 @@ import ToggleAudioButton from "../Buttons/ToggleAudioButton";
 import ToggleVideoButton from "../Buttons/ToggleVideoButton";
 import ToggleScreenShareButton from "../Buttons/ToggleScreenShareButton";
 import ParticipantListDialog from "../ParticipantListDialog";
+import BreakoutRoomsDialog from "../BreakoutRoomsDialog";
+import { useAppState } from "../../state";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -65,14 +67,16 @@ const useStyles = makeStyles((theme) =>
     })
 );
 
-const MenuBar = () => {
+const MenuBar = ({ password }) => {
     const classes = useStyles();
     const participants = useParticipants();
     const [open, setOpen] = React.useState(false);
-    const { isSharingScreen, toggleScreenShare } = useVideoContext();
+    const [breakoutOpen, setBreakoutOpen] = React.useState(false);
+    const { isSharingScreen, toggleScreenShare, room } = useVideoContext();
     const roomState = useRoomState();
     const isReconnecting = roomState === "reconnecting";
-    const { room } = useVideoContext();
+
+    const toggleBreakoutRoom = () => setBreakoutOpen(!breakoutOpen);
 
     return (
         <>
@@ -92,6 +96,11 @@ const MenuBar = () => {
                 </Grid>
             )}
             <ParticipantListDialog open={open} onClose={() => setOpen(false)} />
+            <BreakoutRoomsDialog
+                open={breakoutOpen}
+                onClose={() => setBreakoutOpen(false)}
+                password={password}
+            />
             <footer className={classes.container}>
                 <Grid
                     container
@@ -123,7 +132,7 @@ const MenuBar = () => {
                                 </Badge>
                             </Button>
                             <Hidden smDown>
-                                <Menu />
+                                <Menu toggleBreakoutRoom={toggleBreakoutRoom} />
                             </Hidden>
                         </Grid>
                     </Grid>

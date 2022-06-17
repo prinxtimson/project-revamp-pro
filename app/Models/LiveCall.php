@@ -27,4 +27,14 @@ class LiveCall extends Model
     {
         return $this->belongsTo(User::class, 'agent_id');
     }
+
+    public function video_room()
+    {
+        return $this->hasOne(VideoRoom::class);
+    }
+
+    public function survey()
+    {
+        return $this->hasOne(Survey::class);
+    }
 }

@@ -2,6 +2,8 @@ import React, { createContext, useContext, useReducer, useState } from "react";
 import { settingsReducer, initialSettings } from "./settingsReducer.js";
 import useActiveSinkId from "./useActiveSinkId";
 
+const axios = window.axios;
+
 export const StateContext = createContext(null);
 
 export default function AppStateProvider(props) {
@@ -27,10 +29,26 @@ export default function AppStateProvider(props) {
 
     contextValue = {
         ...contextValue,
-        getToken: async (name, room) => {
-            let token = window[`${room}_token`];
+        getToken: async (identity, room, password, breakoutRoom) => {
+            try {
+                let res = await axios.post("/api/room/token", {
+                    identity,
+                    room,
+                    password,
+                    breakoutRoom,
+                });
 
-            return { token };
+                res.data.roomId = room;
+
+                return res.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        getRoom: async (room, password) => {
+            const res = await axios.get(`/api/room/${room}`);
+
+            return res.data;
         },
         updateRecordingRules: async (room_sid, rules) => {
             const endpoint =
@@ -61,12 +79,12 @@ export default function AppStateProvider(props) {
         },
     };
 
-    const getToken = (name, room) => {
+    const getToken = (identity, room, password, breakoutRoom = null) => {
         setIsFetching(true);
         return contextValue
-            .getToken(name, room)
+            .getToken(identity, room, password, breakoutRoom)
             .then((res) => {
-                setRoomType(res.room_type);
+                setRoomType("group");
                 setIsFetching(false);
                 return res;
             })

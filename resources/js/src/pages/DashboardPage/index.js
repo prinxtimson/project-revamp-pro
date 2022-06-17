@@ -7,11 +7,12 @@ import ProfileForm from "./ProfileForm";
 import ChangePasswordForm from "./ChangePasswordForm";
 import LiveCallTable from "./LiveCallTable";
 import CallBackTable from "./CallBackTable";
+import Dashboard from "./Dashboard";
 
 export default () => (
     <DrawerContainer>
         <Routes>
-            <Route path="/" element={<div />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="add-user" element={<AddUserForm />} />
             <Route path="users" element={<AgentsTable />} />
             <Route path="profile" element={<ProfileForm />} />

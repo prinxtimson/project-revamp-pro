@@ -226,33 +226,35 @@ export const requestPasswordReset =
     };
 
 // Reset password action
-export const resetPassword = (data, token, history) => async (dispatch) => {
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-        },
-    };
+export const resetPassword =
+    (data, onSuccessful, setLoading) => async (dispatch) => {
+        try {
+            const res = await axios.post("/password/update", data);
 
-    const body = JSON.stringify({ ...data, token });
-    try {
-        const res = await axios.post("/password/update", body, config);
-
-        dispatch(
-            setAlert("Your password had been updated successfully.", "success")
-        );
-
-        history.replace("/");
-    } catch (err) {
-        console.log(err.response);
-        if (err.response.status === 500) {
-            return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+            dispatch(
+                setAlert(
+                    "Your password had been updated successfully.",
+                    "success"
+                )
             );
-        }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
-    }
-};
+            onSuccessful();
+
+            setLoading(false);
+
+            window.location.replace("/");
+        } catch (err) {
+            console.log(err.response);
+            setLoading(false);
+            if (err.response.status === 500) {
+                return dispatch(
+                    setAlert("Server errror, please try again.", "danger")
+                );
+            }
+
+            dispatch(setAlert(err.response.data.message, "danger"));
+        }
+    };
 
 export const deleteAccount = () => async (dispatch) => {
     if (window.confirm("Are you sure? This can NOT be undone!")) {

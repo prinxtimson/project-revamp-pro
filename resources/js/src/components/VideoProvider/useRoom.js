@@ -16,20 +16,19 @@ export default function useRoom(localTracks, onError, options) {
     }, [options]);
 
     const connect = useCallback(
-        (token, roomName) => {
+        (token) => {
             setIsConnecting(true);
             console.log(token);
             return Video.connect(token, {
-                room: roomName,
+                ...optionsRef.current,
                 tracks: localTracks,
             }).then(
                 (newRoom) => {
-                    console.log(newRoom);
                     setRoom(newRoom);
                     VideoRoomMonitor.registerVideoRoom(newRoom);
                     const disconnect = () => newRoom.disconnect();
 
-                    newRoom.setMaxListeners(15);
+                    newRoom.setMaxListeners(50);
 
                     newRoom.once("disconnected", () => {
                         setTimeout(() => setRoom(null));

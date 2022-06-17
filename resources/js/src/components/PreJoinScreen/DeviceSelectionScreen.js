@@ -51,19 +51,26 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function DeviceSelectionScreen({ name, roomName, setStep }) {
+export default function DeviceSelectionScreen({
+    name,
+    roomId,
+    password,
+    setStep,
+}) {
     const classes = useStyles();
     const { getToken, isFetching } = useAppState();
     const {
         connect: videoConnect,
         isAcquiringLocalTracks,
         isConnecting,
+        getMainRoom,
     } = useVideoContext();
     const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
     const handleJoin = () => {
-        getToken(name, roomName).then(({ token }) => {
-            videoConnect(token, roomName);
+        getToken(name, roomId, password).then(({ token, roomId }) => {
+            videoConnect(token);
+            getMainRoom(roomId);
         });
     };
 
@@ -104,7 +111,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }) {
     return (
         <>
             <Typography variant="h5" className={classes.gutterBottom}>
-                Join {roomName}
+                Join Call
             </Typography>
 
             <Grid container justifyContent="center">

@@ -18,8 +18,8 @@ function Copyright(props) {
             {...props}
         >
             {"Copyright © "}
-            <Link color="inherit" href="#">
-                Your Website
+            <Link color="inherit" href="https://tritekconsulting.co.uk">
+                Tritek Consulting Ltd
             </Link>{" "}
             {new Date().getFullYear()}
             {"."}

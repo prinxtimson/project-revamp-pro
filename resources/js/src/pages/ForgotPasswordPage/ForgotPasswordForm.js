@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Container from "../../components/Container";
@@ -34,12 +35,31 @@ const ForgotPasswordForm = ({ alerts, requestPasswordReset }) => {
         <Container>
             <Box
                 sx={{
-                    marginTop: 8,
+                    marginTop: 5,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    backgroundColor: "white",
+                    padding: 3,
                 }}
             >
+                <Box
+                    component="span"
+                    sx={{
+                        margin: 2,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Avatar
+                        variant="square"
+                        alt="Dev Arena"
+                        src="/images/logo.png"
+                        sx={{ width: 128, height: 32 }}
+                    >
+                        Dev Arena
+                    </Avatar>
+                </Box>
                 <Typography component="h1" variant="h5">
                     Forgot Password
                 </Typography>
@@ -83,7 +103,7 @@ const ForgotPasswordForm = ({ alerts, requestPasswordReset }) => {
                     <Grid container>
                         <Grid item xs>
                             Remember Password?{" "}
-                            <Link to="/" variant="body2">
+                            <Link to="/admin" variant="body2">
                                 Login
                             </Link>
                         </Grid>

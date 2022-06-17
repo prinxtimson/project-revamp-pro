@@ -58,46 +58,56 @@ export const getConnectedLivecalls = () => async (dispatch) => {
     }
 };
 
-export const requestLivecall = (data) => async (dispatch) => {
-    dispatch({ type: LIVECALL_LOADING });
-    try {
-        const res = await axios.post("/api/livecall", data);
+export const requestLivecall =
+    (data, onLivecallRequest, showSurveyForm) => async (dispatch) => {
+        dispatch({ type: LIVECALL_LOADING });
+        try {
+            const res = await axios.post("/api/livecall", data);
 
-        window.Echo.channel(`livecall.${res.data.id}`).listen(
-            "AgentConnected",
-            (e) => {
-                console.log(e);
-                if (window.confirm("You will now be transfer to an agent.")) {
-                    let newWindow = window.open(`/confrencing/${e.data.room}`);
-                    newWindow[`${e.data.room}_token`] = e.data.token;
-                    //newWindow[`${e.data.room}_api_key`] = e.data.apiKey;
-                    //newWindow[`${e.data.room}_session_id`] = e.data.sessionId;
-                    newWindow[
-                        `${e.data.room}_identity`
-                    ] = `Caller ${res.data.id}`;
+            window.Echo.channel(`livecall.${res.data.id}`).listen(
+                "AgentConnected",
+                (e) => {
+                    console.log(e);
+                    if (
+                        window.confirm("You will now be transfer to an agent.")
+                    ) {
+                        showSurveyForm();
+                        window.open(
+                            `/confrencing/${e.data.id}?pwd=${e.password}`
+                        );
+                    }
                 }
-            }
-        );
-
-        dispatch({
-            type: SET_LIVECALL,
-            payload: res.data,
-        });
-
-        dispatch(getConnectedLivecalls());
-        dispatch(setAlert("You are connected", "success"));
-    } catch (err) {
-        console.log(err.response);
-        dispatch({ type: LIVECALL_ERROR });
-        if (err.response.status === 500) {
-            return dispatch(
-                setAlert("Server errror, please try again.", "danger")
             );
-        }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
-    }
-};
+            window.Echo.channel(`livecall.${res.data.id}`).listen(
+                "CallEnded",
+                (e) => {
+                    console.log(e);
+                    showSurveyForm();
+                }
+            );
+
+            dispatch({
+                type: SET_LIVECALL,
+                payload: res.data,
+            });
+
+            onLivecallRequest();
+
+            dispatch(getConnectedLivecalls());
+            dispatch(setAlert("You are connected", "success"));
+        } catch (err) {
+            console.log(err.response);
+            dispatch({ type: LIVECALL_ERROR });
+            if (err.response.status === 500) {
+                return dispatch(
+                    setAlert("Server errror, please try again.", "danger")
+                );
+            }
+
+            dispatch(setAlert(err.response.data.message, "danger"));
+        }
+    };
 
 export const getLivecallById = (id) => async (dispatch) => {
     try {
@@ -125,7 +135,7 @@ export const leaveLivecall = (id) => async (dispatch) => {
 
     if (!livecall.left_at && !livecall.answered_at) {
         try {
-            const res = await axios.get(`/api/livecall/leave/${id}`);
+            await axios.get(`/api/livecall/leave/${id}`);
         } catch (err) {
             console.log(err.response);
             dispatch({ type: LIVECALL_ERROR });
@@ -142,18 +152,12 @@ export const leaveLivecall = (id) => async (dispatch) => {
 
 export const answerLivecall = (id) => async (dispatch) => {
     try {
-        const res = await axios.get(`/api/livecall/connect/${id}`);
-
-        await axios.post(`/api/livecall/on_connected/${id}`, {
-            identity: `Caller ${id}`,
-            roomName: res.data.room,
+        const res = await axios.post(`/api/room`, {
+            livecall: `${id}`,
+            roomName: `call_${id}`,
         });
-
-        let newWindow = window.open(`/confrencing/${res.data.room}`);
-        newWindow[`${res.data.room}_token`] = res.data.token;
-        newWindow[`${res.data.room}_role`] = res.data.role;
-        //newWindow[`${res.data.room}_session_id`] = res.data.sessionId;
-        newWindow[`${res.data.room}_identity`] = res.data.identity;
+        console.log(res.data);
+        window.open(`/confrencing/${res.data.id}?pwd=${res.data.pwd}`);
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });

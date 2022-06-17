@@ -131,18 +131,17 @@ const AddUserForm = ({ alerts, loading, addUser }) => {
                             fullWidth
                             id="email_address"
                             label="Email Address"
-                            name="email"
                             value={data.email}
                             onChange={(e) =>
                                 setData({ ...data, email: e.target.value })
                             }
+                            autoComplete={false}
                         />
                         <TextField
                             variant="outlined"
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
                             label="Password"
                             type={data.showPassword ? "text" : "password"}
                             id="password"
@@ -167,6 +166,7 @@ const AddUserForm = ({ alerts, loading, addUser }) => {
                             onChange={(e) =>
                                 setData({ ...data, password: e.target.value })
                             }
+                            autoComplete={false}
                         />
 
                         <Button

@@ -3,6 +3,8 @@ import { makeStyles } from "@mui/styles";
 
 import React from "react";
 import useVideoContext from "../hooks/useVideoContext";
+import { useAppState } from "../state";
+import BreakoutRoomsDialog from "./BreakoutRoomsDialog";
 import EndCallButton from "./Buttons/EndCallButton";
 import Menu from "./MenuBar/Menu";
 
@@ -32,9 +34,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const MobileTopMenuBar = () => {
+const MobileTopMenuBar = ({ password }) => {
     const classes = useStyles();
     const { room } = useVideoContext();
+    const [breakoutOpen, setBreakoutOpen] = React.useState(false);
+
+    const toggleBreakoutRoom = () => setBreakoutOpen(!breakoutOpen);
 
     return (
         <Grid
@@ -45,8 +50,16 @@ const MobileTopMenuBar = () => {
         >
             <Typography variant="subtitle1">{room?.name}</Typography>
             <div>
+                <BreakoutRoomsDialog
+                    open={breakoutOpen}
+                    onClose={() => setBreakoutOpen(false)}
+                    password={password}
+                />
                 <EndCallButton className={classes.endCallButton} />
-                <Menu buttonClassName={classes.settingsButton} />
+                <Menu
+                    buttonClassName={classes.settingsButton}
+                    toggleBreakoutRoom={toggleBreakoutRoom}
+                />
             </div>
         </Grid>
     );

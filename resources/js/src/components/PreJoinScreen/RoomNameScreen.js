@@ -1,7 +1,9 @@
 import React from "react";
 import { Typography, TextField, Grid, Button, InputLabel } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import { makeStyles } from "@mui/styles";
 import { useAppState } from "../../state";
+import useVideoContext from "../../hooks/useVideoContext";
 
 const useStyles = makeStyles((theme) => ({
     gutterBottom: {
@@ -28,67 +30,57 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function RoomNameScreen({
-    name,
-    roomName,
-    setName,
-    setRoomName,
-    handleSubmit,
-}) {
+export default function RoomNameScreen({ name, setName, handleSubmit }) {
     const classes = useStyles();
-    const { user } = useAppState();
+    const { isFetching } = useAppState();
+    const { isConnecting } = useVideoContext();
 
     const handleNameChange = (event) => {
         setName(event.target.value);
     };
 
-    const handleRoomNameChange = (event) => {
-        setRoomName(event.target.value);
-    };
-
-    const hasUsername =
-        !window.location.search.includes("customIdentity=true") &&
-        user?.displayName;
+    if (isFetching || isConnecting) {
+        return (
+            <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                direction="column"
+                style={{ height: "100%" }}
+            >
+                <div>
+                    <CircularProgress variant="indeterminate" />
+                </div>
+                <div>
+                    <Typography
+                        variant="body2"
+                        style={{ fontWeight: "bold", fontSize: "16px" }}
+                    >
+                        Joining Meeting
+                    </Typography>
+                </div>
+            </Grid>
+        );
+    }
 
     return (
         <>
             <Typography variant="h5" className={classes.gutterBottom}>
-                Join a Room
-            </Typography>
-            <Typography variant="body1">
-                {hasUsername
-                    ? "Enter the name of a room you'd like to join."
-                    : "Enter your name and the name of a room you'd like to join"}
+                Enter your name
             </Typography>
             <form onSubmit={handleSubmit}>
                 <div className={classes.inputContainer}>
-                    {!hasUsername && (
-                        <div className={classes.textFieldContainer}>
-                            <InputLabel shrink htmlFor="input-user-name">
-                                Your Name
-                            </InputLabel>
-                            <TextField
-                                id="input-user-name"
-                                variant="outlined"
-                                fullWidth
-                                size="small"
-                                value={name}
-                                onChange={handleNameChange}
-                            />
-                        </div>
-                    )}
                     <div className={classes.textFieldContainer}>
-                        <InputLabel shrink htmlFor="input-room-name">
-                            Room Name
+                        <InputLabel shrink htmlFor="input-user-name">
+                            Your Name
                         </InputLabel>
                         <TextField
-                            autoCapitalize="false"
-                            id="input-room-name"
+                            id="input-user-name"
                             variant="outlined"
                             fullWidth
                             size="small"
-                            value={roomName}
-                            onChange={handleRoomNameChange}
+                            value={name}
+                            onChange={handleNameChange}
                         />
                     </div>
                 </div>
@@ -97,7 +89,7 @@ export default function RoomNameScreen({
                         variant="contained"
                         type="submit"
                         color="primary"
-                        disabled={!name || !roomName}
+                        disabled={!name}
                         className={classes.continueButton}
                     >
                         Continue

@@ -1,13 +1,14 @@
 import { useState, useCallback, useRef } from "react";
+import Video from "twilio-video";
 
-export default function useScreenShareToggle(room, onError) {
+export default function useScreenShareToggle(room, localTracks, onError) {
     const [isSharing, setIsSharing] = useState(false);
     const stopScreenShareRef = useRef(null);
 
     const shareScreen = useCallback(() => {
         navigator.mediaDevices
             .getDisplayMedia({
-                audio: false,
+                audio: true,
                 video: {
                     frameRate: 10,
                     height: 1080,
@@ -15,13 +16,13 @@ export default function useScreenShareToggle(room, onError) {
                 },
             })
             .then((stream) => {
-                const track = stream.getTracks()[0];
+                const track = new Video.LocalVideoTrack(stream.getTracks()[0], {
+                    name: "screen",
+                    priority: "low",
+                });
 
                 room?.localParticipant
-                    .publishTrack(track, {
-                        name: "screen", // Tracks can be named to easily find them later
-                        priority: "low",
-                    })
+                    .publishTracks([...localTracks, track])
                     .then((trackPublication) => {
                         stopScreenShareRef.current = () => {
                             room?.localParticipant.unpublishTrack(track);

@@ -16,7 +16,11 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Moment from "react-moment";
 import { connect } from "react-redux";
-import { getCallbacks, clearCallback } from "../../actions/callback";
+import {
+    getCallbacks,
+    clearCallback,
+    delCallback,
+} from "../../actions/callback";
 
 const theme = createTheme();
 
@@ -38,7 +42,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
+const CallBackTable = ({
+    loading,
+    callbacks,
+    getCallbacks,
+    clearCallback,
+    delCallback,
+}) => {
     const [page, setPage] = React.useState(0);
 
     React.useEffect(() => {
@@ -47,7 +57,9 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
         return clearCallback;
     }, []);
 
-    const handleDelete = (row) => {};
+    const handleDelete = (row) => {
+        delCallback(row);
+    };
 
     const handleDisable = (row) => {};
 
@@ -113,7 +125,7 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
                                     </TableRow>
                                 ) : (
                                     callbacks?.data.map((row) => (
-                                        <StyledTableRow key={row.email}>
+                                        <StyledTableRow key={row.id}>
                                             <StyledTableCell scope="row">
                                                 {row.name}
                                             </StyledTableCell>
@@ -137,6 +149,9 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
                                                         <Button
                                                             size="small"
                                                             variant="outlined"
+                                                            disabled={
+                                                                !row.called_at
+                                                            }
                                                             onClick={() =>
                                                                 handleDisable(
                                                                     row.id
@@ -153,7 +168,7 @@ const CallBackTable = ({ loading, callbacks, getCallbacks, clearCallback }) => {
                                                             size="small"
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    row
+                                                                    row.id
                                                                 )
                                                             }
                                                         >
@@ -192,6 +207,8 @@ const mapStateToProps = (state) => ({
     callbacks: state.callback.callbacks,
 });
 
-export default connect(mapStateToProps, { getCallbacks, clearCallback })(
-    CallBackTable
-);
+export default connect(mapStateToProps, {
+    getCallbacks,
+    clearCallback,
+    delCallback,
+})(CallBackTable);

@@ -4,8 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Broadcasting\LivecallChannel;
+<<<<<<< HEAD
 use App\Http\Controllers\TwoFactorAuthController;
 
+=======
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LiveCallController;
+>>>>>>> f51c490b0dd17df8f6db24ea82057edac8ccd9b9
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +32,7 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     })->name('home');
 
-    Route::get('admin/reset-password/{token}', function () {
+    Route::get('admin/password/reset/{token}', function () {
         return view('welcome');
     })->name('password.reset');
 
@@ -42,6 +47,10 @@ Route::middleware(['guest'])->group(function () {
     Route::get('live-support', function () {
         return view('welcome');
     });
+
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('password/email', [AuthController::class, 'forgotPass']);
+    Route::post('password/update', [AuthController::class, 'resetPass']);
 
 });
 
@@ -61,7 +70,11 @@ Route::middleware(['auth', '2fa'])->group(function () {
         return view('welcome');
     })->where('name', '.*')->name('dashboard');
 
-    //Route::get('customer-analytics/download', [MailController::class, 'download']);
+    Route::put('/change-password', [AuthController::class, 'changePass']);
+    Route::put('/update', [AuthController::class, 'update']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('livecall/download', [LiveCallController::class, 'download']);
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
@@ -74,7 +87,3 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 Route::get('confrencing/{URLRoomName?}', function () {
     return view('welcome');
 });
-
-Auth::routes();
-
-//Broadcast::channel('livecall', LivecallChannel::class);

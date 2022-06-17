@@ -3,7 +3,7 @@ import AboutDialog from "../AboutDialog";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoIconOutlined from "@mui/icons-material/InfoOutlined";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import StartRecordingIcon from "@mui/icons-material/PlayCircle";
+import LanIcon from "@mui/icons-material/Lan";
 import StopRecordingIcon from "@mui/icons-material/StopCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import {
@@ -85,8 +85,18 @@ const Menu = (props) => {
                         <Typography variant="body1">Flip Camera</Typography>
                     </MenuItem>
                 )}
-
-                {roomType !== "peer-to-peer" && roomType !== "go" && (
+                <MenuItem
+                    onClick={() => {
+                        props.toggleBreakoutRoom();
+                        setMenuOpen(false);
+                    }}
+                >
+                    <IconContainer>
+                        <LanIcon />
+                    </IconContainer>
+                    <Typography variant="body1">Breakout Rooms</Typography>
+                </MenuItem>
+                {/*roomType !== "peer-to-peer" && roomType !== "go" && (
                     <MenuItem
                         disabled={isFetching}
                         onClick={() => {
@@ -114,7 +124,7 @@ const Menu = (props) => {
                             {isRecording ? "Stop" : "Start"} Recording
                         </Typography>
                     </MenuItem>
-                )}
+                            )*/}
 
                 <MenuItem
                     onClick={() => {

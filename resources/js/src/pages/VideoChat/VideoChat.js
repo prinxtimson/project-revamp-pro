@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "@mui/styles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const theme = createTheme();
 
@@ -31,22 +32,38 @@ const Main = styled("main")(({ theme }) => ({
 }));
 
 export default function VideoChat() {
+    const { URLRoomID } = useParams();
+    let [urlSearchParams] = useSearchParams();
+    const [password] = React.useState(urlSearchParams.get("pwd"));
     const roomState = useRoomState();
 
     const height = useHeight();
+
+    // React.useEffect(() => {
+    //     if (livecall) {
+    //         window.addEventListener("beforeunload", (e) => {
+    //             e.preventDefault();
+    //             e.returnValue = "Are you sure you want to close?";
+    //         });
+    //         window.addEventListener("unload", (e) => {
+    //             e.preventDefault();
+    //             leaveLivecall(livecall.id);
+    //         });
+    //     }
+    // }, [livecall]);
 
     return (
         <ThemeProvider theme={theme}>
             <Container style={{ height, flexGrow: 1 }}>
                 {roomState === "disconnected" ? (
-                    <PreJoinScreens />
+                    <PreJoinScreens URLRoomID={URLRoomID} password={password} />
                 ) : (
                     <Main>
                         <ReconnectingNotification />
                         <RecordingNotifications />
-                        <MobileTopMenuBar />
+                        <MobileTopMenuBar password={password} />
                         <Room />
-                        <MenuBar />
+                        <MenuBar password={password} />
                     </Main>
                 )}
             </Container>

@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 //require_once '/path/to/vendor/autoload.php'; // Loads the library
 
-use App\Events\AgentConnected;
-use OpenTok\OpenTok;
-use Twilio\Rest\Client;
+use Maatwebsite\Excel\Excel;
 use App\Events\LivecallUpdate;
+use App\Exports\LiveCallExport;
 use App\Models\LiveCall as ModelsLiveCall;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -15,6 +14,12 @@ use Carbon\Carbon;
 
 class LiveCallController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
 
     /**
      * Display a listing of the resource.
@@ -49,9 +54,12 @@ class LiveCallController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function download(Request $request)
     {
-        //
+        $from = $request->from;
+        $to = $request->to;
+
+        return $this->excel->download(new LiveCallExport($from, $to), 'live_support_call.xlsx');
     }
 
     /**
@@ -100,106 +108,6 @@ class LiveCallController extends Controller
         LivecallUpdate::dispatch($livecall);
 
         return $livecall;
-    }
-
-    public function remove_participant(Request $request)
-    {
-        $fields = $request->validate([
-            'roomName' => 'required|string',
-            'participant' => 'required|string'
-        ]);
-
-        $api_key = getenv('TWILIO_API_KEY');
-        $api_secret = getenv('TWILIO_API_SECRET');
-        $client = new Client($api_key, $api_secret);
-
-        
-        $participant = $client->video->rooms($fields['roomName'])->participants($fields['participant'])->update(array("status" => "disconnected"));
-
-        return $participant;
-    }
-
-    public function connect($id)
-    {
-        $user = auth()->user();
-        $roomName = 'call_'.$id;
-        $identity = $user->username;
-        $token = $user->createToken('access_token')->plainTextToken;
-
-        $livecall = ModelsLiveCall::find($id);
-
-        if($livecall->answered_at || $livecall->left_at){
-            $response = [
-                'msg' => 'Livecall request no longer available'
-            ];
-            return response($response, 400);
-        }
-
-        $livecall->update([
-            'agent_id' => $user->id,
-            'answered_at' => Carbon::now()
-        ]);
-
-        LivecallUpdate::dispatch($livecall);
-
-        $data = Http::withToken($token)->post('http://localhost:5000/twilio/connect', ['roomName' => $roomName, 'identity' => $identity, 'role' => 'host'])->throw()->json();
-
-        return $data;
-    }
-
-    public function on_connected(Request $request, $id)
-    {
-        $fields = $request->validate([
-            'roomName' => 'required|string',
-            'identity' => 'required|string'
-        ]);
-        $livecall = ModelsLiveCall::find($id);
-
-        $data = Http::post('http://localhost:5000/twilio/connect', $fields)->throw()->json();
-
-        AgentConnected::dispatch($livecall, $data);
-
-        return response('', 200);
-    }
-
-    public function con($id) 
-    {
-        $user = auth()->user();   
-        $roomName = 'call_'.$id;
-        $api_key = getenv('OPENTOK_API_KEY');
-        $api_secret = getenv('OPENTOK_API_SECRET');
-    
-        $opentok = new OpenTok($api_key, $api_secret);
-
-        $livecall = ModelsLiveCall::find($id);
-
-        // if($livecall->answered_at || $livecall->left_at){
-        //     $response = [
-        //         'msg' => 'Livecall request no longer available'
-        //     ];
-        //     return response($response, 400);
-        // }
-
-            $session = $opentok->createSession();
-            $sessionId = $session->getSessionId();
-            $token = $opentok->generateToken($sessionId);
-
-            $livecall->update([
-                'agent_id' => $user->id,
-                'answered_at' => Carbon::now(),
-                'session_id' => $sessionId
-            ]);
-    
-            LivecallUpdate::dispatch($livecall); 
-
-            return [
-                'apiKey' => $api_key,
-                'sessionId' => $sessionId,
-                'token' => $token,
-                'room' => $roomName,
-                'id' => $user->username
-            ];
-        
     }
 
     /**

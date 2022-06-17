@@ -52,7 +52,7 @@ const ListItems = ({ livecalls }) => {
                                 (val) => !val.answered_at && !val.left_at
                             ).length
                         }
-                        color="success"
+                        color="error"
                     >
                         <ListItemText primary="Livecall" />
                     </Badge>
@@ -64,14 +64,6 @@ const ListItems = ({ livecalls }) => {
                         <PhoneCallbackIcon />
                     </ListItemIcon>
                     <ListItemText primary="Callback" />
-                </ListItem>
-            </Link>
-            <Link to="reports">
-                <ListItem button>
-                    <ListItemIcon>
-                        <BarChartIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Reports" />
                 </ListItem>
             </Link>
         </div>
