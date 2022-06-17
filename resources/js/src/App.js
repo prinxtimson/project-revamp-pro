@@ -13,11 +13,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import LiveSupportPage from "./pages/LiveSupportPage";
 import VideoChat from "./pages/VideoChat";
-<<<<<<< HEAD
 import TwoFactorAuthPage from "./pages/TwoFactorAuthPage";
 import OpenTok from "./pages/OpenTok";
-=======
->>>>>>> f51c490b0dd17df8f6db24ea82057edac8ccd9b9
 
 const App = (props) => {
     const [auth, setAuth] = useState(store.getState().auth);
