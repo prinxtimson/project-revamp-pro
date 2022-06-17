@@ -4,13 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Broadcasting\LivecallChannel;
-<<<<<<< HEAD
 use App\Http\Controllers\TwoFactorAuthController;
-
-=======
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LiveCallController;
->>>>>>> f51c490b0dd17df8f6db24ea82057edac8ccd9b9
 
 /*
 |--------------------------------------------------------------------------
