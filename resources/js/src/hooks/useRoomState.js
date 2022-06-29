@@ -18,6 +18,8 @@ export default function useRoomState() {
                     .off("reconnecting", setRoomState);
             };
         }
+
+        return () => setState(null);
     }, [room]);
 
     return state;

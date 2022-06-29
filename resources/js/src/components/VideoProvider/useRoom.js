@@ -13,12 +13,15 @@ export default function useRoom(localTracks, onError, options) {
 
     useEffect(() => {
         optionsRef.current = options;
+
+        return () => {
+            optionsRef.current = null;
+        };
     }, [options]);
 
     const connect = useCallback(
         (token) => {
             setIsConnecting(true);
-            console.log(token);
             return Video.connect(token, {
                 ...optionsRef.current,
                 tracks: localTracks,
@@ -55,7 +58,6 @@ export default function useRoom(localTracks, onError, options) {
                     }
                 },
                 (error) => {
-                    console.log(error);
                     onError(error);
                     setIsConnecting(false);
                 }

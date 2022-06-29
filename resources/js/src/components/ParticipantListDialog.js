@@ -41,7 +41,6 @@ const ParticipantListDialog = ({ open, onClose, user }) => {
     };
 
     const handleRemoveParticipant = (name) => {
-        console.log(room.name);
         axios
             .post("/api/room/remove_participant", {
                 roomName: room.name,

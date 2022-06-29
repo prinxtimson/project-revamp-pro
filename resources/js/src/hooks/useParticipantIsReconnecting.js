@@ -14,6 +14,7 @@ export default function useParticipantIsReconnecting(participant) {
         return () => {
             participant.off("reconnecting", handleReconnecting);
             participant.off("reconnected", handleReconnected);
+            setIsReconnecting(null);
         };
     }, [participant]);
 

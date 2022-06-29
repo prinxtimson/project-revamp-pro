@@ -37,7 +37,7 @@ class TwoFactorAuthController extends Controller
         if ($exists) {
             $request->session()->put('user_2fa', auth()->user()->id);
             
-            return redirect(RouteServiceProvider::HOME);
+            return redirect()->route('dashboard');
         }
   
         return response('You entered wrong OTP code.', 401);

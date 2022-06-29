@@ -53,6 +53,7 @@ export default function useScreenShareParticipant() {
                     "trackUnpublished",
                     updateScreenShareParticipant
                 );
+                setScreenShareParticipant(null);
             };
         }
     }, [room]);

@@ -1,7 +1,7 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,15 +12,15 @@ import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
+import TextField from "@mui/material/TextField";
+import ClearIcon from "@mui/icons-material/Cancel";
+import DrawerContainer from "./DrawerContainer";
 import { connect } from "react-redux";
+import AddUserForm from "./AddUserForm";
 import {
     getAllProfiles,
     enableUser,
@@ -29,7 +29,7 @@ import {
     clearProfile,
 } from "../../actions/profile";
 
-const theme = createTheme();
+const axios = window.axios;
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     head: {
@@ -60,12 +60,37 @@ const AgentsTable = ({
     clearProfile,
 }) => {
     const [page, setPage] = React.useState(0);
+    const [searchUsers, setSearchUsers] = React.useState([]);
+    const [query, setQuery] = React.useState("");
 
     React.useEffect(() => {
         getAllProfiles();
 
         return clearProfile;
     }, []);
+
+    React.useEffect(() => {
+        if (users) {
+            setSearchUsers(users.data);
+        }
+    }, [users]);
+
+    React.useEffect(() => {
+        if (query) {
+            axios
+                .get(`/api/users/search/${query}`)
+                .then((res) => {
+                    setSearchUsers(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            if (users) {
+                setSearchUsers(users.data);
+            }
+        }
+    }, [query]);
 
     const handleDelete = (row) => delUser(row);
 
@@ -78,17 +103,46 @@ const AgentsTable = ({
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <DrawerContainer>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
+
                 <Box
                     sx={{
-                        marginTop: 8,
+                        marginTop: 4,
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center",
+                        backgroundColor: "white",
+                        borderRadius: 2,
+                        padding: 3,
                     }}
                 >
+                    <Box sx={{ maxWidth: 480, mb: 2, width: "100%" }}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            margin="normal"
+                            label="Search"
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                    <IconButton
+                                        sx={{
+                                            visibility: query
+                                                ? "visible"
+                                                : "hidden",
+                                        }}
+                                        onClick={() => setQuery("")}
+                                    >
+                                        <ClearIcon />
+                                    </IconButton>
+                                ),
+                            }}
+                        />
+                    </Box>
+                    <Divider />
                     <TableContainer
                         variant="elevation"
                         style={{
@@ -101,6 +155,7 @@ const AgentsTable = ({
                         <Table aria-label="customized table">
                             <TableHead>
                                 <TableRow>
+                                    <StyledTableCell>ID</StyledTableCell>
                                     <StyledTableCell>Name</StyledTableCell>
                                     <StyledTableCell align="left">
                                         Username
@@ -123,15 +178,18 @@ const AgentsTable = ({
                                             Loading.....
                                         </StyledTableCell>
                                     </TableRow>
-                                ) : !users || users.data.length === 0 ? (
+                                ) : !searchUsers || searchUsers.length === 0 ? (
                                     <TableRow>
                                         <StyledTableCell scope="row">
                                             No Data Available.
                                         </StyledTableCell>
                                     </TableRow>
                                 ) : (
-                                    users.data.map((row) => (
+                                    searchUsers.map((row) => (
                                         <StyledTableRow key={row.email}>
+                                            <StyledTableCell>
+                                                {row.id}
+                                            </StyledTableCell>
                                             <StyledTableCell scope="row">
                                                 {row.name}
                                             </StyledTableCell>
@@ -142,10 +200,10 @@ const AgentsTable = ({
                                                 {row.email}
                                             </StyledTableCell>
                                             <StyledTableCell align="left">
-                                                {row.roles[0]?.name}
+                                                {row.roles[0].name}
                                             </StyledTableCell>
                                             <StyledTableCell align="center">
-                                                {row.roles[0]?.name ===
+                                                {row.roles[0].name ===
                                                 "super-admin" ? null : (
                                                     <Grid container spacing={2}>
                                                         <Grid item xs={6}>
@@ -210,8 +268,9 @@ const AgentsTable = ({
                         </Table>
                     </TableContainer>
                 </Box>
+                <AddUserForm />
             </Container>
-        </ThemeProvider>
+        </DrawerContainer>
     );
 };
 

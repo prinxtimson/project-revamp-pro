@@ -1,8 +1,9 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -18,17 +19,25 @@ import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import Divider from "@mui/material/Divider";
+import { Tag } from "primereact/tag";
 import {
     delLivecall,
     answerLivecall,
     setLivecalls,
+    getConnectedLivecalls,
+    getLivecalls,
 } from "../../actions/livecall";
 import { connect } from "react-redux";
 import Moment from "react-moment";
 import Typography from "@mui/material/Typography";
+import DrawerContainer from "./DrawerContainer";
 //import moment from "@mui/material/TextField";
-
-const theme = createTheme();
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     head: {
@@ -55,6 +64,8 @@ const LiveCallTable = ({
     answerLivecall,
     setLivecalls,
     alerts,
+    getConnectedLivecalls,
+    getLivecalls,
 }) => {
     const [page, setPage] = React.useState(0);
     const [actionLoading, setActionLoading] = React.useState(false);
@@ -86,6 +97,14 @@ const LiveCallTable = ({
         setPage(newPage);
     };
 
+    const onFilterSelect = (e) => {
+        if (e.target.value === "waiting") {
+            getConnectedLivecalls();
+        } else {
+            getLivecalls();
+        }
+    };
+
     const handleOnSelectChange = (text) => {
         if (text) {
             setQueryType(text);
@@ -113,7 +132,7 @@ const LiveCallTable = ({
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <DrawerContainer>
             <Stack sx={{ width: "100%" }} spacing={2}>
                 {alerts.map(
                     (alert) =>
@@ -140,9 +159,10 @@ const LiveCallTable = ({
             </Stack>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
+
                 <Box
                     sx={{
-                        marginTop: 8,
+                        marginTop: 5,
                         display: "flex",
                         flexDirection: "column",
                         backgroundColor: "white",
@@ -150,87 +170,109 @@ const LiveCallTable = ({
                         padding: 3,
                     }}
                 >
-                    <Typography
-                        component="p"
-                        variant="h4"
+                    <Card
                         sx={{
-                            marginY: 2,
+                            my: 2,
+                            padding: 3,
                         }}
+                        variant="outlined"
                     >
-                        Download Report
-                    </Typography>
-                    <Grid
-                        container
-                        spacing={3}
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <Grid item xs={12} sm={5}>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                margin="dense"
-                                id="start"
-                                label="Start Date"
-                                type="date"
-                                value={data.from}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                onChange={(e) =>
-                                    setData({
-                                        ...data,
-                                        from: e.target.value,
-                                    })
-                                }
-                            />
+                        <Typography
+                            component="p"
+                            variant="h6"
+                            sx={{
+                                marginY: 2,
+                            }}
+                        >
+                            Download Report
+                        </Typography>
+                        <Grid
+                            container
+                            spacing={3}
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Grid item xs={12} sm={5}>
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="dense"
+                                    id="start"
+                                    label="Start Date"
+                                    type="date"
+                                    size="small"
+                                    value={data.from}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            from: e.target.value,
+                                        })
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={5}>
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="dense"
+                                    id="end"
+                                    label="End Date"
+                                    type="date"
+                                    value={data.to}
+                                    size="small"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            to: e.target.value,
+                                        })
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={2}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    size="small"
+                                    onClick={handleOnDownload}
+                                    disabled={!data.from || !data.to}
+                                >
+                                    Download
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={5}>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                margin="dense"
-                                id="end"
-                                label="End Date"
-                                type="date"
-                                value={data.to}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                onChange={(e) =>
-                                    setData({
-                                        ...data,
-                                        to: e.target.value,
-                                    })
-                                }
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                size="large"
-                                onClick={handleOnDownload}
-                                disabled={!data.from || !data.to}
-                            >
-                                Download
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: "flex",
-                        flexDirection: "column",
-                        backgroundColor: "white",
-                        borderRadius: 2,
-                        padding: 3,
-                    }}
-                >
+                    </Card>
                     <div style={{ margin: 10 }}>
                         <Grid container spacing={5}>
-                            <Grid item xs />
+                            <Grid item xs>
+                                <FormControl>
+                                    <FormLabel id="filter-radio-buttons-group-label">
+                                        Filter Queries
+                                    </FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="filter-radio-buttons-group-label"
+                                        name="filter"
+                                        onChange={onFilterSelect}
+                                    >
+                                        <FormControlLabel
+                                            value="all"
+                                            control={<Radio />}
+                                            label="All Tickets"
+                                        />
+                                        <FormControlLabel
+                                            value="waiting"
+                                            control={<Radio />}
+                                            label="Waiting Tickets"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
                             <Grid item xs>
                                 <TextField
                                     id="query_type"
@@ -283,6 +325,7 @@ const LiveCallTable = ({
                             </Grid>
                         </Grid>
                     </div>
+                    <Divider sx={{ mt: 2 }} />
                     <TableContainer
                         variant="elevation"
                         style={{
@@ -302,7 +345,7 @@ const LiveCallTable = ({
                                     <StyledTableCell align="left">
                                         Wait Duration
                                     </StyledTableCell>
-                                    <StyledTableCell align="left">
+                                    <StyledTableCell align="center">
                                         Status
                                     </StyledTableCell>
                                     <StyledTableCell align="center">
@@ -349,12 +392,23 @@ const LiveCallTable = ({
                                                     </Moment>
                                                 )}
                                             </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.answered_at
-                                                    ? "Answered"
-                                                    : row.left_at
-                                                    ? "Left"
-                                                    : "Waiting"}
+                                            <StyledTableCell align="center">
+                                                {row.answered_at ? (
+                                                    <Tag
+                                                        value="ANSWERED"
+                                                        severity="success"
+                                                    />
+                                                ) : row.left_at ? (
+                                                    <Tag
+                                                        value="LEFT"
+                                                        severity="error"
+                                                    />
+                                                ) : (
+                                                    <Tag
+                                                        value="WAITING"
+                                                        severity="info"
+                                                    />
+                                                )}
                                             </StyledTableCell>
                                             <StyledTableCell align="center">
                                                 <Grid container spacing={2}>
@@ -416,7 +470,7 @@ const LiveCallTable = ({
                     </TableContainer>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </DrawerContainer>
     );
 };
 
@@ -430,4 +484,6 @@ export default connect(mapStateToProps, {
     delLivecall,
     answerLivecall,
     setLivecalls,
+    getConnectedLivecalls,
+    getLivecalls,
 })(LiveCallTable);

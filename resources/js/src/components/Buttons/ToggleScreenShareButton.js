@@ -2,6 +2,8 @@ import React from "react";
 import { createStyles, makeStyles } from "@mui/styles";
 
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Hidden from "@mui/material/Hidden";
 import ScreenShareIcon from "@mui/icons-material/ScreenShare";
 import Tooltip from "@mui/material/Tooltip";
 
@@ -38,10 +40,12 @@ export default function ToggleScreenShareButton(props) {
     const isDisabled =
         props.disabled || disableScreenShareButton || !isScreenShareSupported;
 
-    let tooltipMessage = "";
+    let tooltipMessage = SCREEN_SHARE_TEXT;
 
     if (disableScreenShareButton) {
         tooltipMessage = SHARE_IN_PROGRESS_TEXT;
+    } else {
+        tooltipMessage = SCREEN_SHARE_TEXT;
     }
 
     if (!isScreenShareSupported) {
@@ -49,23 +53,48 @@ export default function ToggleScreenShareButton(props) {
     }
 
     return (
-        <Tooltip
-            title={tooltipMessage}
-            placement="top"
-            PopperProps={{ disablePortal: true }}
-            style={{ cursor: isDisabled ? "not-allowed" : "pointer" }}
-        >
-            <span>
-                <Button
-                    className={classes.button}
-                    onClick={toggleScreenShare}
-                    disabled={isDisabled}
-                    startIcon={<ScreenShareIcon />}
-                    data-cy-share-screen
+        <>
+            <Hidden smDown>
+                <Tooltip
+                    title={tooltipMessage}
+                    placement="top"
+                    PopperProps={{ disablePortal: true }}
+                    style={{ cursor: isDisabled ? "not-allowed" : "pointer" }}
                 >
-                    {SCREEN_SHARE_TEXT}
-                </Button>
-            </span>
-        </Tooltip>
+                    <span>
+                        <Button
+                            className={classes.button}
+                            onClick={toggleScreenShare}
+                            disabled={isDisabled}
+                            startIcon={<ScreenShareIcon />}
+                            data-cy-share-screen
+                        >
+                            {SCREEN_SHARE_TEXT}
+                        </Button>
+                    </span>
+                </Tooltip>
+            </Hidden>
+            <Hidden smUp>
+                <Tooltip
+                    title={tooltipMessage}
+                    placement="top"
+                    PopperProps={{ disablePortal: true }}
+                    style={{ cursor: isDisabled ? "not-allowed" : "pointer" }}
+                >
+                    <span>
+                        <IconButton
+                            className={classes.button}
+                            onClick={toggleScreenShare}
+                            disabled={isDisabled}
+                            data-cy-share-screen
+                            color="primary"
+                            size="large"
+                        >
+                            <ScreenShareIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            </Hidden>
+        </>
     );
 }

@@ -1,8 +1,10 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
+import { red, yellow } from "@mui/material/colors";
 import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,18 +13,30 @@ import TableHead from "@mui/material/TableHead";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CheckIcon from "@mui/icons-material/Check";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import Tooltip from "@mui/material/Tooltip";
+import { Tag } from "primereact/tag";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import {
     getCallbacks,
     clearCallback,
     delCallback,
+    callbackFailed,
+    callbackSuccessful,
 } from "../../actions/callback";
+import DrawerContainer from "./DrawerContainer";
 
-const theme = createTheme();
+const axios = window.axios;
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     head: {
@@ -48,8 +62,20 @@ const CallBackTable = ({
     getCallbacks,
     clearCallback,
     delCallback,
+    callbackFailed,
+    callbackSuccessful,
 }) => {
     const [page, setPage] = React.useState(0);
+    const [searchCallbacks, setSearchCallbacks] = React.useState([]);
+    const [query, setQuery] = React.useState("");
+    const [data, setData] = React.useState({
+        from: "",
+        to: "",
+    });
+
+    const handleOnDownload = () => {
+        window.location.href = `/callback/download?from=${data.from}&to=${data.to}`;
+    };
 
     React.useEffect(() => {
         getCallbacks();
@@ -57,33 +83,167 @@ const CallBackTable = ({
         return clearCallback;
     }, []);
 
+    React.useEffect(() => {
+        if (callbacks) {
+            setSearchCallbacks(callbacks.data);
+        }
+    }, [callbacks]);
+
+    React.useEffect(() => {
+        if (query) {
+            axios
+                .get(`/api/callback/search/${query}`)
+                .then((res) => {
+                    setSearchCallbacks(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            if (callbacks) {
+                setSearchCallbacks(callbacks.data);
+            }
+        }
+    }, [query]);
+
     const handleDelete = (row) => {
         delCallback(row);
     };
 
-    const handleDisable = (row) => {};
+    const handleCheck = (id) => callbackSuccessful(id);
+
+    const handleCancel = (id) => callbackFailed(id);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <DrawerContainer>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
+
                 <Box
                     sx={{
-                        marginTop: 8,
+                        marginTop: 4,
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center",
+                        backgroundColor: "white",
+                        borderRadius: 2,
+                        padding: 3,
                     }}
                 >
+                    <Card
+                        sx={{
+                            my: 2,
+                            padding: 3,
+                            width: "100%",
+                        }}
+                        variant="outlined"
+                    >
+                        <Typography
+                            component="p"
+                            variant="h6"
+                            sx={{
+                                marginY: 2,
+                            }}
+                        >
+                            Download Report
+                        </Typography>
+                        <Grid
+                            container
+                            spacing={3}
+                            justifyContent="center"
+                            alignItems="center"
+                        >
+                            <Grid item xs={12} sm={5}>
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="dense"
+                                    id="start"
+                                    label="Start Date"
+                                    type="date"
+                                    size="small"
+                                    value={data.from}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            from: e.target.value,
+                                        })
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={5}>
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="dense"
+                                    id="end"
+                                    label="End Date"
+                                    type="date"
+                                    value={data.to}
+                                    size="small"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            to: e.target.value,
+                                        })
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={2}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    size="small"
+                                    onClick={handleOnDownload}
+                                    disabled={!data.from || !data.to}
+                                >
+                                    Download
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Card>
+                    <Box sx={{ mb: 2, width: "100%" }}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            margin="normal"
+                            label="Search"
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                    <IconButton
+                                        sx={{
+                                            visibility: query
+                                                ? "visible"
+                                                : "hidden",
+                                        }}
+                                        onClick={() => setQuery("")}
+                                    >
+                                        <CancelIcon />
+                                    </IconButton>
+                                ),
+                            }}
+                        />
+                    </Box>
+                    <Divider />
                     <TableContainer
                         variant="elevation"
                         style={{
                             borderTopLeftRadius: 0,
                             borderTopRightRadius: 0,
+                            width: "100%",
+                            //overflow: 'auto'
                         }}
                         elevation={0}
                         component={Paper}
@@ -91,6 +251,7 @@ const CallBackTable = ({
                         <Table aria-label="customized table">
                             <TableHead>
                                 <TableRow>
+                                    <StyledTableCell>ID</StyledTableCell>
                                     <StyledTableCell>Name</StyledTableCell>
                                     <StyledTableCell align="left">
                                         Email
@@ -105,6 +266,9 @@ const CallBackTable = ({
                                         Time
                                     </StyledTableCell>
                                     <StyledTableCell align="center">
+                                        Status
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
                                         Actions
                                     </StyledTableCell>
                                 </TableRow>
@@ -116,16 +280,19 @@ const CallBackTable = ({
                                             Loading.....
                                         </StyledTableCell>
                                     </TableRow>
-                                ) : !callbacks ||
-                                  callbacks.data.length === 0 ? (
+                                ) : !searchCallbacks ||
+                                  searchCallbacks.length === 0 ? (
                                     <TableRow>
                                         <StyledTableCell scope="row">
                                             No Data Available.
                                         </StyledTableCell>
                                     </TableRow>
                                 ) : (
-                                    callbacks?.data.map((row) => (
+                                    searchCallbacks.map((row) => (
                                         <StyledTableRow key={row.id}>
+                                            <StyledTableCell>
+                                                {row.id}
+                                            </StyledTableCell>
                                             <StyledTableCell scope="row">
                                                 {row.name}
                                             </StyledTableCell>
@@ -144,38 +311,82 @@ const CallBackTable = ({
                                                 {row.time}
                                             </StyledTableCell>
                                             <StyledTableCell align="center">
-                                                <Grid container spacing={2}>
-                                                    <Grid item xs={6}>
-                                                        <Button
-                                                            size="small"
-                                                            variant="outlined"
-                                                            disabled={
-                                                                !row.called_at
-                                                            }
+                                                {!row.status ? null : row.status ===
+                                                  "FAILED" ? (
+                                                    <Tag
+                                                        value={row.status}
+                                                        severity="error"
+                                                    ></Tag>
+                                                ) : (
+                                                    <Tag
+                                                        value={row.status}
+                                                        severity="success"
+                                                    ></Tag>
+                                                )}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="center">
+                                                <Tooltip title="Successful">
+                                                    <span>
+                                                        <IconButton
+                                                            disabled={Boolean(
+                                                                row.called_at
+                                                            )}
                                                             onClick={() =>
-                                                                handleDisable(
+                                                                handleCheck(
                                                                     row.id
                                                                 )
                                                             }
                                                         >
-                                                            Close
-                                                        </Button>
-                                                    </Grid>
-                                                    <Grid item xs={6}>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="secondary"
-                                                            size="small"
+                                                            <CheckIcon
+                                                                color={
+                                                                    row.called_at
+                                                                        ? "disabled"
+                                                                        : "success"
+                                                                }
+                                                            />
+                                                        </IconButton>
+                                                    </span>
+                                                </Tooltip>
+                                                <Tooltip title="Failed">
+                                                    <span>
+                                                        <IconButton
+                                                            disabled={Boolean(
+                                                                row.called_at
+                                                            )}
                                                             onClick={() =>
-                                                                handleDelete(
+                                                                handleCancel(
                                                                     row.id
                                                                 )
                                                             }
                                                         >
-                                                            Delete
-                                                        </Button>
-                                                    </Grid>
-                                                </Grid>
+                                                            <CancelIcon
+                                                                color={
+                                                                    row.called_at
+                                                                        ? "disabled"
+                                                                        : ""
+                                                                }
+                                                                sx={{
+                                                                    color: row.called_at
+                                                                        ? ""
+                                                                        : yellow[700],
+                                                                }}
+                                                            />
+                                                        </IconButton>
+                                                    </span>
+                                                </Tooltip>
+                                                <Tooltip title="Delete">
+                                                    <IconButton
+                                                        onClick={() =>
+                                                            handleDelete(row.id)
+                                                        }
+                                                    >
+                                                        <DeleteIcon
+                                                            sx={{
+                                                                color: red[500],
+                                                            }}
+                                                        />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </StyledTableCell>
                                         </StyledTableRow>
                                     ))
@@ -198,7 +409,7 @@ const CallBackTable = ({
                     </TableContainer>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </DrawerContainer>
     );
 };
 
@@ -211,4 +422,6 @@ export default connect(mapStateToProps, {
     getCallbacks,
     clearCallback,
     delCallback,
+    callbackFailed,
+    callbackSuccessful,
 })(CallBackTable);

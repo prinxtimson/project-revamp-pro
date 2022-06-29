@@ -1,38 +1,28 @@
 import React from "react";
-import clsx from "clsx";
-import { createStyles, makeStyles } from "@mui/styles";
 import { Button } from "@mui/material";
 
 import useVideoContext from "../../hooks/useVideoContext";
+import { connect } from "react-redux";
+import { endLivecall } from "../../actions/livecall";
 
-const axios = window.axios;
-
-const useStyles = makeStyles((theme) =>
-    createStyles({
-        button: {
-            background: theme.brand,
-            color: "white",
-            "&:hover": {
-                background: "#600101",
-            },
-        },
-    })
-);
-
-export default function EndCallButton(props) {
-    const classes = useStyles();
+const EndCallButton = ({ endLivecall, loading }) => {
     const { room } = useVideoContext();
 
     return (
         <Button
-            onClick={() => {
-                room?.disconnect();
-                // axios.get('callended')
-            }}
-            className={clsx(classes.button, props.className)}
+            onClick={() => endLivecall(room.sid)}
+            variant="contained"
+            color="error"
             data-cy-disconnect
+            size="small"
         >
-            Disconnect
+            Endcall
         </Button>
     );
-}
+};
+
+const mapStateToProps = (state) => ({
+    loading: state.livecall.loading,
+});
+
+export default connect(mapStateToProps, { endLivecall })(EndCallButton);

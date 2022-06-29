@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Excel;
 use App\Events\LivecallUpdate;
 use App\Exports\LiveCallExport;
 use App\Models\LiveCall as ModelsLiveCall;
+use App\WebPush\WebNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
@@ -33,9 +34,16 @@ class LiveCallController extends Controller
         return $livecall;
     }
 
-    public function on()
+    public function waiting_list_count()
     {
-        $livecalls = ModelsLiveCall::where('answered_at', '=', null)->where('left_at', '=', null)->get();
+        $count = ModelsLiveCall::whereNull('answered_at')->whereNull('left_at')->count();
+
+        return $count;
+    }
+
+    public function filter_waiting_list()
+    {
+        $livecalls = ModelsLiveCall::whereNull('answered_at')->whereNull('left_at')->orderBy('id', 'DESC')->paginate(20);
 
         return $livecalls;
     }
@@ -48,6 +56,21 @@ class LiveCallController extends Controller
 
         return $livecalls;
     }
+
+
+
+    public function summary()
+    {
+        $livecalls = ModelsLiveCall::count();
+        $answered = ModelsLiveCall::whereNotNull('answered_at')->count();
+        $left = ModelsLiveCall::whereNotNull('left_at')->count();
+
+        return response([
+            'total_livecalls' => $livecalls,
+            'total_answered' => $answered,
+            'total_left' => $left,
+        ]);
+     }
 
     /**
      * Show the form for creating a new resource.
@@ -77,6 +100,8 @@ class LiveCallController extends Controller
         $livecall = ModelsLiveCall::create($request->all());
 
         LivecallUpdate::dispatch($livecall);
+
+       WebNotification::sendWebNotification(['title' => 'Livecall Request', 'body' => 'A new livecall request had been submitted.']);
 
         return response($livecall, 201);
     }
@@ -108,6 +133,11 @@ class LiveCallController extends Controller
         LivecallUpdate::dispatch($livecall);
 
         return $livecall;
+    }
+
+    public function end($room)
+    {
+
     }
 
     /**

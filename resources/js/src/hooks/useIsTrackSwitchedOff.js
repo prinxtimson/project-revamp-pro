@@ -17,8 +17,10 @@ export default function useIsTrackSwitchedOff(track) {
             return () => {
                 track.off("switchedOff", handleSwitchedOff);
                 track.off("switchedOn", handleSwitchedOn);
+                setIsSwitchedOff(null);
             };
         }
+        return () => setIsSwitchedOff(null);
     }, [track]);
 
     return !!isSwitchedOff;

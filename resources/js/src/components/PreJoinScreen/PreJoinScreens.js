@@ -34,6 +34,11 @@ const PreJoinScreens = ({ user, URLRoomID, password, loading }) => {
         if (name) {
             setStep(Steps.deviceSelectionStep);
         }
+        return () => {
+            setStep(null);
+            setRoomId(null);
+            setName(null);
+        };
     }, [user, URLRoomID, room]);
 
     useEffect(() => {

@@ -195,16 +195,16 @@ class VideoRoomController extends Controller
                 ], 401);
             }
 
-            $data = Http::post('https://excelnode.herokuapp.com/twilio/connect', ['roomId' => $request->breakoutRoom, 'identity' => $fields['identity']])->throw()->json();
+            $data = Http::post('http://127.0.0.1:5000/twilio/connect', ['roomId' => $request->breakoutRoom, 'identity' => $fields['identity']])->throw()->json();
 
             return $data;
         }
 
-        $data = Http::post('https://excelnode.herokuapp.com/twilio/connect', ['roomId' => $room, 'identity' => $fields['identity']])->throw()->json();
+        $data = Http::post('http://127.0.0.1:5000/twilio/connect', ['roomId' => $room, 'identity' => $fields['identity']])->throw()->json();
 
         return $data;
     }
-
+ 
     /**
      * Update the specified resource in storage.
      *
@@ -233,8 +233,21 @@ class VideoRoomController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function end($id)
     {
-        //
+        $videoRoom =VideoRoom::find($id);
+
+        $client = new Client($this->api_key, $this->api_secret);
+        $room = $client->video->v1->rooms($id)->update('completed');
+
+        if($videoRoom){
+            $breakouts = $videoRoom->breakouts;         
+
+            foreach ($breakouts as $breakout) {
+                $client->video->v1->rooms($breakout->id)->update('completed');
+            }
+        }
+
+        return $room;
     }
 }

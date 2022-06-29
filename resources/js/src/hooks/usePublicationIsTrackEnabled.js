@@ -18,6 +18,8 @@ export default function usePublicationIsTrackEnabled(publication) {
                 publication.off("trackDisabled", setDisabled);
             };
         }
+
+        return () => setIsEnabled(null);
     }, [publication]);
 
     return isEnabled;

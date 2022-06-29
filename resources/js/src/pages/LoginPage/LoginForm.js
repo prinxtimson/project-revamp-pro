@@ -105,6 +105,7 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                         disabled={loading}
+                        id="login-btn"
                     >
                         Sign In
                     </Button>

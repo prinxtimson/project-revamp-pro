@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CallbackExport;
+use Maatwebsite\Excel\Excel;
 use App\Mail\Callback;
 use App\Models\CallBack as ModelsCallBack;
+use App\WebPush\WebNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class CallBackController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -27,10 +36,20 @@ class CallBackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function summary()
     {
-        //
-    }
+        $callbacks = ModelsCallBack::count();
+        $successful = ModelsCallBack::whereNotNull('called_at')->where('status', 'SUCCESSFUL')->count();
+        $failed = ModelsCallBack::whereNotNull('called_at')->where('status', 'FAILED')->count();
+        $waiting = ModelsCallBack::whereNull('called_at')->count();
+
+        return response([
+            'total_callbacks' => $callbacks,
+            'total_successful' => $successful,
+            'total_failed' => $failed,
+            'total_waiting' => $waiting
+        ]);
+     }
 
     /**
      * Store a newly created resource in storage.
@@ -48,13 +67,9 @@ class CallBackController extends Controller
             'date' => 'required'
         ]);
 
-        $response = ModelsCallBack::create([
-            'name' => $fields['name'],
-            'phone' => $fields['phone'],
-            'email' => $fields['email'],
-            'date' => $fields['date'],
-            'time' => $fields['time']
-        ]);
+        $response = ModelsCallBack::create($fields);
+
+        WebNotification::sendWebNotification(['title' => 'Callback Request', 'body' => 'A new callback request had been submitted.']);
 
         // Carbon::createFromDate($fields['date'], $fields['time'])
 
@@ -80,15 +95,58 @@ class CallBackController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function success($id)
     {
+        $user = auth()->user();
         $callback = ModelsCallBack::find($id);
         $callback->update([
-            'called_at' => Carbon::now()
+            'agent_id' => $user->id,
+            'called_at' => Carbon::now(),
+            'status' => 'SUCCESSFUL'
         ]);
 
+        return $callback;
+    }
+
+    public function fail($id)
+    {
+        $user = auth()->user();
+        $callback = ModelsCallBack::find($id);
+        $callback->update([
+            'agent_id' => $user->id,
+            'called_at' => Carbon::now(),
+            'status' => 'FAILED'
+        ]);
 
         return $callback;
+    }
+
+    public function download(Request $request)
+    {
+        $from = $request->from;
+        $to = $request->to;
+
+        return $this->excel->download(new CallbackExport($from, $to), 'live_support_call.xlsx');
+    }
+
+    public function search($query)
+    {
+        $search = collect();
+
+        foreach(ModelsCallBack::where('name', 'like', '%'.$query.'%')->get() as $q) {
+            $search->push($q);
+        }
+        foreach(ModelsCallBack::where('email', 'like', '%'.$query.'%')->get() as $q) {
+            $search->push($q);
+        }
+
+        $result = [];
+
+        foreach($search->unique('id')->values()->all() as $val){
+            $result[] = $val;
+        }
+
+        return response()->json($result);
     }
 
     /**

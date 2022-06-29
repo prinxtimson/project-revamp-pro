@@ -5,18 +5,16 @@ import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
 import CameraIcon from "@mui/icons-material/CameraAlt";
 import Typography from "@mui/material/Typography";
+import PhoneInput from "react-phone-input-2";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { connect } from "react-redux";
 import { updateUser, deleteAccount } from "../../actions/auth";
-import Divider from "@mui/material/Divider";
-
-const theme = createTheme();
+import DrawerContainer from "./DrawerContainer";
 
 const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
     const [inputRef, setInputRef] = React.useState(null);
@@ -25,6 +23,7 @@ const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
         firstname: "",
         lastname: "",
         avatar: "",
+        phone: "",
     });
 
     React.useEffect(() => {
@@ -32,6 +31,7 @@ const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
             firstname: user?.profile?.firstname || "",
             lastname: user?.profile?.lastname || "",
             avatar: user?.avatar || "",
+            phone: user?.phone || "",
         });
     }, [user]);
 
@@ -58,8 +58,8 @@ const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
+        <DrawerContainer>
+            <Container component="main" maxWidth="sm">
                 <CssBaseline />
                 <input
                     id="avatar"
@@ -76,6 +76,9 @@ const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        backgroundColor: "white",
+                        padding: 5,
+                        borderRadius: 2,
                     }}
                 >
                     <Typography component="h1" variant="h5">
@@ -95,7 +98,7 @@ const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
                         component="form"
                         onSubmit={handleSubmit}
                         noValidate
-                        sx={{ mt: 1 }}
+                        sx={{ mt: 2 }}
                     >
                         <Box
                             component="div"
@@ -153,30 +156,47 @@ const ProfileForm = ({ alerts, user, updateUser, loading, deleteAccount }) => {
                                 setData({ ...data, lastname: e.target.value })
                             }
                         />
+                        <PhoneInput
+                            inputProps={{
+                                required: true,
+                            }}
+                            inputStyle={{
+                                width: "100%",
+                                paddingTop: "14.5px",
+                                paddingBottom: "14.5px",
+                            }}
+                            containerStyle={{
+                                marginBottom: 5,
+                                marginTop: 10,
+                            }}
+                            specialLabel="Phone *"
+                            country={"gb"}
+                            value={data.phone}
+                            onChange={(val) => setData({ ...data, phone: val })}
+                        />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             disabled={loading}
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{ mt: 1.5, mb: 1 }}
                         >
                             Save
                         </Button>
+                        <Button
+                            type="button"
+                            fullWidth
+                            variant="contained"
+                            color="error"
+                            sx={{ mt: 1.5, mb: 2 }}
+                            onClick={deleteAccount}
+                        >
+                            Delete Account
+                        </Button>
                     </Box>
-                    <Divider light />
-                    <Button
-                        type="button"
-                        fullWidth
-                        variant="contained"
-                        color="error"
-                        sx={{ mt: 3, mb: 2 }}
-                        onClick={deleteAccount}
-                    >
-                        Delete Account
-                    </Button>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </DrawerContainer>
     );
 };
 

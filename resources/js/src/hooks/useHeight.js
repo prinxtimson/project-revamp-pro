@@ -13,6 +13,7 @@ export default function useHeight() {
         window.addEventListener("resize", onResize);
         return () => {
             window.removeEventListener("resize", onResize);
+            setHeight(null);
         };
     });
 

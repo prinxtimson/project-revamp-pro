@@ -17,6 +17,7 @@ export default function usePublications(participant) {
         return () => {
             participant.off("trackPublished", publicationAdded);
             participant.off("trackUnpublished", publicationRemoved);
+            setPublications([]);
         };
     }, [participant]);
 

@@ -34,6 +34,8 @@ export default function useDominantSpeaker() {
                     "participantDisconnected",
                     handleParticipantDisconnected
                 );
+
+                setDominantSpeaker(null);
             };
         }
     }, [room]);

@@ -18,6 +18,8 @@ export default function useFlipCameraToggle() {
         if (currentFacingMode && supportsFacingMode === false) {
             setSupportsFacingMode(true);
         }
+
+        return () => setSupportsFacingMode(null);
     }, [mediaStreamTrack, supportsFacingMode]);
 
     const toggleFacingMode = useCallback(() => {

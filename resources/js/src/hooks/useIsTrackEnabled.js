@@ -14,8 +14,10 @@ export default function useIsTrackEnabled(track) {
             return () => {
                 track.off("enabled", setEnabled);
                 track.off("disabled", setDisabled);
+                setDisabled(null);
             };
         }
+        return () => setIsEnabled(null);
     }, [track]);
 
     return isEnabled;

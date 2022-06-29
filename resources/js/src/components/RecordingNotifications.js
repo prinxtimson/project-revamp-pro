@@ -20,6 +20,11 @@ const RecordingNotifications = () => {
         if (isRecording && prevIsRecording.current === null) {
             setActiveSnackbar(Snackbars.recordingInProgress);
         }
+
+        return () => {
+            setActiveSnackbar("");
+            prevIsRecording.current = null;
+        };
     }, [isRecording]);
 
     useEffect(() => {

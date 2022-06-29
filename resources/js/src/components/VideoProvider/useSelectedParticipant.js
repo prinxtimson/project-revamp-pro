@@ -32,8 +32,10 @@ export function SelectedParticipantProvider({ room, children }) {
                     "participantDisconnected",
                     handleParticipantDisconnected
                 );
+                _setSelectedParticipant(null);
             };
         }
+        return () => _setSelectedParticipant(null);
     }, [room]);
 
     return (

@@ -14,6 +14,7 @@ import Room from "../../components/Room";
 
 import useHeight from "../../hooks/useHeight";
 import useRoomState from "../../hooks/useRoomState";
+import { connect } from "react-redux";
 
 const Container = styled("div")({
     display: "grid",
@@ -31,26 +32,13 @@ const Main = styled("main")(({ theme }) => ({
     },
 }));
 
-export default function VideoChat() {
+const VideoChat = () => {
     const { URLRoomID } = useParams();
     let [urlSearchParams] = useSearchParams();
     const [password] = React.useState(urlSearchParams.get("pwd"));
     const roomState = useRoomState();
 
     const height = useHeight();
-
-    // React.useEffect(() => {
-    //     if (livecall) {
-    //         window.addEventListener("beforeunload", (e) => {
-    //             e.preventDefault();
-    //             e.returnValue = "Are you sure you want to close?";
-    //         });
-    //         window.addEventListener("unload", (e) => {
-    //             e.preventDefault();
-    //             leaveLivecall(livecall.id);
-    //         });
-    //     }
-    // }, [livecall]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -69,4 +57,10 @@ export default function VideoChat() {
             </Container>
         </ThemeProvider>
     );
-}
+};
+
+const mapStateToProps = (state) => ({
+    loading: state.livecall.loading,
+});
+
+export default connect(mapStateToProps)(VideoChat);

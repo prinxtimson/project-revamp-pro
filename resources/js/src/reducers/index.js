@@ -4,6 +4,7 @@ import auth from "./auth";
 import profile from "./profile";
 import callback from "./callback";
 import livecall from "./livecall";
+import feedback from "./feedback";
 // import notification from './notification';
 
 export default combineReducers({
@@ -12,4 +13,5 @@ export default combineReducers({
     profile,
     callback,
     livecall,
+    feedback,
 });

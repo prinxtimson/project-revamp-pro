@@ -5,14 +5,15 @@ import {
     LIVECALL_LOADING,
     SET_LIVECALL,
     SET_LIVECALLS,
+    SET_WAITING_COUNT,
     UPDATE_LIVECALL,
-    UPDATE_LIVECALL_ADMIN,
 } from "../actions/types";
 
 const initialState = {
     loading: true,
     livecalls: null,
     livecall: null,
+    count: 0,
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -37,7 +38,7 @@ export default (state = initialState, action) => {
                 loading: false,
                 livecall: payload,
             };
-        case UPDATE_LIVECALL_ADMIN:
+        case UPDATE_LIVECALL:
             let i = state.livecalls.data.findIndex(
                 (item) => item.id === payload.id
             );
@@ -47,16 +48,13 @@ export default (state = initialState, action) => {
                 ...state,
                 loading: false,
                 livecalls: { ...state.livecalls },
+                livecall: payload,
             };
-        case UPDATE_LIVECALL:
-            let ind = state.livecalls?.findIndex(
-                (item) => item.id === payload.id
-            );
-            if (ind > -1) state.livecalls[ind] = payload;
+        case SET_WAITING_COUNT:
             return {
                 ...state,
                 loading: false,
-                livecalls: [...state.livecalls],
+                count: payload,
             };
         case DELETE_LIVECALL:
             let data = state.livecalls.data.filter((val) => val.id !== payload);
@@ -70,6 +68,7 @@ export default (state = initialState, action) => {
                 loading: true,
                 livecalls: null,
                 livecall: null,
+                count: 0,
             };
         case LIVECALL_ERROR:
             return {

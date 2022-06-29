@@ -114,9 +114,32 @@ export const delCallback = (id) => async (dispatch) => {
     }
 };
 
-export const closeCallback = (id) => async (dispatch) => {
+export const callbackSuccessful = (id) => async (dispatch) => {
     try {
-        const res = await axios.put(`/api/callback/close/${id}`);
+        const res = await axios.put(`/api/callback/success/${id}`);
+
+        dispatch({
+            type: UPDATE_CALLBACK,
+            payload: res.data,
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: CALLBACK_ERROR });
+        if (err.response.status == 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
+export const callbackFailed = (id) => async (dispatch) => {
+    try {
+        const res = await axios.put(`/api/callback/fail/${id}`);
 
         dispatch({
             type: UPDATE_CALLBACK,

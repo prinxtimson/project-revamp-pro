@@ -1,43 +1,23 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableFooter from "@mui/material/TableFooter";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 import Moment from "react-moment";
 import { connect } from "react-redux";
+import Rating from "@mui/material/Rating";
+import { getFeedbacks, clearFeedback } from "../../actions/feedback";
+import { parseInt } from "lodash";
+import DrawerContainer from "./DrawerContainer";
 
-const theme = createTheme();
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    head: {
-        backgroundColor: theme.palette.common.white,
-        color: theme.palette.common.black,
-    },
-    body: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    root: {
-        "&:nth-of-type(odd)": {
-            backgroundColor: theme.palette.action.hover,
-        },
-    },
-}));
-
-const FeedbackTable = ({ loading }) => {
+const FeedbackTable = ({ loading, getFeedbacks, clearFeedback, feedbacks }) => {
     const [page, setPage] = React.useState(0);
 
     const handleDelete = (row) => {};
@@ -48,8 +28,14 @@ const FeedbackTable = ({ loading }) => {
         setPage(newPage);
     };
 
+    React.useEffect(() => {
+        getFeedbacks();
+
+        return clearFeedback;
+    }, []);
+
     return (
-        <ThemeProvider theme={theme}>
+        <DrawerContainer>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
                 <Box
@@ -57,127 +43,123 @@ const FeedbackTable = ({ loading }) => {
                         marginTop: 8,
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center",
                     }}
                 >
-                    <TableContainer
-                        variant="elevation"
-                        style={{
-                            borderTopLeftRadius: 0,
-                            borderTopRightRadius: 0,
+                    <List
+                        sx={{
+                            width: "100%",
+                            bgcolor: "background.paper",
                         }}
-                        elevation={0}
-                        component={Paper}
                     >
-                        <Table aria-label="customized table">
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell>Name</StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Email
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Phone
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Date
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Time
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                        Actions
-                                    </StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {loading ? (
-                                    <TableRow>
-                                        <StyledTableCell scope="row">
-                                            Loading.....
-                                        </StyledTableCell>
-                                    </TableRow>
-                                ) : !callbacks ||
-                                  callbacks.data.length === 0 ? (
-                                    <TableRow>
-                                        <StyledTableCell scope="row">
-                                            No Data Available.
-                                        </StyledTableCell>
-                                    </TableRow>
-                                ) : (
-                                    callbacks?.data.map((row) => (
-                                        <StyledTableRow key={row.email}>
-                                            <StyledTableCell scope="row">
-                                                {row.name}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.email}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.phone}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                <Moment format="ll">
-                                                    {row.date}
-                                                </Moment>
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.time}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="center">
-                                                <Grid container spacing={2}>
-                                                    <Grid item xs={6}>
-                                                        <Button
-                                                            size="small"
-                                                            variant="outlined"
-                                                            onClick={() =>
-                                                                handleDisable(
-                                                                    row.id
-                                                                )
+                        {!loading && feedbacks.length === 0 && (
+                            <ListItem>
+                                <ListItemText
+                                    secondary={
+                                        <React.Fragment>
+                                            <Typography
+                                                sx={{ display: "inline" }}
+                                                component="span"
+                                                variant="body2"
+                                                color="text.primary"
+                                            >
+                                                No feedback available.
+                                            </Typography>
+                                            {}
+                                        </React.Fragment>
+                                    }
+                                />
+                            </ListItem>
+                        )}
+                        {!loading &&
+                            feedbacks.map((feedback) => {
+                                console.log(feedback);
+                                const ratings = feedback.data;
+
+                                return (
+                                    <Accordion key={feedback.id}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                        >
+                                            <Moment
+                                                format="lll"
+                                                style={{
+                                                    flexGrow: 1,
+                                                }}
+                                            >
+                                                {feedback.created_at}
+                                            </Moment>
+                                            {"    "}
+                                            <Typography
+                                                component="h6"
+                                                variant="p"
+                                                sx={{
+                                                    mb: 0,
+                                                    alignSelf: "center",
+                                                }}
+                                            >{`Average Rating   -     ${
+                                                ratings.reduce(
+                                                    (total, val) =>
+                                                        total +
+                                                        parseInt(val.rating),
+                                                    0
+                                                ) / 3
+                                            }`}</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <List>
+                                                {ratings.map((value, index) => (
+                                                    <ListItem
+                                                        key={index}
+                                                        secondaryAction={
+                                                            <Rating
+                                                                name="read-only"
+                                                                value={parseInt(
+                                                                    value.rating
+                                                                )}
+                                                                readOnly
+                                                            />
+                                                        }
+                                                    >
+                                                        <ListItemText
+                                                            secondary={
+                                                                <React.Fragment>
+                                                                    <Typography
+                                                                        sx={{
+                                                                            display:
+                                                                                "inline",
+                                                                        }}
+                                                                        component="span"
+                                                                        variant="body2"
+                                                                        color="text.primary"
+                                                                    >
+                                                                        {
+                                                                            value.question
+                                                                        }
+                                                                    </Typography>
+                                                                </React.Fragment>
                                                             }
-                                                        >
-                                                            Close
-                                                        </Button>
-                                                    </Grid>
-                                                    <Grid item xs={6}>
-                                                        <Button
-                                                            variant="contained"
-                                                            color="secondary"
-                                                            size="small"
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    row
-                                                                )
-                                                            }
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                    </Grid>
-                                                </Grid>
-                                            </StyledTableCell>
-                                        </StyledTableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                        rowsPerPageOptions={[20]}
-                                        rowsPerPage={
-                                            callbacks?.data.length || 0
-                                        }
-                                        count={callbacks?.total || 0}
-                                        page={callbacks?.current_page - 1 || 0}
-                                        onPageChange={handleChangePage}
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
-                    </TableContainer>
+                                                        />
+                                                    </ListItem>
+                                                ))}
+                                            </List>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                );
+                            })}
+                    </List>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </DrawerContainer>
     );
 };
 
-export default FeedbackTable;
+const mapStateToProps = (state) => ({
+    loading: state.feedback.loading,
+    feedbacks: state.feedback.feedbacks,
+});
+
+export default connect(mapStateToProps, { clearFeedback, getFeedbacks })(
+    FeedbackTable
+);

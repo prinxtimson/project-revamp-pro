@@ -1,12 +1,13 @@
-import { Grid, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-
 import React from "react";
+import { connect } from "react-redux";
+import { Grid, Typography, Hidden } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import useVideoContext from "../hooks/useVideoContext";
 import { useAppState } from "../state";
 import BreakoutRoomsDialog from "./BreakoutRoomsDialog";
 import EndCallButton from "./Buttons/EndCallButton";
 import Menu from "./MenuBar/Menu";
+import DisconnectButton from "./Buttons/DisconnectButton";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const MobileTopMenuBar = ({ password }) => {
+const MobileTopMenuBar = ({ password, isAuthenticated }) => {
     const classes = useStyles();
     const { room } = useVideoContext();
     const [breakoutOpen, setBreakoutOpen] = React.useState(false);
@@ -49,20 +50,27 @@ const MobileTopMenuBar = ({ password }) => {
             className={classes.container}
         >
             <Typography variant="subtitle1">{room?.name}</Typography>
-            <div>
+            <div style={{ marginRight: 5 }}>
                 <BreakoutRoomsDialog
                     open={breakoutOpen}
                     onClose={() => setBreakoutOpen(false)}
                     password={password}
                 />
-                <EndCallButton className={classes.endCallButton} />
                 <Menu
                     buttonClassName={classes.settingsButton}
                     toggleBreakoutRoom={toggleBreakoutRoom}
                 />
+                <Hidden smUp>
+                    <DisconnectButton className={classes.endCallButton} />
+                </Hidden>
+                {isAuthenticated && <EndCallButton />}
             </div>
         </Grid>
     );
 };
 
-export default MobileTopMenuBar;
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, {})(MobileTopMenuBar);

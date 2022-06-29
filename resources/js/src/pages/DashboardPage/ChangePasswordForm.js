@@ -13,11 +13,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { connect } from "react-redux";
 import { changePassword } from "../../actions/auth";
-
-const theme = createTheme();
+import DrawerContainer from "./DrawerContainer";
 
 const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
     const [show, setShow] = React.useState(false);
@@ -42,7 +40,7 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <DrawerContainer>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -168,7 +166,7 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
                     </Box>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </DrawerContainer>
     );
 };
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Broadcasting\LivecallChannel;
 use App\Http\Controllers\TwoFactorAuthController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
 
 /*
@@ -28,7 +29,7 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     })->name('home');
 
-    Route::get('admin/password/reset/{token}', function () {
+    Route::get('password/reset/{token}', function () {
         return view('welcome');
     })->name('password.reset');
 
@@ -44,9 +45,9 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     });
 
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('password/email', [AuthController::class, 'forgotPass']);
-    Route::post('password/update', [AuthController::class, 'resetPass']);
+    // Route::post('/login', [AuthController::class, 'login']);
+    // Route::post('password/email', [AuthController::class, 'forgotPass']);
+    // Route::post('password/update', [AuthController::class, 'resetPass']);
 
 });
 
@@ -69,8 +70,10 @@ Route::middleware(['auth', '2fa'])->group(function () {
     Route::put('/change-password', [AuthController::class, 'changePass']);
     Route::put('/update', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/save-token', [AuthController::class, 'saveToken']);
 
     Route::get('livecall/download', [LiveCallController::class, 'download']);
+    Route::get('callback/download', [CallBackController::class, 'download']);
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
@@ -80,6 +83,15 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     });
 });
 
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
+
+    Route::get('admin/dashboard/account', function () {
+        return view('welcome');
+    })->name('dashboard');
+});
+
 Route::get('confrencing/{URLRoomName?}', function () {
     return view('welcome');
 });
+
+Auth::routes();

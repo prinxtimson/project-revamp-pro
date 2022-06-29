@@ -60,6 +60,7 @@ class UserController extends Controller
             'lastname' => 'required|string',
             'role' => 'required|string',
             'email' => 'required|string|unique:users,email',
+            'phone' => 'max:255|unique:users,phone',
             'password' => 'required|string'
         ]);
 
@@ -68,6 +69,7 @@ class UserController extends Controller
         $user = User::create([
             'name' =>  $fields['firstname'].' '.$fields['lastname'],
             'email' => $fields['email'],
+            'phone' => $fields['phone'],
             'username' => strtolower($fields['firstname'].$fields['lastname']),
             'avatar' => 'https://www.gravatar.com/avatar/'.$hash,
             'password' => bcrypt($fields['password'])
@@ -109,9 +111,31 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function search($query)
     {
-        //
+        $search = collect();
+
+        foreach(User::where('name', 'like', '%'.$query.'%')->with('role')->get() as $q) {
+            $search->push($q);
+        }
+        foreach(User::where('username', 'like', '%'.$query.'%')->with('role')->get() as $q) {
+            $search->push($q);
+        }
+        foreach(User::where('email', 'like', '%'.$query.'%')->with('role')->get() as $q) {
+            $search->push($q);
+        }
+
+        $weight = $search->countBy('email')->all();
+        $result = [];
+
+        foreach($search->unique('id')->values()->all() as $val){
+            $val['weight'] = $weight[$val['email']];
+            $result[] = $val;
+        }
+
+        array_multisort(array_column($result, 'weight'), SORT_DESC, $result);
+
+        return response()->json($result);
     }
 
     /**

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\WebPush\WebNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -63,8 +64,16 @@ class AuthController extends Controller
         return $response;
     }
 
+    public function saveToken(Request $request) {
+        $user = auth()->user();
+
+        return WebNotification::storeToken($user, $request->input('token'));
+    }
+
     public function logout(Request $request) {
         auth()->user()->tokens()->delete();
+
+        WebNotification::removeToken(auth()->user());
 
         Auth::logout();
 

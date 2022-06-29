@@ -2,6 +2,8 @@ import React from "react";
 import { makeStyles, createStyles } from "@mui/styles";
 
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import PeopleIcon from "@mui/icons-material/People";
 import Badge from "@mui/material/Badge";
 import { isMobile } from "../../utils";
 import Menu from "./Menu";
@@ -10,13 +12,14 @@ import useVideoContext from "../../hooks/useVideoContext";
 import { Typography, Grid, Hidden } from "@mui/material";
 
 import useParticipants from "../../hooks/useParticipants";
-import EndCallButton from "../Buttons/EndCallButton";
+import DisconnectButton from "../Buttons/DisconnectButton";
 import ToggleAudioButton from "../Buttons/ToggleAudioButton";
 import ToggleVideoButton from "../Buttons/ToggleVideoButton";
 import ToggleScreenShareButton from "../Buttons/ToggleScreenShareButton";
 import ParticipantListDialog from "../ParticipantListDialog";
 import BreakoutRoomsDialog from "../BreakoutRoomsDialog";
 import { useAppState } from "../../state";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -25,7 +28,7 @@ const useStyles = makeStyles((theme) =>
             bottom: 0,
             left: 0,
             right: 0,
-            height: `${theme.footerHeight}px`,
+            height: 40,
             position: "fixed",
             display: "flex",
             padding: "0 1.43em",
@@ -37,8 +40,8 @@ const useStyles = makeStyles((theme) =>
         },
         screenShareBanner: {
             position: "fixed",
-            zIndex: 8,
-            bottom: `${theme.footerHeight}px`,
+            zIndex: 180,
+            bottom: 40,
             left: 0,
             right: 0,
             height: "104px",
@@ -67,7 +70,7 @@ const useStyles = makeStyles((theme) =>
     })
 );
 
-const MenuBar = ({ password }) => {
+const MenuBar = ({ password, isAuthenticated }) => {
     const classes = useStyles();
     const participants = useParticipants();
     const [open, setOpen] = React.useState(false);
@@ -90,7 +93,12 @@ const MenuBar = ({ password }) => {
                     <Typography variant="h6">
                         You are sharing your screen
                     </Typography>
-                    <Button onClick={() => toggleScreenShare()}>
+                    <Button
+                        onClick={() => {
+                            console.log("toggle stop");
+                            toggleScreenShare();
+                        }}
+                    >
                         Stop Sharing
                     </Button>
                 </Grid>
@@ -118,28 +126,42 @@ const MenuBar = ({ password }) => {
                         <Grid container justifyContent="center">
                             <ToggleAudioButton disabled={isReconnecting} />
                             <ToggleVideoButton disabled={isReconnecting} />
-                            {!isSharingScreen && !isMobile && (
+                            {!isMobile && (
                                 <ToggleScreenShareButton
                                     disabled={isReconnecting}
+                                    room={room}
                                 />
                             )}
-                            <Button onClick={() => setOpen(true)}>
-                                <Badge
-                                    badgeContent={participants.length + 1}
-                                    color="success"
-                                >
-                                    Participants
-                                </Badge>
-                            </Button>
                             <Hidden smDown>
-                                <Menu toggleBreakoutRoom={toggleBreakoutRoom} />
+                                <Button onClick={() => setOpen(true)}>
+                                    <Badge
+                                        badgeContent={participants.length + 1}
+                                        color="success"
+                                    >
+                                        Participants
+                                    </Badge>
+                                </Button>
+                            </Hidden>
+                            <Hidden smUp>
+                                <IconButton
+                                    onClick={() => setOpen(true)}
+                                    color="primary"
+                                    size="large"
+                                >
+                                    <Badge
+                                        badgeContent={participants.length + 1}
+                                        color="success"
+                                    >
+                                        <PeopleIcon />
+                                    </Badge>
+                                </IconButton>
                             </Hidden>
                         </Grid>
                     </Grid>
                     <Hidden smDown>
                         <Grid style={{ flex: 1 }}>
                             <Grid container justifyContent="flex-end">
-                                <EndCallButton />
+                                <DisconnectButton />
                             </Grid>
                         </Grid>
                     </Hidden>
@@ -149,4 +171,9 @@ const MenuBar = ({ password }) => {
     );
 };
 
-export default MenuBar;
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    livecall: state.livecall.livecall,
+});
+
+export default connect(mapStateToProps, {})(MenuBar);

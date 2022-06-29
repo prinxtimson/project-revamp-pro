@@ -15,7 +15,7 @@ export default function useLocalVideoToggle() {
     );
     const [isPublishing, setIspublishing] = useState(false);
 
-    const toggleVideoEnabled = useCallback(() => {
+    const toggleVideo = () => {
         if (!isPublishing) {
             if (videoTrack) {
                 const localTrackPublication =
@@ -40,6 +40,10 @@ export default function useLocalVideoToggle() {
                     });
             }
         }
+    };
+
+    const toggleVideoEnabled = useCallback(() => {
+        toggleVideo();
     }, [
         videoTrack,
         localParticipant,

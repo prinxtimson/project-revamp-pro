@@ -28,6 +28,7 @@ const VideoTrack = ({ track, isLocal, priority }) => {
             if (track.setPriority && priority) {
                 track.setPriority(null);
             }
+            ref.current = null;
         };
     }, [track, priority]);
 

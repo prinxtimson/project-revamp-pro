@@ -1,21 +1,18 @@
+import "react-phone-input-2/lib/material.css";
 import React from "react";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PhoneInput from "react-phone-input-2";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { connect } from "react-redux";
 import { addUser } from "../../actions/auth";
-
-const theme = createTheme();
 
 const AddUserForm = ({ alerts, loading, addUser }) => {
     const [data, setData] = React.useState({
@@ -24,6 +21,7 @@ const AddUserForm = ({ alerts, loading, addUser }) => {
         email: "",
         role: "admin",
         password: "",
+        phone: "",
         showPassword: false,
     });
 
@@ -38,6 +36,7 @@ const AddUserForm = ({ alerts, loading, addUser }) => {
             lastname: "",
             email: "",
             role: "admin",
+            phone: "+44",
             password: "",
             showPassword: false,
         });
@@ -67,121 +66,131 @@ const AddUserForm = ({ alerts, loading, addUser }) => {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
+        <Box
+            sx={{
+                marginTop: 5,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                backgroundColor: "white",
+                padding: 5,
+                borderRadius: 2,
+            }}
+        >
+            <Typography component="h1" variant="h5">
+                Add Admin
+            </Typography>
+            <Stack sx={{ width: "100%" }} spacing={2}>
+                {alerts.map(
+                    (alert) =>
+                        alert.alertType === "danger" && (
+                            <Alert key={alert.id} severity="error">
+                                {alert.msg}
+                            </Alert>
+                        )
+                )}
+            </Stack>
+            <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{ mt: 1, width: "100%", maxWidth: 468 }}
+            >
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Firstname"
+                    name="firstname"
+                    value={data.firstname}
+                    onChange={(e) =>
+                        setData({ ...data, firstname: e.target.value })
+                    }
+                />
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Lastname"
+                    value={data.lastname}
+                    onChange={(e) =>
+                        setData({ ...data, lastname: e.target.value })
+                    }
+                />
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Email Address"
+                    value={data.email}
+                    onChange={(e) =>
+                        setData({ ...data, email: e.target.value })
+                    }
+                />
+                <PhoneInput
+                    inputProps={{
+                        required: true,
                     }}
-                >
-                    <Typography component="h1" variant="h5">
-                        Add User
-                    </Typography>
-                    <Stack sx={{ width: "100%" }} spacing={2}>
-                        {alerts.map(
-                            (alert) =>
-                                alert.alertType === "danger" && (
-                                    <Alert key={alert.id} severity="error">
-                                        {alert.msg}
-                                    </Alert>
-                                )
-                        )}
-                    </Stack>
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
-                        sx={{ mt: 1 }}
-                    >
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="firstname"
-                            label="Firstname"
-                            name="firstname"
-                            autoFocus
-                            value={data.firstname}
-                            onChange={(e) =>
-                                setData({ ...data, firstname: e.target.value })
-                            }
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="lastname"
-                            label="Lastname"
-                            name="lastname"
-                            value={data.lastname}
-                            onChange={(e) =>
-                                setData({ ...data, lastname: e.target.value })
-                            }
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email_address"
-                            label="Email Address"
-                            value={data.email}
-                            onChange={(e) =>
-                                setData({ ...data, email: e.target.value })
-                            }
-                            autoComplete={false}
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            label="Password"
-                            type={data.showPassword ? "text" : "password"}
-                            id="password"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                        >
-                                            {data.showPassword ? (
-                                                <Visibility />
-                                            ) : (
-                                                <VisibilityOff />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={data.password}
-                            onFocus={handleOnFocus}
-                            onChange={(e) =>
-                                setData({ ...data, password: e.target.value })
-                            }
-                            autoComplete={false}
-                        />
+                    inputStyle={{
+                        width: "100%",
+                        paddingTop: "14.5px",
+                        paddingBottom: "14.5px",
+                    }}
+                    containerStyle={{
+                        marginBottom: 5,
+                        marginTop: 10,
+                    }}
+                    specialLabel="Phone *"
+                    country={"gb"}
+                    value={data.phone}
+                    onChange={(val) => setData({ ...data, phone: val })}
+                />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={loading}
-                        >
-                            Submit
-                        </Button>
-                    </Box>
-                </Box>
-            </Container>
-        </ThemeProvider>
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Password"
+                    type={data.showPassword ? "text" : "password"}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                >
+                                    {data.showPassword ? (
+                                        <Visibility />
+                                    ) : (
+                                        <VisibilityOff />
+                                    )}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                    value={data.password}
+                    onFocus={handleOnFocus}
+                    onChange={(e) =>
+                        setData({ ...data, password: e.target.value })
+                    }
+                    autoComplete="new-password"
+                />
+
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    disabled={loading}
+                >
+                    Submit
+                </Button>
+            </Box>
+        </Box>
     );
 };
 

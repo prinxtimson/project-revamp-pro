@@ -89,7 +89,7 @@ class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHead
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                $event->sheet->getStyle('A3:G3')->applyFromArray([
+                $event->sheet->getStyle('B3:H3')->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
@@ -100,11 +100,11 @@ class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHead
 
     public function startCell(): string
     {
-        return 'A3';
+        return 'B3';
     }
 
     public function title(): string
     {
-        return 'Live Support Call Table';
+        return 'Live Support Call Report';
     }
 }

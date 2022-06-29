@@ -56,6 +56,7 @@ const UserCard = ({ loading, users, getAllProfiles, clearProfile }) => {
         if (users) {
             setCount(users.length);
         }
+        return () => setCount(null);
     }, [users]);
 
     if (loading) {

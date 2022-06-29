@@ -19,6 +19,7 @@ export default function useParticipantNetworkQualityLevel(participant) {
                 "networkQualityLevelChanged",
                 handleNewtorkQualityLevelChange
             );
+            setNetworkQualityLevel(null);
         };
     }, [participant]);
 

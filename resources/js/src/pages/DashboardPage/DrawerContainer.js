@@ -95,9 +95,9 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 const settings = [
-    { name: "Profile", route: "profile" },
-    { name: "Change Password", route: "change-password" },
-    { name: "Dashboard", route: "/dashboard" },
+    { name: "Profile", route: "../profile" },
+    { name: "Change Password", route: "../change-password" },
+    { name: "Dashboard", route: "../" },
     { name: "Logout", route: "/logout" },
 ];
 
@@ -311,7 +311,7 @@ const DrawerContainer = ({
                         flexGrow: 1,
                         height: "100vh",
                         overflow: "auto",
-                        //width: { sm: `calc(100% - ${drawerWidth}px)` },
+                        width: { sm: `calc(100vw - ${drawerWidth}px)` },
                     }}
                 >
                     <Toolbar />

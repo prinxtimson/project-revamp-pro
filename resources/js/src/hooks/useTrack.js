@@ -15,6 +15,7 @@ const useTrack = (publication) => {
             return () => {
                 publication.off("subscribed", setTrack);
                 publication.off("unsubscribed", removeTrack);
+                setTrack(null);
             };
         }
     }, [publication]);

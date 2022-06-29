@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { Typography, Grid, Button, Hidden } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,6 +8,7 @@ import ToggleAudioButton from "../Buttons/ToggleAudioButton";
 import ToggleVideoButton from "../Buttons/ToggleVideoButton";
 import { useAppState } from "../../state";
 import useVideoContext from "../../hooks/useVideoContext";
+import Snackbar from "../Snackbar";
 
 const useStyles = makeStyles((theme) => ({
     gutterBottom: {
@@ -58,14 +59,19 @@ export default function DeviceSelectionScreen({
     setStep,
 }) {
     const classes = useStyles();
+    const [isSnackbarDismissed, setIsSnackbarDismissed] = useState(false);
     const { getToken, isFetching } = useAppState();
     const {
         connect: videoConnect,
         isAcquiringLocalTracks,
         isConnecting,
         getMainRoom,
+        error,
     } = useVideoContext();
+
     const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
+
+    const isSnackbarOpen = !isSnackbarDismissed && Boolean(error);
 
     const handleJoin = () => {
         getToken(name, roomId, password).then(({ token, roomId }) => {
@@ -110,6 +116,13 @@ export default function DeviceSelectionScreen({
 
     return (
         <>
+            <Snackbar
+                open={isSnackbarOpen}
+                handleClose={() => setIsSnackbarDismissed(true)}
+                headline="Connection Error:"
+                message={error}
+                variant="warning"
+            />
             <Typography variant="h5" className={classes.gutterBottom}>
                 Join Call
             </Typography>

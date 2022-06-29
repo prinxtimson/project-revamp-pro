@@ -2,22 +2,20 @@ import * as React from "react";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import Badge from "@mui/material/Badge";
 import PhoneIcon from "@mui/icons-material/Phone";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
 import { Link } from "react-router-dom";
 
 import { connect } from "react-redux";
 
-const ListItems = ({ livecalls }) => {
+const ListItems = ({ livecalls, user }) => {
     return (
         <div>
-            <Link to="">
+            <Link to="../">
                 <ListItem button>
                     <ListItemIcon>
                         <DashboardIcon />
@@ -25,23 +23,19 @@ const ListItems = ({ livecalls }) => {
                     <ListItemText primary="Dashboard" />
                 </ListItem>
             </Link>
-            <Link to="add-user">
-                <ListItem button>
-                    <ListItemIcon>
-                        <PersonAddIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Add Agent" />
-                </ListItem>
-            </Link>
-            <Link to="users">
-                <ListItem button>
-                    <ListItemIcon>
-                        <PeopleIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Agents" />
-                </ListItem>
-            </Link>
-            <Link to="livecall">
+
+            {user?.roles[0].name === "super-admin" && (
+                <Link to="../account">
+                    <ListItem button>
+                        <ListItemIcon>
+                            <PeopleIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Account" />
+                    </ListItem>
+                </Link>
+            )}
+
+            <Link to="../livecall">
                 <ListItem button>
                     <ListItemIcon>
                         <PhoneIcon />
@@ -54,16 +48,24 @@ const ListItems = ({ livecalls }) => {
                         }
                         color="error"
                     >
-                        <ListItemText primary="Livecall" />
+                        <ListItemText primary="Live Call" />
                     </Badge>
                 </ListItem>
             </Link>
-            <Link to="callback">
+            <Link to="../callback">
                 <ListItem button>
                     <ListItemIcon>
                         <PhoneCallbackIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Callback" />
+                    <ListItemText primary="Call Back" />
+                </ListItem>
+            </Link>
+            <Link to="../feedback">
+                <ListItem button>
+                    <ListItemIcon>
+                        <FeedbackIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Feedback" />
                 </ListItem>
             </Link>
         </div>
@@ -71,6 +73,7 @@ const ListItems = ({ livecalls }) => {
 };
 const mapStateToProps = (state) => ({
     livecalls: state.livecall.livecalls,
+    user: state.auth.user,
 });
 
 export default connect(mapStateToProps)(ListItems);

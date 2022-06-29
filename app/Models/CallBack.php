@@ -15,7 +15,9 @@ class CallBack extends Model
         'email',
         'time',
         'date',
-        'called_at'
+        'called_at',
+        'status',
+        'agent_id'
     ];
 
     protected $casts = [

@@ -17,10 +17,11 @@ class TwoFactorAuth
      */
     public function handle(Request $request, Closure $next)
     {
+        
         if (!$request->session()->exists('user_2fa')) {
             return redirect()->route('2fa.index');
         }
-
+ 
         return $next($request);
     }
 }

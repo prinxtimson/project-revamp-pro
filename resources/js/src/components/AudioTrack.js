@@ -20,6 +20,10 @@ const AudioTrack = ({ track }) => {
 
     useEffect(() => {
         audioEl.current?.setSinkId?.(activeSinkId);
+
+        return () => {
+            audioEl.current = null;
+        };
     }, [activeSinkId]);
 
     return null;

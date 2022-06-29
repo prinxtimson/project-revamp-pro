@@ -49,6 +49,7 @@ const AudioLevelIndicator = ({ audioTrack, color = "white" }) => {
                 stopAllMediaStreamTracks();
                 window.removeEventListener("focus", reinitializeAnalyser);
                 audioTrack.off("stopped", stopAllMediaStreamTracks);
+                setAnalyser(null);
             };
         }
     }, [isTrackEnabled, mediaStreamTrack, audioTrack]);
@@ -79,8 +80,11 @@ const AudioLevelIndicator = ({ audioTrack, color = "white" }) => {
             return () => {
                 SVGClipElement.setAttribute("y", "14");
                 timer.stop();
+                SVGRectRef.current = null;
             };
         }
+
+        return () => (SVGRectRef.current = null);
     }, [isTrackEnabled, analyser]);
 
     // Each instance of this component will need a unique HTML ID

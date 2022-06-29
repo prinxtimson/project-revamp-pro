@@ -34,6 +34,7 @@ export default function useParticipants() {
                 room.off("participantDisconnected", participantDisconnected);
             };
         }
+        return () => setParticipants([]);
     }, [room]);
 
     return participants;

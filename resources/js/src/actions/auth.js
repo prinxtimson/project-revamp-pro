@@ -54,9 +54,9 @@ export const loginUser = (email, password) => async (dispatch) => {
     try {
         await axios.get(`/sanctum/csrf-cookie`);
 
-        const res = await axios.post("/login", { email, password });
+        await axios.post("/login", { email, password });
 
-        window.location.reload();
+        location.href = "/admin/two-factor-auth";
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LOGIN_FAIL });
@@ -76,7 +76,8 @@ export const verifyCode = (data) => async (dispatch) => {
         await axios.post("/two-factor-auth", data);
         dispatch({ type: AUTH_LOADING });
         dispatch(setAlert("Verification successful", "success"));
-        window.location.reload();
+        //location.reload();
+        location.href = "/admin/dashboard";
     } catch (err) {
         console.log(err.response);
         dispatch({ type: AUTH_LOADING });
@@ -90,11 +91,12 @@ export const verifyCode = (data) => async (dispatch) => {
     }
 };
 
-export const resendCode = () => async (dispatch) => {
+export const resendCode = (onCodeResend) => async (dispatch) => {
     dispatch({ type: AUTH_LOADING });
     try {
         await axios.get("/two-factor-auth/resent");
         dispatch({ type: AUTH_LOADING });
+        onCodeResend();
         dispatch(setAlert("New verification code sent", "success"));
     } catch (err) {
         console.log(err.response);

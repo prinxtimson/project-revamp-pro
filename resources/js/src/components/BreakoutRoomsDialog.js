@@ -74,6 +74,8 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
         if (mainRoom) {
             setBreakouts(mainRoom.breakouts);
         }
+
+        return () => setBreakouts(null);
     }, [mainRoom]);
 
     React.useEffect(() => {
@@ -86,6 +88,8 @@ const BreakoutRoomsDialog = ({ open, onClose, password, user }) => {
                 ],
             });
         }
+
+        return () => setState(null);
     }, [mainRoom, user]);
 
     const handleChange = (e) => {

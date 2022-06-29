@@ -14,6 +14,7 @@ export default function useMediaStreamTrack(track) {
             track.on("started", handleStarted);
             return () => {
                 track.off("started", handleStarted);
+                setMediaStreamTrack(null);
             };
         }
     }, [track]);

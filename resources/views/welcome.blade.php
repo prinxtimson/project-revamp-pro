@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
+
   <!-- Styles -->
   <style>
   /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
@@ -415,9 +416,66 @@
   <div id="app" class="relative flex items-top min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0" >
   @endif
   
-    <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
     <script src="{{asset('js/app.js')}}"></script>
   </div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+<script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDHXdjVllGxZ_nTbzV4guj3DmnUoZlDGNU",
+    authDomain: "spotlight-f6663.firebaseapp.com",
+    projectId: "spotlight-f6663",
+    storageBucket: "spotlight-f6663.appspot.com",
+    messagingSenderId: "825975225494",
+    appId: "1:825975225494:web:4c37260f2e5f2496fc16b7",
+    measurementId: "G-L0L8JRZ4EK",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    function startFCM() {
+        messaging
+            .requestPermission()
+            .then(function () {
+                return messaging.getToken()
+            })
+            .then(function (response) {
+              console.log(response)
+              localStorage.setItem('device_token', response)
+                
+            }).catch(function (error) {
+                alert(error);
+            });
+    }
+    messaging.onMessage(function (payload) {
+      
+        const title = payload.notification.title;
+        const options = {
+            body: payload.notification.body,
+            icon: "/images/logo.png",
+        };
+        new Notification(title, options);
+    });
+
+    $(document).ready(function() {
+      $(document).one('click', function() {
+        
+        if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+      } else if (Notification.permission === "granted") {
+        startFCM() 
+      }else {
+        Notification.requestPermission().then(function(permission) {
+          // If the user accepts, let's create a notification
+          if (permission === "granted") {
+            startFCM() 
+          }
+        })
+      }
+      })
+    })
+    
+</script>
+
 </body>
 
 </html>

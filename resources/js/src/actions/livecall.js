@@ -10,7 +10,7 @@ import {
     SET_LIVECALLS,
     SET_VIDEOCALL,
     UPDATE_LIVECALL,
-    UPDATE_LIVECALL_ADMIN,
+    SET_WAITING_COUNT,
 } from "./types";
 
 export const getLivecalls = () => async (dispatch) => {
@@ -39,7 +39,7 @@ export const getLivecalls = () => async (dispatch) => {
 
 export const getConnectedLivecalls = () => async (dispatch) => {
     try {
-        const res = await axios.get("/api/livecall/on");
+        const res = await axios.get("/api/livecall/filter");
 
         dispatch({
             type: SET_LIVECALLS,
@@ -156,7 +156,9 @@ export const answerLivecall = (id) => async (dispatch) => {
             livecall: `${id}`,
             roomName: `call_${id}`,
         });
-        console.log(res.data);
+
+        getLivecallById(id);
+
         window.open(`/confrencing/${res.data.id}?pwd=${res.data.pwd}`);
     } catch (err) {
         console.log(err.response);
@@ -173,27 +175,63 @@ export const answerLivecall = (id) => async (dispatch) => {
     }
 };
 
+export const endLivecall = (id) => async (dispatch) => {
+    if (window.confirm("Are you sure you want to end livecall session?")) {
+        dispatch({ type: LIVECALL_LOADING });
+        try {
+            const res = await axios.get(`/api/room/end/${id}`);
+
+            dispatch({ type: LIVECALL_LOADING });
+        } catch (err) {
+            console.log(err.response);
+            dispatch({ type: LIVECALL_ERROR });
+            if (err.response.status === 500) {
+                return dispatch(
+                    setAlert("Server errror, please try again.", "danger")
+                );
+            }
+            if (err.response.status === 401 || err.response.status === 403) {
+                window.location.reload();
+            }
+            dispatch(setAlert(err.response.data.message, "danger"));
+        }
+    }
+};
+
+export const getWaitingListCount = () => async (dispatch) => {
+    try {
+        const res = await axios.get("api/livecall/waiting/count");
+
+        dispatch({
+            type: SET_WAITING_COUNT,
+            payload: res.data,
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: LIVECALL_ERROR });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
 export const updateLivecalls = (data) => (dispatch) => {
     const auth = store.getState().auth;
     const livecall = store.getState().livecall.livecall;
 
     if (auth.isAuthenticated) {
         dispatch({
-            type: UPDATE_LIVECALL_ADMIN,
+            type: UPDATE_LIVECALL,
             payload: data,
         });
-    } else {
-        if (livecall && livecall.id === data.id) {
-            dispatch({
-                type: SET_LIVECALL,
-                payload: data,
-            });
-        } else {
-            dispatch({
-                type: UPDATE_LIVECALL,
-                payload: data,
-            });
-        }
+    } else if (livecall && livecall.id === data.id) {
+        dispatch({
+            type: SET_LIVECALL,
+            payload: data,
+        });
     }
 };
 

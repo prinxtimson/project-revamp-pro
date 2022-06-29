@@ -18,8 +18,10 @@ export default function useIsRecording() {
             return () => {
                 room.off("recordingStarted", handleRecordingStarted);
                 room.off("recordingStopped", handleRecordingStopped);
+                setIsRecording(null);
             };
         }
+        return () => setIsRecording(null);
     }, [room]);
 
     return isRecording;

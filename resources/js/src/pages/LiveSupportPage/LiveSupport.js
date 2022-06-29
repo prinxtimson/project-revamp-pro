@@ -12,7 +12,7 @@ import Rating from "@mui/material/Rating";
 import { connect } from "react-redux";
 import {
     requestLivecall,
-    getConnectedLivecalls,
+    getWaitingListCount,
     leaveLivecall,
 } from "../../actions/livecall";
 import { requestCallback, getCallbacks } from "../../actions/callback";
@@ -36,10 +36,10 @@ const SurveyQuestions = [
 
 const LiveSupport = ({
     livecall,
-    livecalls,
+    count,
     loading,
     requestLivecall,
-    getConnectedLivecalls,
+    getWaitingListCount,
     requestCallback,
     callbackLoading,
     getCallbacks,
@@ -56,7 +56,7 @@ const LiveSupport = ({
         email: "",
         phone: "",
         time: "",
-        date: new Date.now(),
+        date: new Date().toISOString().split("T")[0],
     });
     const [survey, setSurvey] = React.useState({
         ratings: [],
@@ -73,7 +73,7 @@ const LiveSupport = ({
         };
 
         axios
-            .post("/api/survey", surveyData)
+            .post("/api/feedback", surveyData)
             .then((res) => {
                 console.log(res.data);
                 setSurvey({ ...survey, loading: false, successfull: true });
@@ -94,24 +94,24 @@ const LiveSupport = ({
 
     const onSuccessful = () => {
         handleClose();
-        setFormData({ name: "", email: "", phone: "", time: "", date: "" });
+        setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            time: "",
+            date: new Date().toISOString().split("T")[0],
+        });
         showSurveyForm();
     };
 
     React.useEffect(() => {
-        if (livecalls) {
-            let count = livecalls.filter(
-                (val) => val.answered_at === null && val.left_at === null
-            ).length;
+        let total = count * 5;
 
-            let total = count * 5;
-
-            setMin(total);
-        }
-    }, [livecalls]);
+        setMin(total);
+    }, [count]);
 
     React.useEffect(() => {
-        getConnectedLivecalls();
+        getWaitingListCount();
         getCallbacks();
     }, []);
 
@@ -582,7 +582,6 @@ const LiveSupport = ({
                                         color="primary"
                                         size="small"
                                         disabled={
-                                            Boolean(livecall.left_at) ||
                                             survey.ratings.length < 3 ||
                                             survey.successfull
                                         }
@@ -602,14 +601,14 @@ const LiveSupport = ({
 
 const mapStateToProps = (state) => ({
     livecall: state.livecall.livecall,
-    livecalls: state.livecall.livecalls,
+    count: state.livecall.count,
     loading: state.livecall.loading,
     callbackLoading: state.callback.loading,
 });
 
 export default connect(mapStateToProps, {
     requestLivecall,
-    getConnectedLivecalls,
+    getWaitingListCount,
     requestCallback,
     getCallbacks,
     leaveLivecall,

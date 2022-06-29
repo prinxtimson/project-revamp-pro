@@ -1,4 +1,4 @@
-import React, { createContext, useCallback } from "react";
+import React, { createContext, useCallback, useState } from "react";
 import { SelectedParticipantProvider } from "./useSelectedParticipant";
 
 import AttachVisibilityHandler from "./AttachVisibilityHandler";
@@ -13,10 +13,11 @@ import useMainRoom from "./useMainRoom";
 export const VideoContext = createContext();
 
 export const VideoProvider = ({ options, children, onError = () => {} }) => {
+    const [error, setError] = useState();
     const onErrorCallback = useCallback(
-        (error) => {
-            console.log(`ERROR: ${error.message}`, error);
-            onError(error);
+        (err) => {
+            setError(err.message);
+            onError(err);
         },
         [onError]
     );
@@ -65,6 +66,7 @@ export const VideoProvider = ({ options, children, onError = () => {} }) => {
                 room,
                 localTracks,
                 isConnecting,
+                error,
                 onError: onErrorCallback,
                 getLocalVideoTrack,
                 getLocalAudioTrack,

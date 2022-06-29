@@ -2,32 +2,52 @@ import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { verifyCode, resendCode } from "../../actions/auth";
 import Container from "../../components/Container";
 
 const TwoFactorAuth = (props) => {
+    const [reset, setReset] = React.useState(0);
     const { verifyCode, resendCode, alerts, loading, user } = props;
+    const [authUser, setAuthUser] = React.useState(null);
+    const [remainingTime, setRemainingTime] = React.useState(0);
 
-    const authUser = JSON.parse(user);
+    React.useEffect(() => {
+        const userJson = JSON.parse(user || "{}");
+        setAuthUser(userJson);
+
+        return () => setAuthUser(null);
+    }, [user]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         const code = data.get("code");
-        // eslint-disable-next-line no-console
 
-        verifyCode({ code });
+        if (code) {
+            verifyCode({ code });
+        }
     };
+
+    React.useEffect(() => {
+        const targetTime = new Date().getTime() + 5 * 60000;
+        setRemainingTime(targetTime);
+        const interval = setInterval(() => {
+            const currentMin = targetTime - new Date().getTime();
+            if (currentMin > 0) {
+                setRemainingTime(currentMin);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [reset]);
+
+    const onCodeResend = () => setReset(reset + 1);
 
     return (
         <Container>
@@ -37,6 +57,8 @@ const TwoFactorAuth = (props) => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    backgroundColor: "white",
+                    padding: 3,
                 }}
             >
                 <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -65,31 +87,41 @@ const TwoFactorAuth = (props) => {
                     <Box>
                         <Typography>
                             We sent code to your phone :
-                            {` ${authUser?.phone.substring(
+                            {` ${authUser?.email?.substring(
                                 0,
-                                5
-                            )}******${authUser?.phone.substring(
-                                authUser?.phone.length - 2
+                                3
+                            )}******${authUser?.email?.substring(
+                                authUser?.email?.length - 8
                             )}`}
                         </Typography>
                     </Box>
                     <TextField
-                        margin="normal"
+                        margin="dense"
                         required
                         fullWidth
                         id="code"
                         label="Enter Code"
                         name="code"
                         autoFocus
+                        size="small"
                     />
                     <Button
                         type="button"
                         fullWidth
-                        variant="contained"
-                        onClick={resendCode}
-                        sx={{ mb: 2, mt: 1 }}
+                        variant="outlined"
+                        onClick={() => resendCode(onCodeResend)}
+                        disabled={remainingTime > 1000 || loading}
+                        sx={{ mb: 1.5, mt: 1 }}
                     >
-                        Resend Code
+                        Resend Code in{" "}
+                        {remainingTime === 0
+                            ? "00:00"
+                            : `${Math.floor(
+                                  (remainingTime % (1000 * 60 * 60)) /
+                                      (1000 * 60)
+                              )}:${Math.floor(
+                                  (remainingTime % (1000 * 60)) / 1000
+                              )}`}
                     </Button>
 
                     <Button
