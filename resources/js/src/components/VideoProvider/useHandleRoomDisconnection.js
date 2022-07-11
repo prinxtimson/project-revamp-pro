@@ -11,7 +11,7 @@ export default function useHandleRoomDisconnection(
     useEffect(() => {
         if (room) {
             const onDisconnected = (_, error) => {
-                if (error) {
+                if (error && error.code !== 53118) {
                     onError(error);
                 }
 

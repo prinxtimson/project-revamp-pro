@@ -1,11 +1,15 @@
 import React, { useState, useRef } from "react";
 import AboutDialog from "../AboutDialog";
+import CollaborationViewIcon from "@mui/icons-material/AccountBox";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoIconOutlined from "@mui/icons-material/InfoOutlined";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import LanIcon from "@mui/icons-material/Lan";
 import StopRecordingIcon from "@mui/icons-material/StopCircle";
+import StartRecordingIcon from "@mui/icons-material/RadioButtonChecked";
+import GridViewIcon from "@mui/icons-material/Apps";
 import SearchIcon from "@mui/icons-material/Search";
+import DeviceSelectionDialog from "../DeviceSelectionDialog";
 import {
     Button,
     useMediaQuery,
@@ -16,9 +20,11 @@ import {
 import { styled } from "@mui/material/styles";
 
 import { useAppState } from "../../state";
+import useChatContext from "../../hooks/useChatContext";
 import useIsRecording from "../../hooks/useIsRecording";
 import useVideoContext from "../../hooks/useVideoContext";
 import FlipCameraIcon from "@mui/icons-material/FlipCameraIos";
+import SettingsIcon from "@mui/icons-material/Settings";
 import useFlipCameraToggle from "../../hooks/useFlipCameraToggle";
 import { VideoRoomMonitor } from "@twilio/video-room-monitor";
 
@@ -36,7 +42,14 @@ const Menu = (props) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
-    const { isFetching, updateRecordingRules, roomType } = useAppState();
+    const {
+        isFetching,
+        updateRecordingRules,
+        roomType,
+        setIsGalleryViewActive,
+        isGalleryViewActive,
+    } = useAppState();
+    const { setIsChatWindowOpen } = useChatContext();
     const isRecording = useIsRecording();
     const { room } = useVideoContext();
 
@@ -74,6 +87,28 @@ const Menu = (props) => {
                     horizontal: "center",
                 }}
             >
+                <MenuItem onClick={() => setSettingsOpen(true)}>
+                    <IconContainer>
+                        <SettingsIcon />
+                    </IconContainer>
+                    <Typography variant="body1">
+                        Audio and Video Settings
+                    </Typography>
+                </MenuItem>
+                {/* {isSupported && (
+          <MenuItem
+            onClick={() => {
+              setIsBackgroundSelectionOpen(true);
+              setIsChatWindowOpen(false);
+              setMenuOpen(false);
+            }}
+          >
+            <IconContainer>
+              <BackgroundIcon />
+            </IconContainer>
+            <Typography variant="body1">Backgrounds</Typography>
+          </MenuItem>
+        )} */}
                 {flipCameraSupported && (
                     <MenuItem
                         disabled={flipCameraDisabled}
@@ -96,35 +131,37 @@ const Menu = (props) => {
                     </IconContainer>
                     <Typography variant="body1">Breakout Rooms</Typography>
                 </MenuItem>
-                {/*roomType !== "peer-to-peer" && roomType !== "go" && (
-                    <MenuItem
-                        disabled={isFetching}
-                        onClick={() => {
-                            setMenuOpen(false);
-                            if (isRecording) {
-                                updateRecordingRules(room?.sid, [
-                                    { type: "exclude", all: true },
-                                ]);
-                            } else {
-                                updateRecordingRules(room?.sid, [
-                                    { type: "include", all: true },
-                                ]);
-                            }
-                        }}
-                        data-cy-recording-button
-                    >
-                        <IconContainer>
-                            {isRecording ? (
-                                <StopRecordingIcon />
-                            ) : (
-                                <StartRecordingIcon />
-                            )}
-                        </IconContainer>
-                        <Typography variant="body1">
-                            {isRecording ? "Stop" : "Start"} Recording
-                        </Typography>
-                    </MenuItem>
-                            )*/}
+                {props.isAuthenticated &&
+                    roomType !== "peer-to-peer" &&
+                    roomType !== "go" && (
+                        <MenuItem
+                            disabled={isFetching}
+                            onClick={() => {
+                                setMenuOpen(false);
+                                if (isRecording) {
+                                    updateRecordingRules(room?.sid, [
+                                        { type: "exclude", all: true },
+                                    ]);
+                                } else {
+                                    updateRecordingRules(room?.sid, [
+                                        { type: "include", all: true },
+                                    ]);
+                                }
+                            }}
+                            data-cy-recording-button
+                        >
+                            <IconContainer>
+                                {isRecording ? (
+                                    <StopRecordingIcon />
+                                ) : (
+                                    <StartRecordingIcon />
+                                )}
+                            </IconContainer>
+                            <Typography variant="body1">
+                                {isRecording ? "Stop" : "Start"} Recording
+                            </Typography>
+                        </MenuItem>
+                    )}
 
                 <MenuItem
                     onClick={() => {
@@ -139,7 +176,27 @@ const Menu = (props) => {
                     </IconContainer>
                     <Typography variant="body1">Room Monitor</Typography>
                 </MenuItem>
-
+                <MenuItem
+                    onClick={() => {
+                        setIsGalleryViewActive((isGallery) => !isGallery);
+                        setMenuOpen(false);
+                    }}
+                >
+                    <IconContainer>
+                        {isGalleryViewActive ? (
+                            <CollaborationViewIcon
+                                style={{ fill: "#707578", width: "0.9em" }}
+                            />
+                        ) : (
+                            <GridViewIcon
+                                style={{ fill: "#707578", width: "0.9em" }}
+                            />
+                        )}
+                    </IconContainer>
+                    <Typography variant="body1">
+                        {isGalleryViewActive ? "Speaker View" : "Gallery View"}
+                    </Typography>
+                </MenuItem>
                 <MenuItem onClick={() => setAboutOpen(true)}>
                     <IconContainer>
                         <InfoIconOutlined />
@@ -151,6 +208,13 @@ const Menu = (props) => {
                 open={aboutOpen}
                 onClose={() => {
                     setAboutOpen(false);
+                    setMenuOpen(false);
+                }}
+            />
+            <DeviceSelectionDialog
+                open={settingsOpen}
+                onClose={() => {
+                    setSettingsOpen(false);
                     setMenuOpen(false);
                 }}
             />

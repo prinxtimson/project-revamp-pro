@@ -1,28 +1,20 @@
 import { useState, useCallback, useRef } from "react";
-import Video from "twilio-video";
 
-export default function useScreenShareToggle(room, localTracks, onError) {
+export default function useScreenShareToggle(room, onError) {
     const [isSharing, setIsSharing] = useState(false);
     const stopScreenShareRef = useRef(null);
 
     const shareScreen = useCallback(() => {
         navigator.mediaDevices
             .getDisplayMedia({
-                audio: true,
-                video: {
-                    frameRate: 10,
-                    height: 1080,
-                    width: 1920,
-                },
+                audio: false,
+                video: true,
             })
             .then((stream) => {
-                const track = new Video.LocalVideoTrack(stream.getTracks()[0], {
-                    name: "screen",
-                    priority: "low",
-                });
+                const track = stream.getTracks()[0];
 
                 room?.localParticipant
-                    .publishTracks([...localTracks, track])
+                    .publishTrack(track, { name: "screen", priority: "low" })
                     .then((trackPublication) => {
                         stopScreenShareRef.current = () => {
                             room?.localParticipant.unpublishTrack(track);
@@ -43,8 +35,9 @@ export default function useScreenShareToggle(room, localTracks, onError) {
             .catch((error) => {
                 // Don't display an error if the user closes the screen share dialog
                 if (
-                    error.name !== "AbortError" &&
-                    error.name !== "NotAllowedError"
+                    error.message === "Permission denied by system" ||
+                    (error.name !== "AbortError" &&
+                        error.name !== "NotAllowedError")
                 ) {
                     onError(error);
                 }

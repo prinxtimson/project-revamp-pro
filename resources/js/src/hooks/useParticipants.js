@@ -10,18 +10,6 @@ export default function useParticipants() {
     );
 
     useEffect(() => {
-        if (dominantSpeaker) {
-            let prevParticipants = participants
-                ? participants?.filter(
-                      (participant) => participant !== dominantSpeaker
-                  )
-                : [];
-            setParticipants([dominantSpeaker, ...prevParticipants]);
-        }
-        return () => setParticipants([]);
-    }, [dominantSpeaker]);
-
-    useEffect(() => {
         if (room) {
             const participantConnected = (participant) =>
                 setParticipants([...participants, participant]);

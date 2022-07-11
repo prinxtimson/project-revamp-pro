@@ -14,7 +14,6 @@ export default function useScreenShareParticipant() {
             const updateScreenShareParticipant = () => {
                 setScreenShareParticipant(
                     Array.from(room.participants.values())
-                        // the screenshare participant could be the localParticipant
                         .concat(room.localParticipant)
                         .find((participant) =>
                             Array.from(participant.tracks.values()).find(

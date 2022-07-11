@@ -1,6 +1,7 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Link from "@mui/material/Link";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Alert from "@mui/material/Alert";
@@ -32,7 +33,15 @@ const theme = createTheme();
 const MainContainer = ({ children, alerts }) => {
     return (
         <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Container
+                sx={{
+                    //height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    //background: "white",
+                }}
+            >
                 <Stack sx={{ width: "100%" }} spacing={2}>
                     {alerts.map(
                         (alert) =>
@@ -57,7 +66,6 @@ const MainContainer = ({ children, alerts }) => {
                             )
                     )}
                 </Stack>
-                <CssBaseline />
                 {children}
                 <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>

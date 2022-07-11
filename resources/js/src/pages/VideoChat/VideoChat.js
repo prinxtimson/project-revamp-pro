@@ -1,9 +1,6 @@
 import React from "react";
 import { styled } from "@mui/styles";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useParams, useSearchParams } from "react-router-dom";
-
-const theme = createTheme();
 
 import MenuBar from "../../components/MenuBar/MenuBar";
 import MobileTopMenuBar from "../../components/MobileTopMenuBar";
@@ -41,21 +38,19 @@ const VideoChat = () => {
     const height = useHeight();
 
     return (
-        <ThemeProvider theme={theme}>
-            <Container style={{ height, flexGrow: 1 }}>
-                {roomState === "disconnected" ? (
-                    <PreJoinScreens URLRoomID={URLRoomID} password={password} />
-                ) : (
-                    <Main>
-                        <ReconnectingNotification />
-                        <RecordingNotifications />
-                        <MobileTopMenuBar password={password} />
-                        <Room />
-                        <MenuBar password={password} />
-                    </Main>
-                )}
-            </Container>
-        </ThemeProvider>
+        <Container style={{ height, flexGrow: 1 }}>
+            {roomState === "disconnected" ? (
+                <PreJoinScreens URLRoomID={URLRoomID} password={password} />
+            ) : (
+                <Main>
+                    <ReconnectingNotification />
+                    <RecordingNotifications />
+                    <MobileTopMenuBar password={password} />
+                    <Room />
+                    <MenuBar password={password} />
+                </Main>
+            )}
+        </Container>
     );
 };
 

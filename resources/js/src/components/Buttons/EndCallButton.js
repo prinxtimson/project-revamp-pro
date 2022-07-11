@@ -16,7 +16,7 @@ const EndCallButton = ({ endLivecall, loading }) => {
             data-cy-disconnect
             size="small"
         >
-            Endcall
+            End call
         </Button>
     );
 };

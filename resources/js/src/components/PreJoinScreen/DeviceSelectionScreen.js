@@ -8,6 +8,7 @@ import ToggleAudioButton from "../Buttons/ToggleAudioButton";
 import ToggleVideoButton from "../Buttons/ToggleVideoButton";
 import { useAppState } from "../../state";
 import useVideoContext from "../../hooks/useVideoContext";
+import useChatContext from "../../hooks/useChatContext";
 import Snackbar from "../Snackbar";
 
 const useStyles = makeStyles((theme) => ({
@@ -61,6 +62,7 @@ export default function DeviceSelectionScreen({
     const classes = useStyles();
     const [isSnackbarDismissed, setIsSnackbarDismissed] = useState(false);
     const { getToken, isFetching } = useAppState();
+    const { connect: chatConnect } = useChatContext();
     const {
         connect: videoConnect,
         isAcquiringLocalTracks,
@@ -77,6 +79,8 @@ export default function DeviceSelectionScreen({
         getToken(name, roomId, password).then(({ token, roomId }) => {
             videoConnect(token);
             getMainRoom(roomId);
+
+            chatConnect(token);
         });
     };
 

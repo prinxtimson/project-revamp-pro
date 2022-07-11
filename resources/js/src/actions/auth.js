@@ -144,7 +144,7 @@ export const addUser = (formData, handleSuccess) => async (dispatch) => {
     try {
         const res = await axios.post("/api/users", formData);
 
-        dispatch(setAlert("Agent added successfuly", "success"));
+        dispatch(setAlert("Admin added successfuly", "success"));
 
         dispatch({ type: AUTH_LOADING });
 
@@ -175,7 +175,7 @@ export const changePassword = (data) => async (dispatch) => {
     const body = JSON.stringify(data);
 
     try {
-        const res = await axios.put("/api/change-password", body, config);
+        const res = await axios.put("/change-password", body, config);
 
         dispatch(setAlert(res.data.message, "success"));
         window.location.reload();

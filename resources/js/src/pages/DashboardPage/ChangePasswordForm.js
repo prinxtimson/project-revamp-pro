@@ -32,11 +32,11 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        changePassword(formData);
     };
 
     const handleClickShowPassword = () => {
         setShow(!show);
-        changePassword(formData);
     };
 
     return (
@@ -49,6 +49,8 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        backgroundColor: "white",
+                        padding: 3,
                     }}
                 >
                     <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>

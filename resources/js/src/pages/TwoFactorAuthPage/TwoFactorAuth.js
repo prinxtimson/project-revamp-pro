@@ -5,7 +5,6 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { connect } from "react-redux";
 import { verifyCode, resendCode } from "../../actions/auth";
@@ -59,11 +58,28 @@ const TwoFactorAuth = (props) => {
                     alignItems: "center",
                     backgroundColor: "white",
                     padding: 3,
+                    width: "100%",
+                    maxWidth: 456,
+                    mx: "auto",
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                    <LockOutlinedIcon />
-                </Avatar>
+                <Box
+                    component="span"
+                    sx={{
+                        margin: 2,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Avatar
+                        variant="square"
+                        alt="Tritek Live"
+                        src="/images/logo.png"
+                        sx={{ width: 128, height: 32 }}
+                    >
+                        Tritek Live
+                    </Avatar>
+                </Box>
                 <Typography component="h1" variant="h5">
                     Two Factor Verification
                 </Typography>
@@ -86,7 +102,7 @@ const TwoFactorAuth = (props) => {
                 >
                     <Box>
                         <Typography>
-                            We sent code to your phone :
+                            We sent code to your Email :
                             {` ${authUser?.email?.substring(
                                 0,
                                 3

@@ -59,7 +59,7 @@ export const getConnectedLivecalls = () => async (dispatch) => {
 };
 
 export const requestLivecall =
-    (data, onLivecallRequest, showSurveyForm) => async (dispatch) => {
+    (data, onSuccessful, showSurvey) => async (dispatch) => {
         dispatch({ type: LIVECALL_LOADING });
         try {
             const res = await axios.post("/api/livecall", data);
@@ -71,9 +71,9 @@ export const requestLivecall =
                     if (
                         window.confirm("You will now be transfer to an agent.")
                     ) {
-                        showSurveyForm();
+                        //showSurvey();
                         window.open(
-                            `/confrencing/${e.data.id}?pwd=${e.password}`
+                            `/conferencing/${e.data.id}?pwd=${e.password}`
                         );
                     }
                 }
@@ -83,7 +83,7 @@ export const requestLivecall =
                 "CallEnded",
                 (e) => {
                     console.log(e);
-                    showSurveyForm();
+                    //showSurvey();
                 }
             );
 
@@ -92,7 +92,7 @@ export const requestLivecall =
                 payload: res.data,
             });
 
-            onLivecallRequest();
+            onSuccessful();
 
             dispatch(getConnectedLivecalls());
             dispatch(setAlert("You are connected", "success"));
@@ -159,7 +159,7 @@ export const answerLivecall = (id) => async (dispatch) => {
 
         getLivecallById(id);
 
-        window.open(`/confrencing/${res.data.id}?pwd=${res.data.pwd}`);
+        window.open(`/conferencing/${res.data.id}?pwd=${res.data.pwd}`);
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });

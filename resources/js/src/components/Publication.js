@@ -1,14 +1,8 @@
 import React from "react";
 import useTrack from "../hooks/useTrack";
-import AudioTrack from "./AudioTrack";
 import VideoTrack from "./VideoTrack";
 
-const Publication = ({
-    publication,
-    isLocalParticipant,
-    videoOnly,
-    videoPriority,
-}) => {
+const Publication = ({ publication, isLocalParticipant, videoPriority }) => {
     const track = useTrack(publication);
 
     if (!track) return null;
@@ -24,8 +18,6 @@ const Publication = ({
                     }
                 />
             );
-        case "audio":
-            return videoOnly ? null : <AudioTrack track={track} />;
         default:
             return null;
     }

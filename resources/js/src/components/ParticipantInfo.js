@@ -13,6 +13,9 @@ import useIsTrackSwitchedOff from "../hooks/useIsTrackSwitchedOff";
 import usePublications from "../hooks/usePublications";
 import useTrack from "../hooks/useTrack";
 import useParticipantIsReconnecting from "../hooks/useParticipantIsReconnecting";
+import { useAppState } from "../state";
+
+const borderWidth = 2;
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -125,6 +128,24 @@ const useStyles = makeStyles((theme) =>
         cursorPointer: {
             cursor: "pointer",
         },
+        galleryView: {
+            border: `${theme.participantBorderWidth}px solid ${theme.galleryViewBackgroundColor}`,
+            borderRadius: "8px",
+            [theme.breakpoints.down("sm")]: {
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                padding: "0",
+                fontSize: "12px",
+                margin: "0",
+                "& video": {
+                    objectFit: "cover !important",
+                },
+            },
+        },
+        dominantSpeaker: {
+            border: `solid ${borderWidth}px #7BEAA5`,
+        },
     })
 );
 
@@ -135,6 +156,7 @@ const ParticipantInfo = ({
     children,
     isLocalParticipant,
     hideParticipant,
+    isDominantSpeaker,
 }) => {
     const publications = usePublications(participant);
 
@@ -154,6 +176,8 @@ const ParticipantInfo = ({
     const audioTrack = useTrack(audioPublication);
     const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
+    const { isGalleryViewActive } = useAppState();
+
     const classes = useStyles();
 
     return (
@@ -161,6 +185,8 @@ const ParticipantInfo = ({
             className={clsx(classes.container, {
                 [classes.hideParticipant]: hideParticipant,
                 [classes.cursorPointer]: Boolean(onClick),
+                [classes.dominantSpeaker]: isDominantSpeaker,
+                [classes.galleryView]: isGalleryViewActive,
             })}
             onClick={onClick}
             data-cy-participant={participant.identity}

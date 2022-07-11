@@ -72,6 +72,8 @@ class VideoRoomController extends Controller
 
         $twilio = new Client($this->accout_sid, $this->auth_token);
 
+       // $conversationsClient = $twilio->conversations->v1->services;
+
         $room = $twilio->video->v1->rooms->create([
                                        "type" => "group",
                                        "uniqueName" => $fields['roomName']
@@ -153,6 +155,7 @@ class VideoRoomController extends Controller
      */
     public function get_access_token(Request $request)
     {
+        $token_url = getenv('TWILIO_TOKEN_URL');
         $fields = $request->validate([
             'room' => 'required|string',
             'password' => 'required|string',
@@ -195,12 +198,24 @@ class VideoRoomController extends Controller
                 ], 401);
             }
 
-            $data = Http::post('http://127.0.0.1:5000/twilio/connect', ['roomId' => $request->breakoutRoom, 'identity' => $fields['identity']])->throw()->json();
+            $data = Http::post($token_url.'twilio/connect', ['roomId' => $request->breakoutRoom, 'identity' => $fields['identity']])->throw()->json();
 
             return $data;
         }
 
-        $data = Http::post('http://127.0.0.1:5000/twilio/connect', ['roomId' => $room, 'identity' => $fields['identity']])->throw()->json();
+        $data = Http::post($token_url.'twilio/connect', ['roomId' => $room, 'identity' => $fields['identity']])->throw()->json();
+
+        return $data;
+    }
+
+    public function recording(Request $request)
+    {
+        $token_url = getenv('TWILIO_TOKEN_URL');
+
+        $rsid = $request->input('room_sid');
+        $rules = $request->input('rules');
+        
+        $data = Http::post($token_url.'twilio/recordingrules', ['roomId' => $rsid, 'rules' => $rules])->throw()->json();
 
         return $data;
     }

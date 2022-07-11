@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useVideoContext from "./useVideoContext";
 
-export default function useDominantSpeaker() {
+export default function useDominantSpeaker(includeNull = false) {
     const { room } = useVideoContext();
     const [dominantSpeaker, setDominantSpeaker] = useState(
         room?.dominantSpeaker
@@ -10,7 +10,7 @@ export default function useDominantSpeaker() {
     useEffect(() => {
         if (room) {
             const handleDominantSpeakerChanged = (newDominantSpeaker) => {
-                if (newDominantSpeaker !== null) {
+                if (includeNull || newDominantSpeaker !== null) {
                     setDominantSpeaker(newDominantSpeaker);
                 }
             };
@@ -38,7 +38,7 @@ export default function useDominantSpeaker() {
                 setDominantSpeaker(null);
             };
         }
-    }, [room]);
+    }, [room, includeNull]);
 
     return dominantSpeaker;
 }

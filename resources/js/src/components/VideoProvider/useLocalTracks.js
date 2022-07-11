@@ -139,7 +139,7 @@ export default function useLocalTracks() {
 
                     window.localStorage.setItem(
                         SELECTED_VIDEO_INPUT_KEY,
-                        newVideoTrack.mediaStreamTrack.getSettings().deviceId ??
+                        newVideoTrack.mediaStreamTrack.getSettings().deviceId ||
                             ""
                     );
                 }

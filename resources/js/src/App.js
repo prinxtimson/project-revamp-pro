@@ -1,6 +1,7 @@
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.css";
+
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -10,11 +11,11 @@ import store from "./store";
 import { loadUser, onNewNotification } from "./actions/auth";
 import { getWaitingListCount, updateLivecalls } from "./actions/livecall";
 
+import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage/Dashboard";
-import LiveSupportPage from "./pages/LiveSupportPage";
 import VideoChat from "./pages/VideoChat";
 import TwoFactorAuthPage from "./pages/TwoFactorAuthPage";
 import ErrorPage from "./pages/ErrorPage";
@@ -58,11 +59,7 @@ const App = (props) => {
         <Provider store={store}>
             <Router>
                 <Routes>
-                    <Route
-                        exact
-                        path="live-support"
-                        element={<LiveSupportPage />}
-                    />
+                    <Route exact path="/" element={<HomePage />} />
                     <Route
                         exact
                         path="admin/two-factor-auth"
@@ -71,7 +68,7 @@ const App = (props) => {
                     <Route exact path="admin" element={<LoginPage />} />
                     <Route
                         exact
-                        path="confrencing/:URLRoomID"
+                        path="conferencing/:URLRoomID"
                         element={<VideoChat />}
                     />
                     <Route

@@ -63,7 +63,7 @@ export const enableUser = (id) => async (dispatch) => {
             payload: res.data,
         });
 
-        dispatch(setAlert("User had been enabled successfully", "success"));
+        dispatch(setAlert("Admin had been enabled successfully", "success"));
     } catch (err) {
         console.log(err.response);
         if (err.response.status == 500) {
@@ -87,7 +87,7 @@ export const disableUser = (id) => async (dispatch) => {
             payload: res.data,
         });
 
-        dispatch(setAlert("User had been disabled successfully", "success"));
+        dispatch(setAlert("Admin had been disabled successfully", "success"));
     } catch (err) {
         console.log(err.response);
         if (err.response.status == 500) {
@@ -108,7 +108,7 @@ export const approveUser = (id) => async (dispatch) => {
 
         dispatch(getAllProfiles());
 
-        dispatch(setAlert("User had been approved successfully", "success"));
+        dispatch(setAlert("Admin had been approved successfully", "success"));
     } catch (err) {
         console.log(err.response);
         if (err.response.status == 500) {
@@ -135,7 +135,9 @@ export const delUser = (id) => async (dispatch) => {
                 payload: id,
             });
 
-            dispatch(setAlert("User had been deleted successfully", "success"));
+            dispatch(
+                setAlert("Admin had been deleted successfully", "success")
+            );
         } catch (err) {
             console.log(err);
             if (err.response.status == 500) {

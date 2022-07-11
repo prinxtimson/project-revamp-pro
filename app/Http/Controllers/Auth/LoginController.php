@@ -54,8 +54,7 @@ class LoginController extends Controller
             return redirect()->route('2fa.index');
         }
     
-        return redirect()
-            ->route('login')
-            ->with('error', 'You have entered invalid credentials');
+        return response(['message' =>'email or password is invalid'], 400)
+           ;
     }
 }

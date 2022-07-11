@@ -12,7 +12,7 @@ const VideoTrack = ({ track, isLocal, priority }) => {
     const ref = useRef(null);
     const mediaStreamTrack = useMediaStreamTrack(track);
     const dimensions = useVideoTrackDimensions(track);
-    const isPortrait = dimensions?.height > (dimensions?.width || 0);
+    const isPortrait = (dimensions?.height || 0) > (dimensions?.width || 0);
 
     useEffect(() => {
         const el = ref.current;
@@ -36,7 +36,7 @@ const VideoTrack = ({ track, isLocal, priority }) => {
     const isFrontFacing =
         mediaStreamTrack?.getSettings().facingMode !== "environment";
     const style = {
-        transform: isLocal && isFrontFacing ? "rotateY(180deg)" : "",
+        transform: isLocal && isFrontFacing ? "scaleX(-1)" : "",
         objectFit:
             isPortrait || track.name.includes("screen") ? "contain" : "cover",
     };

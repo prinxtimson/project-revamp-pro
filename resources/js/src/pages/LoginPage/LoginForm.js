@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/auth";
 import Container from "../../components/Container";
+import MuiContainer from "@mui/material/Container";
 
 const LoginForm = ({ loginUser, alerts, loading }) => {
     const handleSubmit = (event) => {
@@ -34,6 +35,9 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
                     alignItems: "center",
                     backgroundColor: "white",
                     padding: 3,
+                    width: "100%",
+                    maxWidth: 456,
+                    mx: "auto",
                 }}
             >
                 <Box
@@ -46,11 +50,11 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
                 >
                     <Avatar
                         variant="square"
-                        alt="Dev Arena"
+                        alt="Tritek Live"
                         src="/images/logo.png"
                         sx={{ width: 128, height: 32 }}
                     >
-                        Dev Arena
+                        Tritek Live
                     </Avatar>
                 </Box>
                 <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>

@@ -41,6 +41,9 @@ const ForgotPasswordForm = ({ alerts, requestPasswordReset }) => {
                     alignItems: "center",
                     backgroundColor: "white",
                     padding: 3,
+                    width: "100%",
+                    maxWidth: 456,
+                    mx: "auto",
                 }}
             >
                 <Box
@@ -53,11 +56,11 @@ const ForgotPasswordForm = ({ alerts, requestPasswordReset }) => {
                 >
                     <Avatar
                         variant="square"
-                        alt="Dev Arena"
+                        alt="Tritek Live"
                         src="/images/logo.png"
                         sx={{ width: 128, height: 32 }}
                     >
-                        Dev Arena
+                        Tritek Live
                     </Avatar>
                 </Box>
                 <Typography component="h1" variant="h5">

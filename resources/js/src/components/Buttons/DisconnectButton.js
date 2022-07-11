@@ -29,8 +29,9 @@ const DisconnectButton = (props) => {
             }}
             className={clsx(classes.button, props.className)}
             data-cy-disconnect
+            color="error"
         >
-            Disconnect
+            Leave Call
         </Button>
     );
 };

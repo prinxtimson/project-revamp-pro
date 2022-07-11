@@ -15,10 +15,10 @@ import useParticipants from "../../hooks/useParticipants";
 import DisconnectButton from "../Buttons/DisconnectButton";
 import ToggleAudioButton from "../Buttons/ToggleAudioButton";
 import ToggleVideoButton from "../Buttons/ToggleVideoButton";
+import ToggleChatButton from "../Buttons/ToggleChatButton";
 import ToggleScreenShareButton from "../Buttons/ToggleScreenShareButton";
 import ParticipantListDialog from "../ParticipantListDialog";
 import BreakoutRoomsDialog from "../BreakoutRoomsDialog";
-import { useAppState } from "../../state";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) =>
@@ -72,12 +72,13 @@ const useStyles = makeStyles((theme) =>
 
 const MenuBar = ({ password, isAuthenticated }) => {
     const classes = useStyles();
-    const participants = useParticipants();
+
     const [open, setOpen] = React.useState(false);
     const [breakoutOpen, setBreakoutOpen] = React.useState(false);
     const { isSharingScreen, toggleScreenShare, room } = useVideoContext();
     const roomState = useRoomState();
     const isReconnecting = roomState === "reconnecting";
+    const participants = useParticipants();
 
     const toggleBreakoutRoom = () => setBreakoutOpen(!breakoutOpen);
 
@@ -126,12 +127,15 @@ const MenuBar = ({ password, isAuthenticated }) => {
                         <Grid container justifyContent="center">
                             <ToggleAudioButton disabled={isReconnecting} />
                             <ToggleVideoButton disabled={isReconnecting} />
-                            {!isMobile && (
+                            {!isSharingScreen && !isMobile && (
                                 <ToggleScreenShareButton
                                     disabled={isReconnecting}
                                     room={room}
                                 />
                             )}
+                            {process.env
+                                .REACT_APP_DISABLE_TWILIO_CONVERSATIONS !==
+                                "true" && <ToggleChatButton />}
                             <Hidden smDown>
                                 <Button onClick={() => setOpen(true)}>
                                     <Badge

@@ -10,9 +10,7 @@ export default function useLocalVideoToggle() {
         onError,
     } = useVideoContext();
     const localParticipant = room?.localParticipant;
-    const videoTrack = localTracks.find(
-        (track) => !track.name.includes("screen") && track.kind === "video"
-    );
+    const videoTrack = localTracks.find((track) => track.kind === "video");
     const [isPublishing, setIspublishing] = useState(false);
 
     const toggleVideo = () => {
@@ -54,5 +52,5 @@ export default function useLocalVideoToggle() {
         room,
     ]);
 
-    return [videoTrack, toggleVideoEnabled];
+    return [!!videoTrack, toggleVideoEnabled];
 }

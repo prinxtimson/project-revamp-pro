@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) =>
 export default function ToggleScreenShareButton(props) {
     const classes = useStyles();
     const screenShareParticipant = useScreenShareParticipant();
-    const { toggleScreenShare } = useVideoContext();
+    const { toggleScreenShare, getAudioAndVideoTracks } = useVideoContext();
     const disableScreenShareButton = Boolean(screenShareParticipant);
     const isScreenShareSupported =
         navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
@@ -52,6 +52,11 @@ export default function ToggleScreenShareButton(props) {
         tooltipMessage = SHARE_NOT_SUPPORTED_TEXT;
     }
 
+    const onToggleScreenShare = () => {
+        getAudioAndVideoTracks();
+        toggleScreenShare();
+    };
+
     return (
         <>
             <Hidden smDown>
@@ -64,7 +69,7 @@ export default function ToggleScreenShareButton(props) {
                     <span>
                         <Button
                             className={classes.button}
-                            onClick={toggleScreenShare}
+                            onClick={onToggleScreenShare}
                             disabled={isDisabled}
                             startIcon={<ScreenShareIcon />}
                             data-cy-share-screen
@@ -84,7 +89,7 @@ export default function ToggleScreenShareButton(props) {
                     <span>
                         <IconButton
                             className={classes.button}
-                            onClick={toggleScreenShare}
+                            onClick={onToggleScreenShare}
                             disabled={isDisabled}
                             data-cy-share-screen
                             color="primary"

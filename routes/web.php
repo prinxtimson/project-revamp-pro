@@ -8,6 +8,7 @@ use App\Http\Controllers\TwoFactorAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
+use App\Http\Controllers\VideoRoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,7 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     })->name('home');
 
-    Route::get('password/reset/{token}', function () {
+    Route::get('admin/password/reset/{token}', function () {
         return view('welcome');
     })->name('password.reset');
 
@@ -38,7 +39,7 @@ Route::middleware(['guest'])->group(function () {
     });
 
     Route::get('/', function () {
-        return view('home');
+        return view('welcome');
     });
 
     Route::get('live-support', function () {
@@ -74,6 +75,8 @@ Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('livecall/download', [LiveCallController::class, 'download']);
     Route::get('callback/download', [CallBackController::class, 'download']);
+
+    Route::post('recordingrules', [VideoRoomController::class, 'recording']);
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
@@ -90,7 +93,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     })->name('dashboard');
 });
 
-Route::get('confrencing/{URLRoomName?}', function () {
+Route::get('conferencing/{URLRoomName?}', function () {
     return view('welcome');
 });
 

@@ -8,21 +8,47 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import moment from "moment";
+import { connect } from "react-redux";
+import { requestCallback } from "../actions/callback";
 
 const CallbackDialog = ({
     open,
-    data,
+    livecall,
     handleClose,
-    handleSubmit,
-    handleOnChange,
     loading,
+    requestCallback,
 }) => {
     let minDate = new Date().toISOString();
     let maxDate = new Date(moment().weekday(5)).toISOString();
+    const [formData, setFormData] = React.useState({
+        name: "",
+        email: "",
+        phone: "",
+        time: "",
+        date: new Date().toISOString().split("T")[0],
+    });
+
+    const handleOnChange = (e) =>
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const handleSubmit = () => {
+        requestCallback(livecall.id, formData, onSuccessful);
+    };
+
+    const onSuccessful = () => {
+        handleClose();
+        setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            time: "",
+            date: new Date().toISOString().split("T")[0],
+        });
+    };
 
     return (
         <div>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} sx={{ padding: 5 }}>
                 <DialogTitle>Request Callback</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -40,7 +66,7 @@ const CallbackDialog = ({
                             label="Name"
                             name="name"
                             autoComplete="name"
-                            value={data.name}
+                            value={formData.name}
                             onChange={handleOnChange}
                             autoFocus
                         />
@@ -51,7 +77,7 @@ const CallbackDialog = ({
                             id="email"
                             label="Email"
                             name="email"
-                            value={data.email}
+                            value={formData.email}
                             onChange={handleOnChange}
                             autoComplete="email"
                         />
@@ -62,7 +88,7 @@ const CallbackDialog = ({
                             name="phone"
                             label="Phone Number"
                             id="phone"
-                            value={data.phone}
+                            value={formData.phone}
                             onChange={handleOnChange}
                             autoComplete="phone"
                         />
@@ -74,7 +100,7 @@ const CallbackDialog = ({
                             fullWidth
                             name="time"
                             label="Time"
-                            value={data.time}
+                            value={formData.time}
                             onChange={handleOnChange}
                             helperText="available time is week days between 8am - 4pm"
                             SelectProps={{
@@ -97,7 +123,7 @@ const CallbackDialog = ({
                             name="date"
                             label="Date"
                             id="date"
-                            value={data.date || minDate.split("T")[0]}
+                            value={formData.date || minDate.split("T")[0]}
                             onChange={handleOnChange}
                             type="date"
                             inputProps={{
@@ -108,9 +134,7 @@ const CallbackDialog = ({
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} disabled={loading}>
-                        Cancel
-                    </Button>
+                    <Button onClick={handleClose}>Cancel</Button>
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
@@ -124,4 +148,9 @@ const CallbackDialog = ({
     );
 };
 
-export default CallbackDialog;
+const mapStateToProps = (state) => ({
+    livecall: state.livecall.livecall,
+    loading: state.callback.loading,
+});
+
+export default connect(mapStateToProps, { requestCallback })(CallbackDialog);

@@ -59,6 +59,7 @@ const MobileTopMenuBar = ({ password, isAuthenticated }) => {
                 <Menu
                     buttonClassName={classes.settingsButton}
                     toggleBreakoutRoom={toggleBreakoutRoom}
+                    isAuthenticated={isAuthenticated}
                 />
                 <Hidden smUp>
                     <DisconnectButton className={classes.endCallButton} />

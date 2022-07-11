@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useState } from "react";
 import { settingsReducer, initialSettings } from "./settingsReducer.js";
+import { useLocalStorageState } from "../hooks/useLocalStorageState";
 import useActiveSinkId from "./useActiveSinkId";
 
 const axios = window.axios;
@@ -9,12 +10,18 @@ export const StateContext = createContext(null);
 export default function AppStateProvider(props) {
     const [error, setError] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
+    const [isGalleryViewActive, setIsGalleryViewActive] = useLocalStorageState(
+        "gallery-view-active-key",
+        true
+    );
     const [activeSinkId, setActiveSinkId] = useActiveSinkId();
     const [settings, dispatchSetting] = useReducer(
         settingsReducer,
         initialSettings
     );
     const [roomType, setRoomType] = useState();
+    const [maxGalleryViewParticipants, setMaxGalleryViewParticipants] =
+        useLocalStorageState("max-gallery-participants-key", 6);
 
     let contextValue = {
         error,
@@ -25,6 +32,10 @@ export default function AppStateProvider(props) {
         settings,
         dispatchSetting,
         roomType,
+        isGalleryViewActive,
+        setIsGalleryViewActive,
+        maxGalleryViewParticipants,
+        setMaxGalleryViewParticipants,
     };
 
     contextValue = {
@@ -50,32 +61,25 @@ export default function AppStateProvider(props) {
 
             return res.data;
         },
-        updateRecordingRules: async (room_sid, rules) => {
-            const endpoint =
-                process.env.REACT_APP_TOKEN_ENDPOINT || "/recordingrules";
-
-            return fetch(endpoint, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ room_sid, rules }),
-                method: "POST",
-            })
-                .then(async (res) => {
-                    const jsonResponse = await res.json();
-
-                    if (!res.ok) {
+        updateRecordingRules: (room_sid, rules) => {
+            return axios
+                .post("/recordingrules", { room_sid, rules })
+                .then((res) => {
+                    if (!res.data) {
                         const recordingError = new Error(
-                            jsonResponse.error?.message ||
+                            res.error?.message ||
                                 "There was an error updating recording rules"
                         );
-                        recordingError.code = jsonResponse.error?.code;
+                        recordingError.code = res.error?.code;
                         return Promise.reject(recordingError);
                     }
 
-                    return jsonResponse;
+                    return res.data;
                 })
-                .catch((err) => setError(err));
+                .catch((err) => {
+                    console.log(err);
+                    setError(err);
+                });
         },
     };
 
@@ -89,6 +93,7 @@ export default function AppStateProvider(props) {
                 return res;
             })
             .catch((err) => {
+                console.log("state index get token");
                 setError(err);
                 setIsFetching(false);
                 return Promise.reject(err);
@@ -104,6 +109,7 @@ export default function AppStateProvider(props) {
                 return res;
             })
             .catch((err) => {
+                console.log("state index recording");
                 setError(err);
                 setIsFetching(false);
                 return Promise.reject(err);

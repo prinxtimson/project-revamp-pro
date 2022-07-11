@@ -10,6 +10,7 @@ const Participant = ({
     isSelected,
     isLocalParticipant,
     hideParticipant,
+    isDominantSpeaker,
 }) => {
     return (
         <ParticipantInfo
@@ -18,6 +19,7 @@ const Participant = ({
             isSelected={isSelected}
             isLocalParticipant={isLocalParticipant}
             hideParticipant={hideParticipant}
+            isDominantSpeaker={isDominantSpeaker}
         >
             <ParticipantTracks
                 participant={participant}
@@ -29,4 +31,4 @@ const Participant = ({
     );
 };
 
-export default Participant;
+export default React.memo(Participant);

@@ -7,10 +7,9 @@ let clipId = 0;
 const getUniqueClipId = () => clipId++;
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-let audioContext;
 
 export const initializeAnalyser = (stream) => {
-    audioContext = audioContext || new AudioContext();
+    const audioContext = new AudioContext();
     const audioSource = audioContext.createMediaStreamSource(stream);
 
     const analyser = audioContext.createAnalyser();
@@ -18,8 +17,17 @@ export const initializeAnalyser = (stream) => {
     analyser.fftSize = 256;
 
     audioSource.connect(analyser);
+
+    stream.addEventListener("cleanup", () => {
+        if (audioContext.state != "closed") {
+            audioContext.close();
+        }
+    });
+
     return analyser;
 };
+
+const isIOS = /iPhone|iPad/.test(navigator.userAgent);
 
 const AudioLevelIndicator = ({ audioTrack, color = "white" }) => {
     const SVGRectRef = useRef(null);
@@ -29,15 +37,24 @@ const AudioLevelIndicator = ({ audioTrack, color = "white" }) => {
 
     useEffect(() => {
         if (audioTrack && mediaStreamTrack && isTrackEnabled) {
-            let newMediaStream = new MediaStream([mediaStreamTrack.clone()]);
+            let newMediaStream = new MediaStream([
+                isIOS ? mediaStreamTrack.clone() : mediaStreamTrack,
+            ]);
 
-            const stopAllMediaStreamTracks = () =>
-                newMediaStream.getTracks().forEach((track) => track.stop());
+            const stopAllMediaStreamTracks = () => {
+                if (isIOS) {
+                    newMediaStream.getTracks().forEach((track) => track.stop());
+                }
+                newMediaStream.dispatchEvent(new Event("cleanup"));
+            };
+
             audioTrack.on("stopped", stopAllMediaStreamTracks);
 
             const reinitializeAnalyser = () => {
                 stopAllMediaStreamTracks();
-                newMediaStream = new MediaStream([mediaStreamTrack.clone()]);
+                newMediaStream = new MediaStream([
+                    isIOS ? mediaStreamTrack.clone() : mediaStreamTrack,
+                ]);
                 setAnalyser(initializeAnalyser(newMediaStream));
             };
 

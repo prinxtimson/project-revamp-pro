@@ -71,15 +71,13 @@ export default function RoomNameScreen({ name, setName, handleSubmit }) {
             <form onSubmit={handleSubmit}>
                 <div className={classes.inputContainer}>
                     <div className={classes.textFieldContainer}>
-                        <InputLabel shrink htmlFor="input-user-name">
-                            Your Name
-                        </InputLabel>
                         <TextField
                             id="input-user-name"
                             variant="outlined"
                             fullWidth
                             size="small"
                             value={name}
+                            label="Your Name"
                             onChange={handleNameChange}
                         />
                     </div>

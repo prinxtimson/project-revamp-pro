@@ -63,6 +63,9 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
                     alignItems: "center",
                     backgroundColor: "white",
                     padding: 3,
+                    width: "100%",
+                    maxWidth: 456,
+                    mx: "auto",
                 }}
             >
                 <Box
