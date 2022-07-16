@@ -98,14 +98,14 @@ const FeedbackTable = ({ loading, getFeedbacks, clearFeedback, feedbacks }) => {
                                                     mb: 0,
                                                     alignSelf: "center",
                                                 }}
-                                            >{`Average Rating   -     ${
+                                            >{`Average Rating   -     ${(
                                                 ratings.reduce(
                                                     (total, val) =>
                                                         total +
                                                         parseInt(val.rating),
                                                     0
                                                 ) / 3
-                                            }`}</Typography>
+                                            ).toFixed(1)}`}</Typography>
                                         </AccordionSummary>
                                         <AccordionDetails>
                                             <List>

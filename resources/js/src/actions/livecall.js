@@ -37,6 +37,27 @@ export const getLivecalls = () => async (dispatch) => {
     }
 };
 
+export const getLivecallsByUrl = (url) => async (dispatch) => {
+    try {
+        const res = await axios.get(url);
+
+        dispatch({
+            type: SET_LIVECALLS,
+            payload: res.data,
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: LIVECALL_ERROR });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
 export const getConnectedLivecalls = () => async (dispatch) => {
     try {
         const res = await axios.get("/api/livecall/filter");
@@ -59,7 +80,7 @@ export const getConnectedLivecalls = () => async (dispatch) => {
 };
 
 export const requestLivecall =
-    (data, onSuccessful, showSurvey) => async (dispatch) => {
+    (data, onSuccessful, showThankYou) => async (dispatch) => {
         dispatch({ type: LIVECALL_LOADING });
         try {
             const res = await axios.post("/api/livecall", data);
@@ -69,9 +90,11 @@ export const requestLivecall =
                 (e) => {
                     console.log(e);
                     if (
-                        window.confirm("You will now be transfer to an agent.")
+                        window.confirm(
+                            "You will now be transferred to an agent."
+                        )
                     ) {
-                        //showSurvey();
+                        showThankYou();
                         window.open(
                             `/conferencing/${e.data.id}?pwd=${e.password}`
                         );
@@ -82,8 +105,7 @@ export const requestLivecall =
             window.Echo.channel(`livecall.${res.data.id}`).listen(
                 "CallEnded",
                 (e) => {
-                    console.log(e);
-                    //showSurvey();
+                    showThankYou();
                 }
             );
 
@@ -150,19 +172,20 @@ export const leaveLivecall = (id) => async (dispatch) => {
     }
 };
 
-export const answerLivecall = (id) => async (dispatch) => {
+export const answerLivecall = (id, handleLoading) => async (dispatch) => {
+    handleLoading();
     try {
         const res = await axios.post(`/api/room`, {
             livecall: `${id}`,
-            roomName: `call_${id}`,
         });
-
+        handleLoading();
         getLivecallById(id);
 
         window.open(`/conferencing/${res.data.id}?pwd=${res.data.pwd}`);
     } catch (err) {
         console.log(err.response);
         dispatch({ type: LIVECALL_ERROR });
+        handleLoading();
         if (err.response.status === 500) {
             return dispatch(
                 setAlert("Server errror, please try again.", "danger")

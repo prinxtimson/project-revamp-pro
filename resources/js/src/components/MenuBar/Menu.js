@@ -152,7 +152,7 @@ const Menu = (props) => {
                         >
                             <IconContainer>
                                 {isRecording ? (
-                                    <StopRecordingIcon />
+                                    <StopRecordingIcon sx={{ color: "red" }} />
                                 ) : (
                                     <StartRecordingIcon />
                                 )}

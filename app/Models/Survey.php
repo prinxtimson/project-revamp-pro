@@ -11,6 +11,7 @@ class Survey extends Model
 
     protected $fillable = [
         'data',
+        'comment'
     ];
 
     protected $casts = [

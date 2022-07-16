@@ -32,12 +32,12 @@ import {
     setLivecalls,
     getConnectedLivecalls,
     getLivecalls,
+    getLivecallsByUrl,
 } from "../../actions/livecall";
 import { connect } from "react-redux";
 import Moment from "react-moment";
 import Typography from "@mui/material/Typography";
 import DrawerContainer from "./DrawerContainer";
-//import moment from "@mui/material/TextField";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     head: {
@@ -59,21 +59,28 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const LiveCallTable = ({
     livecalls,
-    loading,
+    livecallLoading,
     delLivecall,
     answerLivecall,
     setLivecalls,
     alerts,
     getConnectedLivecalls,
     getLivecalls,
+    getLivecallsByUrl,
 }) => {
-    const [page, setPage] = React.useState(0);
-    const [actionLoading, setActionLoading] = React.useState(false);
+    const [data, setData] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
     const [queryType, setQueryType] = React.useState("");
-    const [data, setData] = React.useState({
+    const [formData, setFormData] = React.useState({
         from: "",
         to: "",
     });
+
+    React.useEffect(() => {
+        if (livecalls) {
+            setData(livecalls.data);
+        }
+    }, [livecalls]);
 
     React.useEffect(() => {
         if (queryType)
@@ -84,17 +91,21 @@ const LiveCallTable = ({
     const handleDelete = (id) => delLivecall(id);
 
     const handleConnect = (id) => {
-        answerLivecall(id);
+        answerLivecall(id, handleLoading);
     };
 
-    const handleLoading = () => setActionLoading(!actionLoading);
+    const handleLoading = () => setLoading(!loading);
 
     const handleOnDownload = () => {
-        window.location.href = `/livecall/download?from=${data.from}&to=${data.to}`;
+        window.location.href = `/livecall/download?from=${formData.from}&to=${formData.to}`;
     };
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        if (livecalls.current_page > newPage + 1) {
+            getLivecallsByUrl(livecalls.prev_page_url);
+        } else {
+            getLivecallsByUrl(livecalls.next_page_url);
+        }
     };
 
     const onFilterSelect = (e) => {
@@ -201,13 +212,13 @@ const LiveCallTable = ({
                                     label="Start Date"
                                     type="date"
                                     size="small"
-                                    value={data.from}
+                                    value={formData.from}
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
                                     onChange={(e) =>
-                                        setData({
-                                            ...data,
+                                        setFormData({
+                                            ...formData,
                                             from: e.target.value,
                                         })
                                     }
@@ -221,14 +232,14 @@ const LiveCallTable = ({
                                     id="end"
                                     label="End Date"
                                     type="date"
-                                    value={data.to}
+                                    value={formData.to}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
                                     onChange={(e) =>
-                                        setData({
-                                            ...data,
+                                        setFormData({
+                                            ...formData,
                                             to: e.target.value,
                                         })
                                     }
@@ -240,7 +251,7 @@ const LiveCallTable = ({
                                     color="primary"
                                     size="small"
                                     onClick={handleOnDownload}
-                                    disabled={!data.from || !data.to}
+                                    disabled={!formData.from || !formData.to}
                                 >
                                     Download
                                 </Button>
@@ -354,21 +365,20 @@ const LiveCallTable = ({
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {loading ? (
+                                {livecallLoading ? (
                                     <TableRow>
                                         <StyledTableCell scope="row">
                                             Loading.....
                                         </StyledTableCell>
                                     </TableRow>
-                                ) : !livecalls ||
-                                  livecalls?.data.length === 0 ? (
+                                ) : !livecalls || data.length === 0 ? (
                                     <TableRow>
                                         <StyledTableCell scope="row">
                                             No Data Available.
                                         </StyledTableCell>
                                     </TableRow>
                                 ) : (
-                                    livecalls?.data.map((row) => (
+                                    data.map((row) => (
                                         <StyledTableRow key={row.id}>
                                             <StyledTableCell scope="row">
                                                 {row.id}
@@ -427,7 +437,8 @@ const LiveCallTable = ({
                                                                 ) ||
                                                                 Boolean(
                                                                     row.left_at
-                                                                )
+                                                                ) ||
+                                                                loading
                                                             }
                                                         >
                                                             Connect
@@ -443,6 +454,7 @@ const LiveCallTable = ({
                                                                     row.id
                                                                 )
                                                             }
+                                                            disabled={loading}
                                                         >
                                                             Delete
                                                         </Button>
@@ -457,9 +469,7 @@ const LiveCallTable = ({
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[20]}
-                                        rowsPerPage={
-                                            livecalls?.data.length || 0
-                                        }
+                                        rowsPerPage={livecalls?.per_page || 0}
                                         count={livecalls?.total || 0}
                                         page={livecalls?.current_page - 1 || 0}
                                         onPageChange={handleChangePage}
@@ -475,7 +485,7 @@ const LiveCallTable = ({
 };
 
 const mapStateToProps = (state) => ({
-    loading: state.livecall.loading,
+    livecallLoading: state.livecall.loading,
     livecalls: state.livecall.livecalls,
     alerts: state.alert,
 });
@@ -486,4 +496,5 @@ export default connect(mapStateToProps, {
     setLivecalls,
     getConnectedLivecalls,
     getLivecalls,
+    getLivecallsByUrl,
 })(LiveCallTable);

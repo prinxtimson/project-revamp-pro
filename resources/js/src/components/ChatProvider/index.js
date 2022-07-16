@@ -16,7 +16,7 @@ export const ChatProvider = ({ children }) => {
     const [isChatWindowOpen, setIsChatWindowOpen] = useState(false);
     const [conversation, setConversation] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+    const [hasUnreadMessages, setHasUnreadMessages] = useState(0);
     const [chatClient, setChatClient] = useState();
 
     const connect = useCallback(
@@ -40,10 +40,15 @@ export const ChatProvider = ({ children }) => {
     );
 
     useEffect(() => {
-        console.log(conversation);
         if (conversation) {
-            const handleMessageAdded = (message) =>
+            const handleMessageAdded = (message) => {
+                if (!isChatWindowOpenRef.current) {
+                    setHasUnreadMessages((prevCount) => prevCount + 1);
+                }
+
                 setMessages((oldMessages) => [...oldMessages, message]);
+            };
+
             conversation.getMessages().then((newMessages) => {
                 setMessages([...newMessages.items]);
             });
@@ -55,15 +60,10 @@ export const ChatProvider = ({ children }) => {
     }, [conversation]);
 
     useEffect(() => {
-        // If the chat window is closed and there are new messages, set hasUnreadMessages to true
-        if (!isChatWindowOpenRef.current && messages?.length) {
-            setHasUnreadMessages(true);
-        }
-    }, [messages]);
-
-    useEffect(() => {
         isChatWindowOpenRef.current = isChatWindowOpen;
-        if (isChatWindowOpen) setHasUnreadMessages(false);
+        if (isChatWindowOpen) {
+            setHasUnreadMessages(0);
+        }
     }, [isChatWindowOpen]);
 
     useEffect(() => {

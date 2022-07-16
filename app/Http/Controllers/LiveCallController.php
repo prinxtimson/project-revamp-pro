@@ -10,7 +10,7 @@ use App\Exports\LiveCallExport;
 use App\Models\LiveCall as ModelsLiveCall;
 use App\WebPush\WebNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class LiveCallController extends Controller
@@ -133,11 +133,6 @@ class LiveCallController extends Controller
         LivecallUpdate::dispatch($livecall);
 
         return $livecall;
-    }
-
-    public function end($room)
-    {
-
     }
 
     /**

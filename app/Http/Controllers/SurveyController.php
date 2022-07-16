@@ -38,13 +38,15 @@ class SurveyController extends Controller
     {
         $fields = $request->validate([
             'ratings' => 'required',
-            'livecall' => 'required'
+            'livecall' => 'required',
+            'comment' => 'required'
         ]);
 
         $livecall = LiveCall::find($fields['livecall']);
 
         $survey = $livecall->survey()->create([
-            'data' => $fields['ratings']
+            'data' => $fields['ratings'],
+            'comment' => $fields['comment']
         ]);
 
         return response($survey, 201);

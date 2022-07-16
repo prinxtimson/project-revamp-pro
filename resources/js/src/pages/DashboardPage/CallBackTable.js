@@ -33,6 +33,7 @@ import {
     delCallback,
     callbackFailed,
     callbackSuccessful,
+    getCallbacksByUrl,
 } from "../../actions/callback";
 import DrawerContainer from "./DrawerContainer";
 
@@ -64,8 +65,8 @@ const CallBackTable = ({
     delCallback,
     callbackFailed,
     callbackSuccessful,
+    getCallbacksByUrl,
 }) => {
-    const [page, setPage] = React.useState(0);
     const [searchCallbacks, setSearchCallbacks] = React.useState([]);
     const [query, setQuery] = React.useState("");
     const [data, setData] = React.useState({
@@ -115,7 +116,11 @@ const CallBackTable = ({
     const handleCancel = (id) => callbackFailed(id);
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        if (callbacks.current_page > newPage + 1) {
+            getCallbacksByUrl(callbacks.prev_page_url);
+        } else {
+            getCallbacksByUrl(callbacks.next_page_url);
+        }
     };
 
     return (
@@ -396,9 +401,7 @@ const CallBackTable = ({
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[20]}
-                                        rowsPerPage={
-                                            callbacks?.data.length || 0
-                                        }
+                                        rowsPerPage={callbacks?.per_page || 0}
                                         count={callbacks?.total || 0}
                                         page={callbacks?.current_page - 1 || 0}
                                         onPageChange={handleChangePage}
@@ -424,4 +427,5 @@ export default connect(mapStateToProps, {
     delCallback,
     callbackFailed,
     callbackSuccessful,
+    getCallbacksByUrl,
 })(CallBackTable);

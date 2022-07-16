@@ -58,7 +58,7 @@ const Welcome = ({ handleClickOpen, handleStepChange }) => {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                //onClick={handleClickOpen}
+                                onClick={handleClickOpen}
                                 size="small"
                             >
                                 Request Call Back

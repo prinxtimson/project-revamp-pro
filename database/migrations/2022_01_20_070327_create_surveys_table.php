@@ -16,6 +16,7 @@ class CreateSurveysTable extends Migration
         Schema::create('surveys', function (Blueprint $table) {
             $table->id();
             $table->text('data');
+            $table->tinyText('comment');
             $table->foreignId('live_call_id')
                   ->constrained()->onDelete('cascade');
             $table->timestamps();

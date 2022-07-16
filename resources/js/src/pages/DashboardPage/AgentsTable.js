@@ -26,6 +26,7 @@ import {
     enableUser,
     disableUser,
     delUser,
+    getUsersByUrl,
     clearProfile,
 } from "../../actions/profile";
 
@@ -58,8 +59,8 @@ const AgentsTable = ({
     disableUser,
     delUser,
     clearProfile,
+    getUsersByUrl,
 }) => {
-    const [page, setPage] = React.useState(0);
     const [searchUsers, setSearchUsers] = React.useState([]);
     const [query, setQuery] = React.useState("");
 
@@ -99,7 +100,11 @@ const AgentsTable = ({
     const handleEnable = (row) => enableUser(row);
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        if (users.current_page > newPage + 1) {
+            getUsersByUrl(users.prev_page_url);
+        } else {
+            getUsersByUrl(users.next_page_url);
+        }
     };
 
     return (
@@ -258,7 +263,7 @@ const AgentsTable = ({
                                 <TableRow>
                                     <TablePagination
                                         rowsPerPageOptions={[20]}
-                                        rowsPerPage={users?.data.length || 0}
+                                        rowsPerPage={users?.per_page || 0}
                                         count={users?.total || 0}
                                         page={users?.current_page - 1 || 0}
                                         onPageChange={handleChangePage}
@@ -286,6 +291,7 @@ const mapDispatchToProps = {
     getAllProfiles,
     delUser,
     clearProfile,
+    getUsersByUrl,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AgentsTable);

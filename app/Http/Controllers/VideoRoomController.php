@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\AgentConnected;
 use App\Events\BreakoutRoomCreated;
 use App\Events\LivecallUpdate;
-use App\Models\BreakoutRoom;
+use Illuminate\Support\Str;
 use App\Models\LiveCall;
 use App\Models\VideoRoom;
 use Carbon\Carbon;
@@ -50,7 +50,6 @@ class VideoRoomController extends Controller
     {
         $user = auth()->user();
         $fields = $request->validate([
-            'roomName' => 'required|string',
             'livecall' => 'required|string'
         ]);
 
@@ -70,13 +69,13 @@ class VideoRoomController extends Controller
             return response($response, 400);
         }
 
-        $twilio = new Client($this->accout_sid, $this->auth_token);
+        $roomName = Str::random(16);
 
-       // $conversationsClient = $twilio->conversations->v1->services;
+        $twilio = new Client($this->accout_sid, $this->auth_token);
 
         $room = $twilio->video->v1->rooms->create([
                                        "type" => "group",
-                                       "uniqueName" => $fields['roomName']
+                                       "uniqueName" => $roomName
                                    ]);
 
         $password = rand(100000, 999999);

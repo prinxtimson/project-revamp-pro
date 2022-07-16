@@ -60,7 +60,8 @@ class CallBackController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'name' => 'required',
+            'name' => 'required|string',
+            'query_type' => 'required|string',
             'phone' => 'required',
             'email' => 'required',
             'time' => 'required',

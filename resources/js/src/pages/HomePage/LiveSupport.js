@@ -4,7 +4,12 @@ import LivecallRequest from "./LivecallRequest";
 import SupportOption from "./SupportOption";
 import Survey from "./Survey";
 import Welcome from "./Welcome";
-import { requestLivecall } from "../../actions/livecall";
+import {
+    requestLivecall,
+    getConnectedLivecalls,
+    clearLivecall,
+} from "../../actions/livecall";
+import ThankYou from "./ThankYou";
 
 const LiveSupport = ({
     livecall,
@@ -12,6 +17,8 @@ const LiveSupport = ({
     loading,
     handleClickOpen,
     requestLivecall,
+    getConnectedLivecalls,
+    clearLivecall,
 }) => {
     const [step, setStep] = React.useState("welcome");
     const [data, setData] = React.useState({
@@ -25,12 +32,20 @@ const LiveSupport = ({
     const handleStepChange = (val) => setStep(val);
 
     const handleConnect = () => {
-        requestLivecall(data, onSuccessful, showSurvey);
+        requestLivecall(data, onSuccessful, showThankYou);
     };
 
     const onSuccessful = () => setStep("waiting");
 
-    const showSurvey = () => setStep("survey");
+    const showThankYou = () => setStep("thank-you");
+
+    React.useEffect(() => {
+        getConnectedLivecalls();
+
+        return () => {
+            clearLivecall();
+        };
+    }, []);
 
     switch (step) {
         case "welcome":
@@ -58,8 +73,10 @@ const LiveSupport = ({
                     count={count}
                 />
             );
+        case "thank-you":
+            return <ThankYou handleStepChange={handleStepChange} />;
         case "survey":
-            return <Survey />;
+            return <Survey livecall={livecall} />;
         default:
             break;
     }
@@ -71,4 +88,8 @@ const mapStateToProps = (state) => ({
     loading: state.livecall.loading,
 });
 
-export default connect(mapStateToProps, { requestLivecall })(LiveSupport);
+export default connect(mapStateToProps, {
+    requestLivecall,
+    getConnectedLivecalls,
+    clearLivecall,
+})(LiveSupport);

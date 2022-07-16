@@ -10,7 +10,7 @@ const Snackbars = {
     recordingFinished: 4,
 };
 
-const RecordingNotifications = () => {
+const RecordingNotifications = ({ isAuthenticated }) => {
     const [activeSnackbar, setActiveSnackbar] = useState("");
     const prevIsRecording = useRef(null);
     const isRecording = useIsRecording();
@@ -31,6 +31,7 @@ const RecordingNotifications = () => {
         // Show "Recording started" snackbar when recording has started.
         if (isRecording && prevIsRecording.current === false) {
             setActiveSnackbar(Snackbars.recordingStarted);
+            prevIsRecording.current = isRecording;
         }
     }, [isRecording]);
 
@@ -38,12 +39,13 @@ const RecordingNotifications = () => {
         // Show "Recording finished" snackbar when recording has stopped.
         if (!isRecording && prevIsRecording.current === true) {
             setActiveSnackbar(Snackbars.recordingFinished);
+            prevIsRecording.current = isRecording;
         }
     }, [isRecording]);
 
     useEffect(() => {
         prevIsRecording.current = isRecording;
-    }, [isRecording]);
+    }, []);
 
     return (
         <>
@@ -62,7 +64,10 @@ const RecordingNotifications = () => {
                 message=""
             />
             <Snackbar
-                open={activeSnackbar === Snackbars.recordingFinished}
+                open={
+                    activeSnackbar === Snackbars.recordingFinished &&
+                    isAuthenticated
+                }
                 headline="Recording Complete"
                 message={
                     <>

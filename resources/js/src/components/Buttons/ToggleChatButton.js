@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
+import Badge from "@mui/material/Badge";
 import Hidden from "@mui/material/Hidden";
 import ChatIcon from "@mui/icons-material/Chat";
 import IconButton from "@mui/material/IconButton";
@@ -108,21 +109,12 @@ export default function ToggleChatButton() {
                             onClick={toggleChatWindow}
                             disabled={!conversation}
                             startIcon={
-                                <div className={classes.iconContainer}>
+                                <Badge
+                                    badgeContent={hasUnreadMessages}
+                                    color="error"
+                                >
                                     <ChatIcon />
-                                    <div
-                                        className={clsx(classes.ring, {
-                                            [classes.animateRing]:
-                                                shouldAnimate,
-                                        })}
-                                    />
-                                    <div
-                                        className={clsx(classes.circle, {
-                                            [classes.hasUnreadMessages]:
-                                                hasUnreadMessages,
-                                        })}
-                                    />
-                                </div>
+                                </Badge>
                             }
                         >
                             Chat
@@ -145,20 +137,12 @@ export default function ToggleChatButton() {
                             onClick={toggleChatWindow}
                             disabled={!conversation}
                         >
-                            <div className={classes.iconContainer}>
+                            <Badge
+                                badgeContent={hasUnreadMessages}
+                                color="error"
+                            >
                                 <ChatIcon />
-                                <div
-                                    className={clsx(classes.ring, {
-                                        [classes.animateRing]: shouldAnimate,
-                                    })}
-                                />
-                                <div
-                                    className={clsx(classes.circle, {
-                                        [classes.hasUnreadMessages]:
-                                            hasUnreadMessages,
-                                    })}
-                                />
-                            </div>
+                            </Badge>
                         </IconButton>
                     </span>
                 </Tooltip>

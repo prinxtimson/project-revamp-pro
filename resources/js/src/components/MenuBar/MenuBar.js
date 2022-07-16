@@ -80,6 +80,13 @@ const MenuBar = ({ password, isAuthenticated }) => {
     const isReconnecting = roomState === "reconnecting";
     const participants = useParticipants();
 
+    React.useEffect(() => {
+        return () => {
+            setOpen(null);
+            setBreakoutOpen(null);
+        };
+    }, []);
+
     const toggleBreakoutRoom = () => setBreakoutOpen(!breakoutOpen);
 
     return (

@@ -13,6 +13,7 @@ class CallBack extends Model
         'name',
         'phone',
         'email',
+        'query_type',
         'time',
         'date',
         'called_at',

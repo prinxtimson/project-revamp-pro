@@ -34,6 +34,29 @@ export const getCallbacks = () => async (dispatch) => {
     }
 };
 
+export const getCallbacksByUrl = (url) => async (dispatch) => {
+    try {
+        const res = await axios.get(url);
+
+        dispatch({
+            type: SET_CALLBACKS,
+            payload: res.data,
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: CALLBACK_ERROR });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+        // if (err.response.status === 401 || err.response.status === 403) {
+        //     window.location.reload();
+        // }
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
 export const requestCallback = (id, data, onSuccessful) => async (dispatch) => {
     dispatch({ type: CALLBACK_LOADING });
     try {
@@ -43,7 +66,7 @@ export const requestCallback = (id, data, onSuccessful) => async (dispatch) => {
 
         dispatch(setAlert("Callback request received", "success"));
 
-        dispatch(leaveLivecall(id));
+        if (id) dispatch(leaveLivecall(id));
 
         dispatch({
             type: SET_CALLBACK,

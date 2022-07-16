@@ -6,10 +6,28 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { connect } from "react-redux";
-import { requestCallback } from "../actions/callback";
+import { requestCallback, getCallbacks } from "../actions/callback";
+
+const QUERY_TYPE = [
+    "Second Project Request",
+    "Mentor Request",
+    "Developer Request",
+    "Referencing",
+    "Taster Session",
+    "Course Enquiry",
+    "New Candidate Support",
+    "Software Issues",
+    "LMS Queries",
+    "Access Issue",
+    "Other IT Issues",
+];
 
 const CallbackDialog = ({
     open,
@@ -17,12 +35,14 @@ const CallbackDialog = ({
     handleClose,
     loading,
     requestCallback,
+    getCallbacks,
 }) => {
     let minDate = new Date().toISOString();
     let maxDate = new Date(moment().weekday(5)).toISOString();
     const [formData, setFormData] = React.useState({
         name: "",
         email: "",
+        query_type: "",
         phone: "",
         time: "",
         date: new Date().toISOString().split("T")[0],
@@ -32,7 +52,7 @@ const CallbackDialog = ({
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = () => {
-        requestCallback(livecall.id, formData, onSuccessful);
+        requestCallback(livecall?.id, formData, onSuccessful);
     };
 
     const onSuccessful = () => {
@@ -41,10 +61,15 @@ const CallbackDialog = ({
             name: "",
             email: "",
             phone: "",
+            query_type: "",
             time: "",
             date: new Date().toISOString().split("T")[0],
         });
     };
+
+    React.useEffect(() => {
+        getCallbacks();
+    }, []);
 
     return (
         <div>
@@ -92,6 +117,31 @@ const CallbackDialog = ({
                             onChange={handleOnChange}
                             autoComplete="phone"
                         />
+                        <FormControl
+                            fullWidth
+                            sx={{
+                                marginTop: 2,
+                                marginBottom: 1,
+                            }}
+                        >
+                            <InputLabel id="query-type-label">
+                                Query Type
+                            </InputLabel>
+                            <Select
+                                labelId="query-type-label"
+                                id="query-type"
+                                name="query_type"
+                                value={formData.query_type}
+                                label="Query Type"
+                                onChange={handleOnChange}
+                            >
+                                {QUERY_TYPE.map((val) => (
+                                    <MenuItem key={val} value={val}>
+                                        {val}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <TextField
                             id="time"
                             select
@@ -153,4 +203,6 @@ const mapStateToProps = (state) => ({
     loading: state.callback.loading,
 });
 
-export default connect(mapStateToProps, { requestCallback })(CallbackDialog);
+export default connect(mapStateToProps, { requestCallback, getCallbacks })(
+    CallbackDialog
+);

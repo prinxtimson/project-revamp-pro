@@ -54,6 +54,28 @@ export const getAllProfiles = () => async (dispatch) => {
     }
 };
 
+export const getUsersByUrl = (url) => async (dispatch) => {
+    try {
+        const res = await axios.get(url);
+
+        dispatch({
+            type: GET_PROFILES,
+            payload: res.data,
+        });
+    } catch (err) {
+        console.log(err.response);
+        if (err.response.status == 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+        if (err.response.status == 401 || err.response.status == 403) {
+            window.location.reload();
+        }
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
 export const enableUser = (id) => async (dispatch) => {
     try {
         const res = await axios.put(`/api/users/enable/${id}`);

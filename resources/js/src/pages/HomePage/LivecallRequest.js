@@ -54,7 +54,7 @@ const LivecallRequest = ({ livecall, handleClickOpen, count }) => {
                 <Button
                     variant="contained"
                     color="primary"
-                    //onClick={handleClickOpen}
+                    onClick={handleClickOpen}
                     //size="small"
                     disabled={Boolean(livecall.left_at)}
                 >

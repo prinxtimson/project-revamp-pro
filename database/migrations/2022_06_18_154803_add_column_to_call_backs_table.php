@@ -15,6 +15,7 @@ class AddColumnToCallBacksTable extends Migration
     {
         Schema::table('call_backs', function (Blueprint $table) {
             $table->string('status')->nullable();
+            $table->string('query_type');
         });
     }
 

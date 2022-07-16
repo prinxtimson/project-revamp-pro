@@ -21,7 +21,9 @@ export default function useIsRecording() {
                 setIsRecording(null);
             };
         }
-        return () => setIsRecording(null);
+        return () => {
+            setIsRecording(null);
+        };
     }, [room]);
 
     return isRecording;

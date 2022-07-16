@@ -29,7 +29,7 @@ const Main = styled("main")(({ theme }) => ({
     },
 }));
 
-const VideoChat = () => {
+const VideoChat = ({ isAuthenticated }) => {
     const { URLRoomID } = useParams();
     let [urlSearchParams] = useSearchParams();
     const [password] = React.useState(urlSearchParams.get("pwd"));
@@ -43,7 +43,9 @@ const VideoChat = () => {
                 <PreJoinScreens URLRoomID={URLRoomID} password={password} />
             ) : (
                 <Main>
-                    <ReconnectingNotification />
+                    <ReconnectingNotification
+                        isAuthenticated={isAuthenticated}
+                    />
                     <RecordingNotifications />
                     <MobileTopMenuBar password={password} />
                     <Room />
@@ -56,6 +58,7 @@ const VideoChat = () => {
 
 const mapStateToProps = (state) => ({
     loading: state.livecall.loading,
+    isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(mapStateToProps)(VideoChat);

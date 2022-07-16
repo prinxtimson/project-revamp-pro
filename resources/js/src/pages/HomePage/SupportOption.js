@@ -26,7 +26,13 @@ const IT = [
     "Other IT Issues",
 ];
 
-const SupportOption = ({ data, loading, handleOnClick, handleConnect }) => {
+const SupportOption = ({
+    data,
+    loading,
+    handleStepChange,
+    handleOnClick,
+    handleConnect,
+}) => {
     const [isOthers, setIsOthers] = React.useState(false);
 
     const onOtherSelected = () => {
@@ -139,7 +145,7 @@ const SupportOption = ({ data, loading, handleOnClick, handleConnect }) => {
                 </Grid>
             </Box>
             <Box>
-                {isOthers ? (
+                {isOthers && (
                     <Box
                         sx={{
                             marginTop: 5,
@@ -156,52 +162,34 @@ const SupportOption = ({ data, loading, handleOnClick, handleConnect }) => {
                             rows={4}
                             onChange={(e) => handleOnClick(e.target.value)}
                         />
-                        <Box
-                            sx={{
-                                marginTop: 2,
-                                display: "flex",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Button
-                                variant="text"
-                                color="primary"
-                                onClick={() => setIsOthers(false)}
-                                //size="small"
-                                //disabled={Boolean(livecall?.left_at)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleConnect}
-                                // size="small"
-                                disabled={Boolean(!data.query_type)}
-                            >
-                                Request Livecall
-                            </Button>
-                        </Box>
-                    </Box>
-                ) : (
-                    <Box
-                        sx={{
-                            marginTop: 5,
-                            display: "flex",
-                            alignItems: "flex-end",
-                        }}
-                    >
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleConnect}
-                            // size="small"
-                            disabled={Boolean(!data.query_type)}
-                        >
-                            Request Livecall
-                        </Button>
                     </Box>
                 )}
+                <Box
+                    sx={{
+                        marginTop: 3,
+                        display: "flex",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <Button
+                        variant="text"
+                        color="primary"
+                        onClick={() => handleStepChange("welcome")}
+                        //size="small"
+                        //disabled={Boolean(livecall?.left_at)}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleConnect}
+                        // size="small"
+                        disabled={Boolean(!data.query_type) || loading}
+                    >
+                        Request Livecall
+                    </Button>
+                </Box>
             </Box>
         </Box>
     );
