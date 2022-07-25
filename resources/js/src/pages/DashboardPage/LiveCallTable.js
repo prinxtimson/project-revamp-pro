@@ -94,7 +94,7 @@ const LiveCallTable = ({
         answerLivecall(id, handleLoading);
     };
 
-    const handleLoading = () => setLoading(!loading);
+    const handleLoading = () => setLoading((prevLoading) => !prevLoading);
 
     const handleOnDownload = () => {
         window.location.href = `/livecall/download?from=${formData.from}&to=${formData.to}`;

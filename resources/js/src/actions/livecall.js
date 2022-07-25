@@ -80,7 +80,7 @@ export const getConnectedLivecalls = () => async (dispatch) => {
 };
 
 export const requestLivecall =
-    (data, onSuccessful, showThankYou) => async (dispatch) => {
+    (data, onSuccessful, confirm) => async (dispatch) => {
         dispatch({ type: LIVECALL_LOADING });
         try {
             const res = await axios.post("/api/livecall", data);
@@ -88,24 +88,7 @@ export const requestLivecall =
             window.Echo.channel(`livecall.${res.data.id}`).listen(
                 "AgentConnected",
                 (e) => {
-                    console.log(e);
-                    if (
-                        window.confirm(
-                            "You will now be transferred to an agent."
-                        )
-                    ) {
-                        showThankYou();
-                        window.open(
-                            `/conferencing/${e.data.id}?pwd=${e.password}`
-                        );
-                    }
-                }
-            );
-
-            window.Echo.channel(`livecall.${res.data.id}`).listen(
-                "CallEnded",
-                (e) => {
-                    showThankYou();
+                    confirm(e);
                 }
             );
 

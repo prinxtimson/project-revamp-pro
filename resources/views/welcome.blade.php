@@ -411,9 +411,9 @@
 
 <body class="antialiased">
   @if (!empty($user))
-  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0" data-user="{{$user}}">
+  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 sm:items-center sm:pt-0" data-user="{{$user}}">
   @else
-  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0" >
+  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 sm:items-center sm:pt-0" >
   @endif
   
     <script src="{{asset('js/app.js')}}"></script>

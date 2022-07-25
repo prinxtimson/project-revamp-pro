@@ -31,6 +31,7 @@ const QUERY_TYPE = [
 
 const CallbackDialog = ({
     open,
+    setStep,
     livecall,
     handleClose,
     loading,
@@ -65,6 +66,7 @@ const CallbackDialog = ({
             time: "",
             date: new Date().toISOString().split("T")[0],
         });
+        setStep("thank-you");
     };
 
     React.useEffect(() => {
@@ -176,6 +178,7 @@ const CallbackDialog = ({
                             value={formData.date || minDate.split("T")[0]}
                             onChange={handleOnChange}
                             type="date"
+                            helperText="you can only select available date in the current week."
                             inputProps={{
                                 min: minDate.split("T")[0],
                                 max: maxDate.split("T")[0],

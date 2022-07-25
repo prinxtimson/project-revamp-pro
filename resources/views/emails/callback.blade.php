@@ -3,7 +3,7 @@
 
 Hi {{ $name }},
 
-Your call back on Tritek Live Support channel received.
+Your callback request on Tritek Live Support channel received.
 
 Thanks,<br>
 {{ config('app.name') }}

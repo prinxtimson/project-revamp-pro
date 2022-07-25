@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { confirmDialog } from "primereact/confirmdialog";
 import LivecallRequest from "./LivecallRequest";
 import SupportOption from "./SupportOption";
 import Survey from "./Survey";
@@ -14,13 +15,14 @@ import ThankYou from "./ThankYou";
 const LiveSupport = ({
     livecall,
     count,
+    step,
+    setStep,
     loading,
     handleClickOpen,
     requestLivecall,
     getConnectedLivecalls,
     clearLivecall,
 }) => {
-    const [step, setStep] = React.useState("welcome");
     const [data, setData] = React.useState({
         query_type: "",
     });
@@ -32,12 +34,23 @@ const LiveSupport = ({
     const handleStepChange = (val) => setStep(val);
 
     const handleConnect = () => {
-        requestLivecall(data, onSuccessful, showThankYou);
+        requestLivecall(data, onSuccessful, confirm);
+    };
+
+    const confirm = (e) => {
+        confirmDialog({
+            message: "You will now be transferred to an agent.",
+            header: "Confirmation",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => {
+                setStep("thank-you");
+                window.open(`/conferencing/${e.data.id}?pwd=${e.password}`);
+            },
+            reject: () => setStep("thank-you"),
+        });
     };
 
     const onSuccessful = () => setStep("waiting");
-
-    const showThankYou = () => setStep("thank-you");
 
     React.useEffect(() => {
         getConnectedLivecalls();

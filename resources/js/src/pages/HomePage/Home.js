@@ -1,8 +1,8 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import { ConfirmDialog } from "primereact/confirmdialog";
 import Typography from "@mui/material/Typography";
 import Container from "../../components/Container";
 import LiveSupport from "./LiveSupport";
@@ -21,6 +21,7 @@ const DAYS = [
 ];
 
 const Home = ({ livecall, leaveLivecall }) => {
+    const [step, setStep] = React.useState("welcome");
     const [open, setOpen] = React.useState(false);
     const [min, setMin] = React.useState(0);
 
@@ -52,7 +53,12 @@ const Home = ({ livecall, leaveLivecall }) => {
 
     return (
         <Container>
-            <CallbackDialog open={open} handleClose={handleClose} />
+            <CallbackDialog
+                open={open}
+                setStep={setStep}
+                handleClose={handleClose}
+            />
+            <ConfirmDialog />
             <Box
                 sx={{
                     flexGrow: 1,
@@ -81,7 +87,11 @@ const Home = ({ livecall, leaveLivecall }) => {
                 {DAYS[new Date().getDay()] !== "Wednesday" &&
                 new Date().getHours() >= 1 &&
                 new Date().getHours() <= 23 ? (
-                    <LiveSupport handleClickOpen={handleClickOpen} />
+                    <LiveSupport
+                        handleClickOpen={handleClickOpen}
+                        step={step}
+                        setStep={setStep}
+                    />
                 ) : (
                     <Box
                         sx={{

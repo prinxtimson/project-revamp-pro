@@ -64,7 +64,6 @@ const Survey = ({ livecall }) => {
                         variant="text"
                         color="primary"
                         href="https://tritekconsulting.co.uk/"
-                        target="_blank"
                         size="small"
                     >
                         Return to Home
@@ -135,7 +134,6 @@ const Survey = ({ livecall }) => {
                                 variant="text"
                                 color="primary"
                                 href="https://tritekconsulting.co.uk/"
-                                target="_blank"
                                 size="small"
                             >
                                 Return to Home

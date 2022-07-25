@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import CallIcon from "@mui/icons-material/Call";
 
 const Welcome = ({ handleClickOpen, handleStepChange }) => {
     return (
@@ -33,6 +34,7 @@ const Welcome = ({ handleClickOpen, handleStepChange }) => {
                         variant="text"
                         color="primary"
                         onClick={() => handleStepChange("initiate")}
+                        startIcon={<CallIcon />}
                     >
                         Initiate a Call
                     </Button>
