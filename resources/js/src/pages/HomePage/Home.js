@@ -84,9 +84,9 @@ const Home = ({ livecall, leaveLivecall }) => {
                         Tritek Live
                     </Avatar>
                 </Box>
-                {DAYS[new Date().getDay()] !== "Wednesday" &&
-                new Date().getHours() >= 1 &&
-                new Date().getHours() <= 23 ? (
+                {DAYS[new Date().getDay()] === "Wednesday" &&
+                new Date().getHours() >= 12 &&
+                new Date().getHours() <= 16 ? (
                     <LiveSupport
                         handleClickOpen={handleClickOpen}
                         step={step}

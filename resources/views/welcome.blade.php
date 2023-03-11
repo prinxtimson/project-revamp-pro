@@ -55,7 +55,6 @@
   svg,
   video {
     display: block;
-    vertical-align: middle
   }
 
   video {

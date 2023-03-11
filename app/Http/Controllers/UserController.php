@@ -230,7 +230,7 @@ class UserController extends Controller
         //
         $user = Auth::user();
 
-        $deleted = $user->forceDelete($id);
+        $deleted = $user->forceDelete();
 
         //Mail::to($user)->send(new UserDelete($user->profile));
 
