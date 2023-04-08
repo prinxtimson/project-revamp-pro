@@ -2,8 +2,6 @@ import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Alert from "@mui/material/Alert";
@@ -14,8 +12,6 @@ import Container from "@mui/material/Container";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
 import { classNames } from "primereact/utils";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { connect } from "react-redux";
 import { changePassword } from "../../actions/auth";
 import DrawerContainer from "./DrawerContainer";
@@ -111,9 +107,9 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
                                     toggleMask
                                     className={classNames({
                                         "p-invalid":
-                                            data.password &&
+                                            formData.password &&
                                             !passwordValidation.test(
-                                                data.password
+                                                formData.password
                                             ),
                                     })}
                                 />
