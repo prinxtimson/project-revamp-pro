@@ -11,6 +11,9 @@ import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { Password } from "primereact/password";
+import { Divider } from "primereact/divider";
+import { classNames } from "primereact/utils";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { connect } from "react-redux";
@@ -27,16 +30,25 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
 
     const { password, new_password, new_password_confirmation } = formData;
 
+    const footer = (
+        <>
+            <Divider />
+            <p className="mt-2">Suggestions</p>
+            <ul className="pl-2 ml-2 mt-0 line-height-3">
+                <li>At least one lowercase</li>
+                <li>At least one uppercase</li>
+                <li>At least one numeric</li>
+                <li>Minimum 8 characters</li>
+            </ul>
+        </>
+    );
+
     const handleOnChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         changePassword(formData);
-    };
-
-    const handleClickShowPassword = () => {
-        setShow(!show);
     };
 
     return (
@@ -73,94 +85,68 @@ const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
                         component="form"
                         onSubmit={handleSubmit}
                         noValidate
-                        sx={{ mt: 1 }}
+                        sx={{ mt: 1, width: "100%" }}
                     >
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Current Password"
-                            type={show ? "text" : "password"}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                        >
-                                            {show ? (
-                                                <Visibility />
-                                            ) : (
-                                                <VisibilityOff />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={password}
-                            onChange={handleOnChange}
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="new_password"
-                            label="New Password"
-                            type={show ? "text" : "password"}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                        >
-                                            {show ? (
-                                                <Visibility />
-                                            ) : (
-                                                <VisibilityOff />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={new_password}
-                            onChange={handleOnChange}
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="new_password_confirmation"
-                            label="Confirm New Password"
-                            type={show ? "text" : "password"}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                        >
-                                            {show ? (
-                                                <Visibility />
-                                            ) : (
-                                                <VisibilityOff />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            value={new_password_confirmation}
-                            onChange={handleOnChange}
-                        />
+                        <div style={{ marginBottom: 30 }}>
+                            <span className="p-float-label">
+                                <Password
+                                    value={password}
+                                    name="password"
+                                    id="password"
+                                    onChange={handleOnChange}
+                                    toggleMask
+                                    feedback={false}
+                                />
+                                <label htmlFor="password">Old Password</label>
+                            </span>
+                        </div>
+                        <div style={{ marginBottom: 30 }}>
+                            <span className="p-float-label">
+                                <Password
+                                    value={new_password}
+                                    name="new_password"
+                                    id="new_password"
+                                    onChange={handleOnChange}
+                                    footer={footer}
+                                    toggleMask
+                                    className={classNames({
+                                        "p-invalid":
+                                            data.password &&
+                                            !passwordValidation.test(
+                                                data.password
+                                            ),
+                                    })}
+                                />
+                                <label htmlFor="password">New Password</label>
+                            </span>
+                        </div>
+
+                        <div style={{ marginBottom: 10 }}>
+                            <span className="p-float-label">
+                                <Password
+                                    value={new_password_confirmation}
+                                    name="new_password_confirmation"
+                                    id="new_password_confirmation"
+                                    onChange={handleOnChange}
+                                    toggleMask
+                                    className={classNames({
+                                        "p-invalid":
+                                            formData.new_password &&
+                                            !formData.new_password.match(
+                                                formData.new_password_confirmation
+                                            ),
+                                    })}
+                                />
+                                <label htmlFor="password">
+                                    Confirm New Password
+                                </label>
+                            </span>
+                        </div>
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{ mt: 2, mb: 2 }}
                             disabled={loading}
                         >
                             Submit

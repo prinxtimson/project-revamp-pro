@@ -1,6 +1,7 @@
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.css";
+import "../../css/app.css";
 
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
@@ -8,8 +9,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import store from "./store";
-import { loadUser, onNewNotification } from "./actions/auth";
+import { loadUser, logoutUser, onNewNotification } from "./actions/auth";
 import { getWaitingListCount, updateLivecalls } from "./actions/livecall";
+
+import { useIdleTimer } from "react-idle-timer";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -27,12 +30,48 @@ import FeedbackTable from "./pages/DashboardPage/FeedbackTable";
 import ChangePasswordForm from "./pages/DashboardPage/ChangePasswordForm";
 
 import axios from "axios";
+import IdleDialog from "./components/IdleDialog";
+
+const timeout = 50_000;
+const promptBeforeIdle = 10_000;
 
 const App = (props) => {
+    const [remaining, setRemaining] = useState(timeout);
+    const [open, setOpen] = useState(false);
     const [auth, setAuth] = useState(store.getState().auth);
+
     useEffect(() => {
         store.dispatch(loadUser());
     }, []);
+
+    const onIdle = () => {
+        if (auth.user) {
+            store.dispatch(logoutUser());
+            setOpen(false);
+        }
+    };
+
+    const onActive = () => {
+        if (auth.user) {
+            store.dispatch(loadUser());
+            setOpen(false);
+        }
+    };
+
+    const onPrompt = () => {
+        if (auth.user) {
+            setOpen(true);
+        }
+    };
+
+    const { getRemainingTime, activate } = useIdleTimer({
+        onIdle,
+        onActive,
+        onPrompt,
+        timeout,
+        promptBeforeIdle,
+        throttle: 500,
+    });
 
     useEffect(() => {
         window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
@@ -40,6 +79,20 @@ const App = (props) => {
             store.dispatch(getWaitingListCount());
         });
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRemaining(Math.ceil(getRemainingTime() / 1000));
+        }, 500);
+
+        return () => {
+            clearInterval(interval);
+        };
+    });
+
+    const handleStillHere = () => {
+        activate();
+    };
 
     useEffect(() => {
         if (auth.isAuthenticated) {
@@ -107,6 +160,11 @@ const App = (props) => {
                     <Route path="/*" element={<ErrorPage />} />
                 </Routes>
             </Router>
+            <IdleDialog
+                open={open}
+                remaining={remaining}
+                onClose={handleStillHere}
+            />
         </Provider>
     );
 };

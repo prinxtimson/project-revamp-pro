@@ -31,7 +31,7 @@ class TwoFactorAuthController extends Controller
   
         $exists = UserCode::where('user_id', auth()->user()->id)
                 ->where('code', $validated['code'])
-                ->where('updated_at', '>=', now()->subMinutes(5))
+                ->where('updated_at', '>=', now()->subSeconds(30))
                 ->exists();
   
         if ($exists) {
@@ -40,7 +40,7 @@ class TwoFactorAuthController extends Controller
             return redirect()->route('dashboard');
         }
   
-        return response('You entered wrong OTP code.', 401);
+        return response('You entered wrong OTP code., please request a new OTP', 401);
     }
     /**
      * resend otp code

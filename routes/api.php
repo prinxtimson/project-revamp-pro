@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
 use App\Http\Controllers\SurveyController;
@@ -29,6 +30,7 @@ Route::get('room/{id}', [VideoRoomController::class, 'show']);
 Route::post('room/token', [VideoRoomController::class, 'get_access_token']);
 Route::post('feedback', [SurveyController::class, 'store']);
 Route::get('feedback/{id}', [SurveyController::class, 'show']);
+Route::post('/reset-password', [AuthController::class, 'resetPass']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

@@ -231,7 +231,7 @@ export const requestPasswordReset =
 export const resetPassword =
     (data, onSuccessful, setLoading) => async (dispatch) => {
         try {
-            const res = await axios.post("/password/update", data);
+            const res = await axios.post("/api/reset-password", data);
 
             dispatch(
                 setAlert(
@@ -244,7 +244,7 @@ export const resetPassword =
 
             setLoading(false);
 
-            window.location.replace("/");
+            window.location.replace("/admin");
         } catch (err) {
             console.log(err.response);
             setLoading(false);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -46,15 +47,38 @@ class LoginController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if(is_null($user)){
+            return response([
+                'message' => 'invalid email'
+            ], 401);
+        }
+    
+        if(isset($user) && $user->login_attempt === 3){
+            return response([
+                'message' => 'you have exceed the login attempt, please reset your password'
+            ], 401);
+        }
              
         if (Auth::attempt($validated)) {
-  
+            $user->update([
+                'login_attempt' => 0
+            ]);
+
             auth()->user()->generate_code();
   
             return redirect()->route('2fa.index');
         }
+
+        $user->update([
+            'login_attempt' => $user->login_attempt + 1
+        ]);
+
+        $user->refresh();
     
-        return response(['message' =>'email or password is invalid'], 400)
+        return response(['message' =>'email or password is invalid, ' . (3 - $user->login_attempt) . ' more attempts left'], 400)
            ;
     }
 }

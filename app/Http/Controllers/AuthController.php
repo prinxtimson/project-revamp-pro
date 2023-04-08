@@ -25,7 +25,25 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
+        $user = User::where('email', $credentials['email'])->first();
+
+        if(is_null($user)){
+            return response([
+                'message' => 'invalid email'
+            ], 401);
+        }
+
+        if(isset($user) && $user->login_attempt === 3){
+            return response([
+                'message' => 'you have exceed the login attempt, please reset your password'
+            ], 401);
+        }
+
         if (Auth::attempt($credentials)) {
+            $user->update([
+                'login_attempt' => 0
+            ]);
+
             $request->session()->regenerate();
 
             $token = auth()->user()->createToken('access_token')->plainTextToken;
@@ -44,8 +62,14 @@ class AuthController extends Controller
             return $response;
         }
 
+        $user->update([
+            'login_attempt' => $user->login_attempt + 1
+        ]);
+
+        $user->refresh();
+
         return response([
-            'message' => 'invalid credentials'
+            'message' => 'invalid credentials, ' . (3 - $user->login_attempt) . ' more attempts left'
         ], 401);
     }
 
@@ -175,7 +199,8 @@ class AuthController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) use ($request) {
                 $user->forceFill([
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
+                    'login_attempt' => 0
                 ])->setRememberToken(Str::random(60));
     
                 $user->save();

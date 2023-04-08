@@ -2,16 +2,14 @@ import * as React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import { Password } from "primereact/password";
+import { Divider } from "primereact/divider";
+import { classNames } from "primereact/utils";
 import Container from "../../components/Container";
 import { connect } from "react-redux";
 import { resetPassword } from "../../actions/auth";
@@ -27,11 +25,25 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
     });
     const [loading, setLoading] = React.useState(false);
     const passwordValidation = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-    const [show, setShow] = React.useState(false);
 
-    const handleClickShow = () => {
-        setShow(!show);
+    const getFormErrorMessage = () => {
+        return data.password &&
+            !data.password.match(data.password_confirmation) ? (
+            <small className="p-error">Password is not a match</small>
+        ) : null;
     };
+    const footer = (
+        <>
+            <Divider />
+            <p className="mt-2">Suggestions</p>
+            <ul className="pl-2 ml-2 mt-0 line-height-3">
+                <li>At least one lowercase</li>
+                <li>At least one uppercase</li>
+                <li>At least one numeric</li>
+                <li>Minimum 8 characters</li>
+            </ul>
+        </>
+    );
 
     const { password, password_confirmation } = data;
 
@@ -105,67 +117,65 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
                     component="form"
                     onSubmit={handleSubmit}
                     noValidate
-                    sx={{ mt: 1 }}
+                    sx={{ mt: 1, width: "100%" }}
                 >
                     <Typography
                         component="h1"
                         variant="h6"
-                        sx={{ textAlign: "center", paddingY: 2 }}
+                        sx={{ textAlign: "center", paddingY: 3 }}
                     >
                         {data.email}
                     </Typography>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        error={
-                            data.password &&
-                            !passwordValidation.test(data.password)
-                        }
-                        label="Password"
-                        type={show ? "text" : "password"}
-                        id="password"
-                        autoComplete="current-password"
-                        helperText="Must contain at least one of each sets A-Z,a-z,0-9 and minimum of 8 characters."
-                        onChange={(e) =>
-                            setData({ ...data, password: e.target.value })
-                        }
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShow}
-                                    >
-                                        {show ? (
-                                            <Visibility />
-                                        ) : (
-                                            <VisibilityOff />
-                                        )}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password Confirmation"
-                        type={show ? "text" : "password"}
-                        id="password_confirmation"
-                        autoComplete="current-password"
-                        onChange={(e) =>
-                            setData({
-                                ...data,
-                                password_confirmation: e.target.value,
-                            })
-                        }
-                    />
+                    <div style={{ marginBottom: 30 }}>
+                        <span className="p-float-label">
+                            <Password
+                                value={data.password}
+                                name="password"
+                                id="password"
+                                onChange={(e) =>
+                                    setData({
+                                        ...data,
+                                        password: e.target.value,
+                                    })
+                                }
+                                footer={footer}
+                                toggleMask
+                                className={classNames({
+                                    "p-invalid":
+                                        data.password &&
+                                        !passwordValidation.test(data.password),
+                                })}
+                            />
+                            <label htmlFor="password">Password</label>
+                        </span>
+                    </div>
+
+                    <div style={{ marginBottom: 10 }}>
+                        <span className="p-float-label">
+                            <Password
+                                value={data.password_confirmation}
+                                name="password_confirmation"
+                                id="password_confirmation"
+                                onChange={(e) =>
+                                    setData({
+                                        ...data,
+                                        password_confirmation: e.target.value,
+                                    })
+                                }
+                                toggleMask
+                                className={classNames({
+                                    "p-invalid":
+                                        data.password &&
+                                        !data.password.match(
+                                            data.password_confirmation
+                                        ),
+                                })}
+                            />
+                            <label htmlFor="password">Confirm Password</label>
+                        </span>
+                        {getFormErrorMessage()}
+                    </div>
+
                     <Button
                         type="submit"
                         fullWidth
@@ -177,7 +187,7 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
                             data.password !== data.password_confirmation
                         }
                         //onClick={handleSubmit}
-                        sx={{ mt: 3, mb: 2 }}
+                        sx={{ mt: 2, mb: 2 }}
                     >
                         Reset Password
                     </Button>

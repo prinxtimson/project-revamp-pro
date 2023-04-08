@@ -15,6 +15,7 @@ class AddColumnToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('device_key')->nullable();
+            $table->tinyInteger('login_attempt')->default(0);
         });
     }
 

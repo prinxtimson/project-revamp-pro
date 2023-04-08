@@ -30,11 +30,12 @@ class User extends Authenticatable implements HasMedia
         'email',
         'phone',
         'device_key',
+        'login_attempt',
         'username',
         'password',
     ];
 
-    protected $guard_name = 'api';
+   // protected $guard_name = 'api';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -79,7 +80,7 @@ class User extends Authenticatable implements HasMedia
     {
         $code = rand(100000, 999999);
 
-        $this->user_code()->updateOrCreate([
+        $this->user_code()->updateOrCreate(['user_id' => $this->id], [
             'code' => $code
         ]);
 

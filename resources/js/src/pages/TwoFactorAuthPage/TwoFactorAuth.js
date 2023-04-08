@@ -34,7 +34,7 @@ const TwoFactorAuth = (props) => {
     };
 
     React.useEffect(() => {
-        const targetTime = new Date().getTime() + 5 * 60000;
+        const targetTime = new Date().getTime() + 30000;
         setRemainingTime(targetTime);
         const interval = setInterval(() => {
             const currentMin = targetTime - new Date().getTime();
