@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use App\Mail\AccountLocked;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\WebPush\WebNotification;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -67,6 +70,13 @@ class AuthController extends Controller
         ]);
 
         $user->refresh();
+        
+        if($user->login_attempt == "3"){
+            $passwordToken = Password::createToken($user);
+            $url = env("APP_URL_ADMIN") . "/password/reset" . "/" . $passwordToken . "?email=" . $user->email;
+            
+            Mail::to($user)->send(new AccountLocked($url, $user->name));
+        }
 
         return response([
             'message' => 'invalid credentials, ' . (3 - $user->login_attempt) . ' more attempts left'
@@ -152,8 +162,8 @@ class AuthController extends Controller
         $user = auth()->user();
 
         $fields = $request->validate([
-            'password' => 'required|string',
-            'new_password' => 'required|string|confirmed'
+            'password' => 'required|string ',
+            'new_password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/'
         ]);
 
         if(!Hash::check($fields['password'], $user->password)) {
@@ -192,7 +202,7 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/',
         ]);
     
         $status = Password::reset(

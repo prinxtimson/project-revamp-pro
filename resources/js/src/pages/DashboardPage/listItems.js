@@ -61,14 +61,14 @@ const ListItems = ({ livecalls, user }) => {
                     <ListItemText primary="Call Back" />
                 </ListItem>
             </Link>
-            <Link to="#">
+            <a href="https://www.sans.org/uk_en/" target="_blank">
                 <ListItem button>
                     <ListItemIcon>
                         <SecurityIcon />
                     </ListItemIcon>
                     <ListItemText primary="E-Learning" />
                 </ListItem>
-            </Link>
+            </a>
             <Link to="../feedback">
                 <ListItem button>
                     <ListItemIcon>

@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Mail\AccountLocked;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 
 class LoginController extends Controller
 {
@@ -77,6 +80,13 @@ class LoginController extends Controller
         ]);
 
         $user->refresh();
+
+        if($user->login_attempt == "3"){
+            $passwordToken = Password::createToken($user);
+            $url = env("APP_URL_ADMIN") . "/password/reset" . "/" . $passwordToken . "?email=" . $user->email;
+            
+            Mail::to($user)->send(new AccountLocked($url, $user->name));
+        }
     
         return response(['message' =>'email or password is invalid, ' . (3 - $user->login_attempt) . ' more attempts left'], 400)
            ;

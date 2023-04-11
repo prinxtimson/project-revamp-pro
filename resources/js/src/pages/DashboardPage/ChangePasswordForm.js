@@ -17,7 +17,7 @@ import { changePassword } from "../../actions/auth";
 import DrawerContainer from "./DrawerContainer";
 
 const ChangePasswordForm = ({ alerts, loading, changePassword }) => {
-    const [show, setShow] = React.useState(false);
+    const passwordValidation = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
     const [formData, setFormData] = React.useState({
         password: "",
         new_password: "",
