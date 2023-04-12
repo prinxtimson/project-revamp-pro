@@ -230,6 +230,7 @@ export const requestPasswordReset =
 // Reset password action
 export const resetPassword =
     (data, onSuccessful, setLoading) => async (dispatch) => {
+        setLoading(true);
         try {
             const res = await axios.post("/api/reset-password", data);
 

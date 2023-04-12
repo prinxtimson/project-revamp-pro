@@ -163,7 +163,12 @@ class AuthController extends Controller
 
         $fields = $request->validate([
             'password' => 'required|string ',
-            'new_password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/'
+            'new_password' => [
+                'required',
+                'min:8',
+                'regex:/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/',
+                'confirmed'
+            ]
         ]);
 
         if(!Hash::check($fields['password'], $user->password)) {
@@ -202,7 +207,12 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/',
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/',
+                'confirmed'
+            ]
         ]);
     
         $status = Password::reset(
