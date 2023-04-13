@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
 import { classNames } from "primereact/utils";
@@ -22,6 +23,8 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
         email: search.get("email"),
         password: "",
         password_confirmation: "",
+        security_question: "",
+        security_answer: "",
     });
     const [loading, setLoading] = React.useState(false);
     const passwordValidation = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
@@ -116,6 +119,7 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
                 <Box
                     component="form"
                     onSubmit={handleSubmit}
+                    autoComplete="off"
                     noValidate
                     sx={{ mt: 1, width: "100%" }}
                 >
@@ -126,7 +130,45 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
                     >
                         {data.email}
                     </Typography>
-                    <div style={{ marginBottom: 30 }}>
+                    <div style={{ marginBottom: 22 }}>
+                        <span className="p-float-label">
+                            <InputText
+                                id="security_question"
+                                value={data.security_question}
+                                onChange={(e) =>
+                                    setData({
+                                        ...data,
+                                        security_question: e.target.value,
+                                    })
+                                }
+                                style={{ width: "100%" }}
+                                autoComplete="new-question"
+                            />
+                            <label htmlFor="security_question">
+                                Security Question
+                            </label>
+                        </span>
+                    </div>
+                    <div style={{ marginBottom: 22 }}>
+                        <span className="p-float-label">
+                            <InputText
+                                id="security_answer"
+                                value={data.security_answer}
+                                onChange={(e) =>
+                                    setData({
+                                        ...data,
+                                        security_answer: e.target.value,
+                                    })
+                                }
+                                style={{ width: "100%" }}
+                                autoComplete="new-answer"
+                            />
+                            <label htmlFor="security_answer">
+                                Security Answer
+                            </label>
+                        </span>
+                    </div>
+                    <div style={{ marginBottom: 22 }}>
                         <span className="p-float-label">
                             <Password
                                 value={data.password}

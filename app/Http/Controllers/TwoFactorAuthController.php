@@ -31,7 +31,7 @@ class TwoFactorAuthController extends Controller
   
         $exists = UserCode::where('user_id', auth()->user()->id)
                 ->where('code', $validated['code'])
-                ->where('updated_at', '>=', now()->subSeconds(30))
+                ->where('updated_at', '>=', now()->subSeconds(90))
                 ->exists();
   
         if ($exists) {

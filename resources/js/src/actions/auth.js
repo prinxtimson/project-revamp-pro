@@ -70,14 +70,13 @@ export const loginUser = (email, password) => async (dispatch) => {
     }
 };
 
-export const verifyCode = (data) => async (dispatch) => {
+export const verifyCode = (data, onSuccessful) => async (dispatch) => {
     dispatch({ type: AUTH_LOADING });
     try {
         await axios.post("/two-factor-auth", data);
         dispatch({ type: AUTH_LOADING });
         dispatch(setAlert("Verification successful", "success"));
-        //location.reload();
-        location.href = "/admin/dashboard";
+        onSuccessful();
     } catch (err) {
         console.log(err.response);
         dispatch({ type: AUTH_LOADING });

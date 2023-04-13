@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -16,6 +17,8 @@ const TwoFactorAuth = (props) => {
     const [authUser, setAuthUser] = React.useState(null);
     const [remainingTime, setRemainingTime] = React.useState(0);
 
+    const navigate = useNavigate();
+
     React.useEffect(() => {
         const userJson = JSON.parse(user || "{}");
         setAuthUser(userJson);
@@ -29,12 +32,16 @@ const TwoFactorAuth = (props) => {
         const code = data.get("code");
 
         if (code) {
-            verifyCode({ code });
+            verifyCode({ code }, onSuccessful);
         }
     };
 
+    const onSuccessful = () => {
+        navigate("/admin/dashboard");
+    };
+
     React.useEffect(() => {
-        const targetTime = new Date().getTime() + 30000;
+        const targetTime = new Date().getTime() + 90000;
         setRemainingTime(targetTime);
         const interval = setInterval(() => {
             const currentMin = targetTime - new Date().getTime();
@@ -118,7 +125,6 @@ const TwoFactorAuth = (props) => {
                         id="code"
                         label="Enter Code"
                         name="code"
-                        autoFocus
                         size="small"
                     />
                     <Button

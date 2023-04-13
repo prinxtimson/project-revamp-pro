@@ -3,10 +3,10 @@
 
 Hi {{ $name }},
 
-Your account had been locked due to several login attempt, please reset your password to access your account.
+You are receiving this email because we have received an account reset request as your account has been locked
 
 @component('mail::button', ['url' => "$url"])
-Reset Password
+Unlock Account
 @endcomponent
 
 Thanks,<br>
