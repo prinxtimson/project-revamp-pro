@@ -447,7 +447,7 @@ const LiveCallTable = ({
                                                     <Grid item xs={6}>
                                                         <Button
                                                             variant="contained"
-                                                            color="secondary"
+                                                            color="error"
                                                             size="small"
                                                             onClick={() =>
                                                                 handleDelete(

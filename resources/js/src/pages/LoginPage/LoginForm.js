@@ -1,6 +1,7 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -10,6 +11,9 @@ import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/auth";
@@ -17,6 +21,7 @@ import Container from "../../components/Container";
 import MuiContainer from "@mui/material/Container";
 
 const LoginForm = ({ loginUser, alerts, loading }) => {
+    const [showPassword, setShowPassword] = React.useState(false);
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -24,6 +29,8 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
 
         loginUser(data.get("email"), data.get("password"));
     };
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     return (
         <Container>
@@ -95,9 +102,26 @@ const LoginForm = ({ loginUser, alerts, loading }) => {
                         fullWidth
                         name="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         id="password"
                         autoComplete="current-password"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? (
+                                            <VisibilityOff />
+                                        ) : (
+                                            <Visibility />
+                                        )}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}

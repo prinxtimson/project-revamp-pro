@@ -66,7 +66,6 @@ const CallbackDialog = ({
             time: "",
             date: new Date().toISOString().split("T")[0],
         });
-        setStep("thank-you");
     };
 
     React.useEffect(() => {

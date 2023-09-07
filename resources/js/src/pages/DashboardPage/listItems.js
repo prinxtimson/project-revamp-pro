@@ -17,7 +17,7 @@ const ListItems = ({ livecalls, user }) => {
     return (
         <div>
             <Link to="../">
-                <ListItem button>
+                <ListItem>
                     <ListItemIcon>
                         <DashboardIcon />
                     </ListItemIcon>
@@ -27,7 +27,7 @@ const ListItems = ({ livecalls, user }) => {
 
             {user?.roles[0].name === "super-admin" && (
                 <Link to="../account">
-                    <ListItem button>
+                    <ListItem>
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
@@ -37,7 +37,7 @@ const ListItems = ({ livecalls, user }) => {
             )}
 
             <Link to="../livecall">
-                <ListItem button>
+                <ListItem>
                     <ListItemIcon>
                         <PhoneIcon />
                     </ListItemIcon>
@@ -54,7 +54,7 @@ const ListItems = ({ livecalls, user }) => {
                 </ListItem>
             </Link>
             <Link to="../callback">
-                <ListItem button>
+                <ListItem>
                     <ListItemIcon>
                         <PhoneCallbackIcon />
                     </ListItemIcon>
@@ -62,7 +62,7 @@ const ListItems = ({ livecalls, user }) => {
                 </ListItem>
             </Link>
             <a href="https://www.sans.org/uk_en/" target="_blank">
-                <ListItem button>
+                <ListItem>
                     <ListItemIcon>
                         <SecurityIcon />
                     </ListItemIcon>
@@ -70,7 +70,7 @@ const ListItems = ({ livecalls, user }) => {
                 </ListItem>
             </a>
             <Link to="../feedback">
-                <ListItem button>
+                <ListItem>
                     <ListItemIcon>
                         <FeedbackIcon />
                     </ListItemIcon>

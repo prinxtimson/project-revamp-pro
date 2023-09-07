@@ -11,6 +11,7 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
 import { classNames } from "primereact/utils";
+import { Dropdown } from "primereact/dropdown";
 import Container from "../../components/Container";
 import { connect } from "react-redux";
 import { resetPassword } from "../../actions/auth";
@@ -132,20 +133,21 @@ const ResetPsswordForm = ({ alerts, resetPassword, setAlert }) => {
                     </Typography>
                     <div style={{ marginBottom: 22 }}>
                         <span className="p-float-label">
-                            <InputText
-                                id="security_question"
+                            <Dropdown
+                                inputId="security_question"
                                 value={data.security_question}
                                 onChange={(e) =>
                                     setData({
                                         ...data,
-                                        security_question: e.target.value,
+                                        security_question: e.value,
                                     })
                                 }
+                                options={QUESTIONS}
                                 style={{ width: "100%" }}
-                                autoComplete="new-question"
+                                className="w-full"
                             />
                             <label htmlFor="security_question">
-                                Security Question
+                                Select Security Question
                             </label>
                         </span>
                     </div>
@@ -246,3 +248,9 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, { setAlert, resetPassword })(
     ResetPsswordForm
 );
+
+const QUESTIONS = [
+    "What is the name of your project?",
+    "What is the name of your PM?",
+    "What is your pet name?",
+];

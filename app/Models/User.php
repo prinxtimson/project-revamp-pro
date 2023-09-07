@@ -61,6 +61,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(Profile::class);
     }
 
+    public function settings () 
+    {
+        return $this->hasMany(Setting::class);
+    }
+
     public function user_code ()
     {
         return $this->hasOne(UserCode::class);

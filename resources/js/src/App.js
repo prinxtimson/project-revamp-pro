@@ -32,8 +32,8 @@ import ChangePasswordForm from "./pages/DashboardPage/ChangePasswordForm";
 import axios from "axios";
 import IdleDialog from "./components/IdleDialog";
 
-const timeout = 50_000;
-const promptBeforeIdle = 10_000;
+const timeout = 500_000;
+const promptBeforeIdle = 20_000;
 
 const App = (props) => {
     const [remaining, setRemaining] = useState(timeout);

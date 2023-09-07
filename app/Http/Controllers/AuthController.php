@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Mail\AccountLocked;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\WebPush\WebNotification;
@@ -207,6 +208,8 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
+            'security_question' => 'string|nullable',
+            'security_answer' => 'string|nullable',
             'password' => [
                 'required',
                 'min:8',
@@ -214,6 +217,25 @@ class AuthController extends Controller
                 'confirmed'
             ]
         ]);
+
+        $user = User::where('email', $request->input("email"))->first();
+
+        $security_question = Setting::where('user_id', $user->id)->where('key', 'security_question')->first();
+        $security_answer = Setting::where('user_id', $user->id)->where('key', 'security_answer')->first();
+
+        if(isset($security_question) && strtoupper($security_question->value) !== strtoupper($request->input('security_question')))
+        {
+            return response([
+                'message' => 'Incorrect security question'
+            ], 401);
+        }
+
+        if(isset($security_answer) && strtoupper($security_answer->value) !== strtoupper($request->input('security_answer')))
+        {
+            return response([
+                'message' => 'Incorrect security answer'
+            ], 401);
+        }
     
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -229,9 +251,88 @@ class AuthController extends Controller
             }
         );
     
-        return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('home')->with('status', __($status))
-                    : back()->withErrors(['email' => [__($status)]]);
+        $status == Password::PASSWORD_RESET;
+
+        if($status){
+            return response([
+                'message' => 'Password reset successful'
+            ]);
+        }else {
+            Password::sendResetLink(
+                $request->only('email')
+            );
+
+            return response([
+                'message' => 'Password reset failed, a new password reset email had been sent'
+            ], 401);
+        }
+    }
+
+    public function unlockAccount(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email',
+            'security_question' => 'string|nullable',
+            'security_answer' => 'string|nullable',
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/',
+                'confirmed'
+            ]
+        ]);
+
+        $user = User::where('email', $request->input("email"))->first();
+
+        $security_question = Setting::where('user_id', $user->id)->where('key', 'security_question')->first();
+        $security_answer = Setting::where('user_id', $user->id)->where('key', 'security_answer')->first();
+
+        if(isset($security_question) && strtoupper($security_question->value) !== strtoupper($request->input('security_question')))
+        {
+            return response([
+                'message' => 'Incorrect security question'
+            ], 401);
+        }
+
+        if(isset($security_answer) && strtoupper($security_answer->value) !== strtoupper($request->input('security_answer')))
+        {
+            return response([
+                'message' => 'Incorrect security answer'
+            ], 401);
+        }
+    
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'login_attempt' => 0
+                ])->setRememberToken(Str::random(60));
+    
+                $user->save();
+    
+                event(new PasswordReset($user));
+            }
+        );
+    
+        $status == Password::PASSWORD_RESET;
+
+        if($status){
+            return response([
+                'message' => 'Account unlock successful'
+            ]);
+        }else {
+            $passwordToken = Password::createToken($user);
+            $url = env("APP_URL_ADMIN") . "/password/reset" . "/" . $passwordToken . "?email=" . $user->email;
+            
+            Mail::to($user)->send(new AccountLocked($url, $user->name));
+
+            return response([
+                'message' => 'Password reset failed, a new password reset email had been sent'
+            ], 401);
+        }
+
     }
 
 }

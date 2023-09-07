@@ -14,7 +14,7 @@ import Stack from "@mui/material/Stack";
 import { connect } from "react-redux";
 import { addUser } from "../../actions/auth";
 
-const AddUserForm = ({ alerts, loading, addUser }) => {
+const AddUserForm = ({ alerts, loading, addUser, handleGetUsers }) => {
     const [data, setData] = React.useState({
         firstname: "",
         lastname: "",
@@ -40,6 +40,7 @@ const AddUserForm = ({ alerts, loading, addUser }) => {
             password: "",
             showPassword: false,
         });
+        handleGetUsers();
     };
 
     const handleOnFocus = () => {

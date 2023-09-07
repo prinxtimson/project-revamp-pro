@@ -72,7 +72,6 @@ const FeedbackTable = ({ loading, getFeedbacks, clearFeedback, feedbacks }) => {
                         )}
                         {!loading &&
                             feedbacks.map((feedback) => {
-                                console.log(feedback);
                                 const ratings = feedback.data;
 
                                 return (

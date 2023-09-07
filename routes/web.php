@@ -52,11 +52,11 @@ Route::middleware(['guest'])->group(function () {
 
 });
 
-Route::get('admin/two-factor-auth', [TwoFactorAuthController::class, 'index'])->name('2fa.index');
+Route::get('admin/two-factor-auth', [TwoFactorAuthController::class, 'index'])->name('2fa.index')->middleware("auth");
 
-Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name('2fa.store');
+Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name('2fa.store')->middleware('auth');
 
-Route::get('two-factor-auth/resent', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend');
+Route::get('two-factor-auth/resent', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend')->middleware("auth");
 
 Route::middleware(['auth', '2fa'])->group(function () {
 

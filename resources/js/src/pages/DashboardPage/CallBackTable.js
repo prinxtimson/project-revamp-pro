@@ -273,7 +273,7 @@ const CallBackTable = ({
                                     <StyledTableCell align="center">
                                         Status
                                     </StyledTableCell>
-                                    <StyledTableCell align="center">
+                                    <StyledTableCell align="left">
                                         Actions
                                     </StyledTableCell>
                                 </TableRow>
@@ -329,7 +329,7 @@ const CallBackTable = ({
                                                     ></Tag>
                                                 )}
                                             </StyledTableCell>
-                                            <StyledTableCell align="center">
+                                            <StyledTableCell align="left">
                                                 <Tooltip title="Successful">
                                                     <span>
                                                         <IconButton

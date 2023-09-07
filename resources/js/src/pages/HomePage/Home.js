@@ -20,6 +20,8 @@ const DAYS = [
     "Saturday",
 ];
 
+const OPENINGDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
 const Home = ({ livecall, leaveLivecall }) => {
     const [step, setStep] = React.useState("welcome");
     const [open, setOpen] = React.useState(false);
@@ -84,8 +86,8 @@ const Home = ({ livecall, leaveLivecall }) => {
                         Tritek Live
                     </Avatar>
                 </Box>
-                {DAYS[new Date().getDay()] === "Wednesday" &&
-                new Date().getHours() >= 12 &&
+                {OPENINGDAYS.includes(DAYS[new Date().getDay()]) &&
+                new Date().getHours() >= 9 &&
                 new Date().getHours() <= 16 ? (
                     <LiveSupport
                         handleClickOpen={handleClickOpen}
@@ -114,7 +116,7 @@ const Home = ({ livecall, leaveLivecall }) => {
                                 Sorry we are unable to take calls today.
                             </Typography>
                             <Typography component="p" variant="h5" mb={1}>
-                                We are live every Wednesday, 12pm - 4pm to take
+                                We are live Monday - Friday, 9am - 4pm to take
                                 calls.
                             </Typography>
                             <Typography component="p" variant="h5" mb={1}>

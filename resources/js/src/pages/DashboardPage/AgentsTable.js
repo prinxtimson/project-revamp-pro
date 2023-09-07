@@ -70,6 +70,10 @@ const AgentsTable = ({
         return clearProfile;
     }, []);
 
+    const handleGetUsers = () => {
+        getAllProfiles();
+    };
+
     React.useEffect(() => {
         if (users) {
             setSearchUsers(users.data);
@@ -241,7 +245,7 @@ const AgentsTable = ({
                                                         <Grid item xs={6}>
                                                             <Button
                                                                 variant="contained"
-                                                                color="secondary"
+                                                                color="error"
                                                                 size="small"
                                                                 onClick={() =>
                                                                     handleDelete(
@@ -273,7 +277,7 @@ const AgentsTable = ({
                         </Table>
                     </TableContainer>
                 </Box>
-                <AddUserForm />
+                <AddUserForm handleGetUsers={handleGetUsers} />
             </Container>
         </DrawerContainer>
     );
