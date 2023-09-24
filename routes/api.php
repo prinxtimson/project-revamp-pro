@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SurveyController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoRoomController;
 use Illuminate\Http\Request;
@@ -31,6 +33,14 @@ Route::post('room/token', [VideoRoomController::class, 'get_access_token']);
 Route::post('feedback', [SurveyController::class, 'store']);
 Route::get('feedback/{id}', [SurveyController::class, 'show']);
 Route::post('/reset-password', [AuthController::class, 'resetPass']);
+
+Route::post('tickets', [TicketController::class, 'store']);
+Route::put('tickets/{ticket}', [TicketController::class, 'update']);
+Route::get('tickets/{ticket}', [TicketController::class, 'show']);
+Route::get('tickets', [TicketController::class, 'index']);
+Route::delete('tickets/{ticket}', [TicketController::class, 'destroy']);
+
+Route::post('rating', [RatingController::class, 'rate_faq']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

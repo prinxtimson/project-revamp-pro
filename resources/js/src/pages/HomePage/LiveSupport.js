@@ -11,6 +11,7 @@ import {
     clearLivecall,
 } from "../../actions/livecall";
 import ThankYou from "./ThankYou";
+import UserMainContainer from "../../components/UserMainContainer";
 
 const LiveSupport = ({
     livecall,
@@ -59,15 +60,15 @@ const LiveSupport = ({
             clearLivecall();
         };
     }, []);
-
-    switch (step) {
-        case "welcome":
-            return (
-                <Welcome
+    {
+        /* <Welcome
                     handleClickOpen={handleClickOpen}
                     handleStepChange={handleStepChange}
-                />
-            );
+                /> */
+    }
+    switch (step) {
+        case "welcome":
+            return <Welcome handleCallbackOpen={handleClickOpen} />;
         case "initiate":
             return (
                 <SupportOption

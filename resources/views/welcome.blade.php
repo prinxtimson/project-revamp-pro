@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="{{asset('css/app.css')}}">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
 
@@ -403,16 +403,16 @@
 
   <style>
   body {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Rubik', 'Roboto', sans-serif;
   }
   </style>
 </head>
 
 <body class="antialiased">
   @if (!empty($user))
-  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 sm:items-center sm:pt-0" data-user="{{$user}}">
+  <div id="app" class="relative flex items-top min-h-screen my-custom-bg" data-user="{{$user}}">
   @else
-  <div id="app" class="relative flex items-top min-h-screen bg-gray-100 sm:items-center sm:pt-0" >
+  <div id="app" class="relative flex items-top min-h-screen my-custom-bg"  >
   @endif
   
     <script src="{{asset('js/app.js')}}"></script>

@@ -1,0 +1,62 @@
+[
+    {
+        "category": "Training",
+        "items": [
+            {
+                "question": "What Does Tritek Consulting Do?",
+                "answer": "<p>Tritek Consulting Limited specializes in providing a robust all-inclusive state-of-the-art career development training and certifications on a wide range of transitions in the following:</p> <ul> <li>Business Analysis Change</li> <li>Stakeholder Management</li> <li>Project Management</li> <li>Business Intelligence</li> <li>Cyber Security</li> <li>Mentorship programme</li> </ul>",
+                "ratings": [3, 5]
+            },
+            {
+                "question": "Am I Getting The Best?",
+                "answer": "<p>Our expertise and experienced trainers in the industry gives a blend of quality and efficiency that guarantees that our learning, training and work experience is delivered in an organised manner and are of the highest quality standard in the market.</p>",
+                "ratings": [3, 5, 5]
+            },
+            {
+                "question": "What Industries Do You Specialise In?",
+                "answer": "<p>We operate and specialize in various market sector which includes Technologies, Managements, Internet/e-commerce, e-learning, Financial services, retail, food service, consumer products, media and entertainment, enterprise software,</p>",
+                "ratings": []
+            },
+            {
+                "question": "What Is The Mode Of Training?",
+                "answer": "<p>We use various interactive methods to deliver industry standard methodologies which includes Agile, Wagile and Waterfall. This is to ensure that you are well equipped with necessary skills and knowledge to increase and maximize your productivity.</p>",
+                "ratings": [5]
+            }
+        ]
+    },
+    {
+        "category": "Support",
+        "items": [
+            {
+                "question": "What Kind Of Support Is Available?",
+                "answer": "<p>With our customer-centric organisational culture and structure, we have a system for peer-to-peer engagement and a forum that fosters an environment for continuous support at all stages of your training and development. We also ensure that the candidates and clients</p>",
+                "ratings": []
+            },
+            {
+                "question": "Do You Offer Practical Experience?",
+                "answer": "<p>Yes, we offer practical work experience in Project Management and Business Analysis. We provide you with all of the tools and guidance to help you build your skills, development and experience.</p>",
+                "ratings": [3]
+            },
+            {
+                "question": "How Flexible Are Your Training Programmes?",
+                "answer": "<p>We acknowledge that contemporary training requirements demands an advice-giving approach (sometimes informal) and how essential it is to have a flexible training provider with a range of options with which your solution can be selected. We offer solutions that can be</p>",
+                "ratings": []
+            }
+        ]
+    },
+    {
+        "category": "Cost and Payment Method",
+        "items": [
+            {
+                "question": "How Much Do Your Courses Cost?",
+                "answer": "<p>All our courses are quite affordable compared with our competitors. Discounts are available for those who sign up early.</p>",
+                "ratings": []
+            },
+            {
+                "question": "Can I Pay For My Course Installmentally?",
+                "answer": "<p>Payments are flexible as candidates can pay in two installments within a period of four weeks.</p>",
+                "ratings": []
+            }
+        ]
+    }
+]

@@ -1,7 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .p-password-input {
     width: 100%;
 }
 
 .p-password {
     width: 100%;
+}
+
+.my-custom-bg {
+    background-color: #f7fafc;
 }

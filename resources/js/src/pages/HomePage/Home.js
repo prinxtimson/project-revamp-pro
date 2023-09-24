@@ -20,7 +20,15 @@ const DAYS = [
     "Saturday",
 ];
 
-const OPENINGDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const OPENINGDAYS = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
 
 const Home = ({ livecall, leaveLivecall }) => {
     const [step, setStep] = React.useState("welcome");
@@ -61,105 +69,80 @@ const Home = ({ livecall, leaveLivecall }) => {
                 handleClose={handleClose}
             />
             <ConfirmDialog />
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    marginTop: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    //backgroundColor: "white",
-                    padding: 3,
-                }}
-            >
+
+            {OPENINGDAYS.includes(DAYS[new Date().getDay()]) &&
+            new Date().getHours() >= 0 &&
+            new Date().getHours() <= 24 ? (
+                <LiveSupport
+                    handleClickOpen={handleClickOpen}
+                    step={step}
+                    setStep={setStep}
+                />
+            ) : (
                 <Box
                     sx={{
-                        marginY: 5,
+                        display: "flex",
+                        flexDirection: "column",
                     }}
                 >
-                    <Avatar
-                        variant="square"
-                        alt="Tritek Live"
-                        src="/images/logo.png"
-                        sx={{ width: 228, height: 54 }}
-                    >
-                        Tritek Live
-                    </Avatar>
-                </Box>
-                {OPENINGDAYS.includes(DAYS[new Date().getDay()]) &&
-                new Date().getHours() >= 9 &&
-                new Date().getHours() <= 16 ? (
-                    <LiveSupport
-                        handleClickOpen={handleClickOpen}
-                        step={step}
-                        setStep={setStep}
-                    />
-                ) : (
                     <Box
                         sx={{
+                            flexGrow: 1,
                             display: "flex",
                             flexDirection: "column",
+                            alignItems: "center",
                         }}
                     >
-                        <Box
-                            sx={{
-                                flexGrow: 1,
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Typography component="h6" variant="h4" mb={3}>
-                                Hello
-                            </Typography>
-                            <Typography component="p" variant="h5" mb={1}>
-                                Sorry we are unable to take calls today.
-                            </Typography>
-                            <Typography component="p" variant="h5" mb={1}>
-                                We are live Monday - Friday, 9am - 4pm to take
-                                calls.
-                            </Typography>
-                            <Typography component="p" variant="h5" mb={1}>
-                                You can drop us your details and a member of our
-                                team will give you a call back.
-                            </Typography>
-                            <Typography component="p" variant="h5" mb={1}>
-                                You can also explore our FAQ below for some
-                                assistance.
-                            </Typography>
-                            <Typography component="p" variant="h5" mb={1}>
-                                Thank you
-                            </Typography>
-                        </Box>
-                        <Box
-                            sx={{
-                                marginTop: 5,
-                                display: "flex",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                //onClick={handleClickOpen}
-                                size="small"
-                                //disabled={Boolean(livecall?.left_at)}
-                            >
-                                Request Call Back
-                            </Button>
-                            <Button
-                                variant="text"
-                                color="primary"
-                                href="https://tritekconsulting.co.uk/faq"
-                                target="_blank"
-                                size="small"
-                            >
-                                FAQ
-                            </Button>
-                        </Box>
+                        <Typography component="h6" variant="h4" mb={3}>
+                            Hello
+                        </Typography>
+                        <Typography component="p" variant="h5" mb={1}>
+                            Sorry we are unable to take calls today.
+                        </Typography>
+                        <Typography component="p" variant="h5" mb={1}>
+                            We are live Monday - Friday, 9am - 4pm to take
+                            calls.
+                        </Typography>
+                        <Typography component="p" variant="h5" mb={1}>
+                            You can drop us your details and a member of our
+                            team will give you a call back.
+                        </Typography>
+                        <Typography component="p" variant="h5" mb={1}>
+                            You can also explore our FAQ below for some
+                            assistance.
+                        </Typography>
+                        <Typography component="p" variant="h5" mb={1}>
+                            Thank you
+                        </Typography>
                     </Box>
-                )}
-            </Box>
+                    <Box
+                        sx={{
+                            marginTop: 5,
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            //onClick={handleClickOpen}
+                            size="small"
+                            //disabled={Boolean(livecall?.left_at)}
+                        >
+                            Request Call Back
+                        </Button>
+                        <Button
+                            variant="text"
+                            color="primary"
+                            href="https://tritekconsulting.co.uk/faq"
+                            target="_blank"
+                            size="small"
+                        >
+                            FAQ
+                        </Button>
+                    </Box>
+                </Box>
+            )}
         </Container>
     );
 };

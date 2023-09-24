@@ -34,7 +34,6 @@ const Survey = ({ livecall }) => {
         axios
             .post("/api/feedback", surveyData)
             .then((res) => {
-                console.log(res.data);
                 setSurvey({ ...survey, loading: false, successfull: true });
             })
             .catch((err) => {
