@@ -17,8 +17,6 @@ class CreateSurveysTable extends Migration
             $table->id();
             $table->text('data');
             $table->tinyText('comment');
-            $table->foreignId('live_call_id')
-                  ->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

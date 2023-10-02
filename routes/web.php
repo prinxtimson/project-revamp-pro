@@ -42,6 +42,14 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     });
 
+    Route::get('/callback/{id}', function () {
+        return view('welcome');
+    });
+
+    Route::get('/feedback/{channel}', function () {
+        return view('welcome');
+    });
+
     Route::get('live-support', function () {
         return view('welcome');
     });

@@ -32,7 +32,7 @@ const theme = createTheme();
 
 const MainContainer = ({ children, alerts }) => {
     return (
-        <div className="tw-flex-1 tw-flex tw-flex-col">
+        <div className="tw-w-full tw-flex-1 tw-flex tw-flex-col">
             <Stack sx={{ width: "100%" }} spacing={2}>
                 {alerts.map(
                     (alert) =>
@@ -74,7 +74,7 @@ const MainContainer = ({ children, alerts }) => {
             </Box>
             <div className="tw-flex-1">{children}</div>
 
-            <Copyright sx={{ mt: 3, mb: 2 }} />
+            <Copyright sx={{ mt: 2, mb: 2 }} />
         </div>
     );
 };

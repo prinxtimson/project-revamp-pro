@@ -7,11 +7,13 @@ namespace App\Http\Controllers;
 use Maatwebsite\Excel\Excel;
 use App\Events\LivecallUpdate;
 use App\Exports\LiveCallExport;
+use App\Mail\SubmitFeedback;
 use App\Models\LiveCall as ModelsLiveCall;
 use App\WebPush\WebNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class LiveCallController extends Controller
 {
@@ -94,7 +96,9 @@ class LiveCallController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'query_type' => 'required',
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'query_type' => 'required|string',
         ]);
 
         $livecall = ModelsLiveCall::create($request->all());
@@ -115,6 +119,15 @@ class LiveCallController extends Controller
     public function show($id)
     {
         return ModelsLiveCall::find($id);
+    }
+
+    public function sendSurveyForm(ModelsLiveCall $livecall)
+    {
+        $livecall->toArray();
+        $livecall->support_type = 'livecall';
+        Mail::to($livecall->email)->send(new SubmitFeedback($livecall));
+
+        return response();
     }
 
     /**

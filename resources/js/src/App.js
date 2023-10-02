@@ -31,6 +31,7 @@ import ChangePasswordForm from "./pages/DashboardPage/ChangePasswordForm";
 
 import axios from "axios";
 import IdleDialog from "./components/IdleDialog";
+import Survey from "./pages/HomePage/Survey";
 
 const timeout = 500_000;
 const promptBeforeIdle = 20_000;
@@ -113,12 +114,18 @@ const App = (props) => {
             <Router>
                 <Routes>
                     <Route exact path="/" element={<HomePage />} />
+                    <Route exact path="/callback/:id" element={<HomePage />} />
+                    <Route
+                        exact
+                        path="/feedback/:channel"
+                        element={<Survey />}
+                    />
                     <Route
                         exact
                         path="admin/two-factor-auth"
                         element={<TwoFactorAuthPage {...props} />}
                     />
-                    <Route exact path="admin" element={<LoginPage />} />
+
                     <Route
                         exact
                         path="conferencing/:URLRoomID"
@@ -135,6 +142,7 @@ const App = (props) => {
                         element={<ResetPasswordPage />}
                     />
                     <Route path="admin">
+                        <Route exact path="" element={<LoginPage />} />
                         <Route path="dashboard">
                             <Route path="" element={<DashboardPage />} />
                             <Route path="account" element={<AgentsTable />} />

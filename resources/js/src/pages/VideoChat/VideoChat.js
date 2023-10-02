@@ -33,6 +33,7 @@ const VideoChat = ({ isAuthenticated }) => {
     const { URLRoomID } = useParams();
     let [urlSearchParams] = useSearchParams();
     const [password] = React.useState(urlSearchParams.get("pwd"));
+    const [name] = React.useState(urlSearchParams.get("name"));
     const roomState = useRoomState();
 
     const height = useHeight();
@@ -40,7 +41,11 @@ const VideoChat = ({ isAuthenticated }) => {
     return (
         <Container style={{ height, flexGrow: 1 }}>
             {roomState === "disconnected" ? (
-                <PreJoinScreens URLRoomID={URLRoomID} password={password} />
+                <PreJoinScreens
+                    URLRoomID={URLRoomID}
+                    password={password}
+                    candidateName={name}
+                />
             ) : (
                 <Main>
                     <ReconnectingNotification

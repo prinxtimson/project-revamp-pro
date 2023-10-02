@@ -67,43 +67,40 @@ const TicketsDialog = ({
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = () => {
-        const { name, email, query_type, phone, description } = formData;
-        if (!name) {
-            setFormError({ name: "Name is required!" });
-            return;
+        setFormError({});
+        let name, email, phone, query_type, description;
+        if (!formData.name) {
+            name = "Name is required!";
         }
-        if (!email) {
-            setFormError({ email: "Email is required!" });
-            return;
+
+        if (!formData.email) {
+            email = "Email is required!";
         }
-        if (!phone) {
-            setFormError({ phone: "Phone number is required!" });
-            return;
+
+        if (!formData.phone) {
+            phone = "Phone number is required!";
         }
-        if (!query_type) {
-            setFormError({
-                query_type: "Query Type is required!",
-            });
-            return;
+
+        if (!formData.query_type) {
+            query_type = "Query Type is required!";
         }
-        if (!description) {
-            setFormError({
-                description: "Description is required!",
-            });
-            return;
-        }
-        if (!email.match(emailValidation)) {
-            setFormError({ email: "Email is invalid" });
-            return;
-        }
+
         if (
-            description.split(" ").length < 50 ||
-            description.split(" ").length > 500
+            formData.description.length < 50 ||
+            formData.description.length > 500
         ) {
-            setFormError({
-                description:
-                    "It must be at least 50 words and not more than 500 words",
-            });
+            description =
+                "It must be at least 50 character and not more than 500 character";
+        }
+
+        if (name || email || phone || query_type || description) {
+            console.log({ name, email, phone, query_type, description });
+            setFormError({ name, email, phone, query_type, description });
+            return;
+        }
+
+        if (!formData.email.match(emailValidation)) {
+            setFormError({ email: "Email is invalid" });
             return;
         }
 
@@ -134,11 +131,20 @@ const TicketsDialog = ({
 
     return (
         <div>
-            <BootstrapDialog open={open} onClose={handleClose}>
+            <BootstrapDialog
+                open={open}
+                onClose={() => {
+                    handleClose();
+                    onSuccessful();
+                }}
+            >
                 <DialogTitle sx={{ m: 0, p: 2 }}>Raise Ticket</DialogTitle>
                 <IconButton
                     aria-label="close"
-                    onClick={handleClose}
+                    onClick={() => {
+                        handleClose();
+                        onSuccessful();
+                    }}
                     sx={{
                         position: "absolute",
                         right: 8,
@@ -238,8 +244,7 @@ const TicketsDialog = ({
                             value={formData.description}
                             onChange={handleOnChange}
                             onKeyPress={() => {
-                                let totalWords =
-                                    formData.description?.split(" ").length;
+                                let totalWords = formData.description?.length;
                                 let _remainingWords = 500 - totalWords;
                                 setRemainingWords(_remainingWords);
                             }}

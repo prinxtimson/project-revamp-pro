@@ -163,6 +163,7 @@ export const answerLivecall = (id, handleLoading) => async (dispatch) => {
         });
         handleLoading();
         getLivecallById(id);
+        console.log(res.data);
 
         window.open(`/conferencing/${res.data.id}?pwd=${res.data.pwd}`);
     } catch (err) {

@@ -44,6 +44,6 @@ class VideoRoom extends Model
 
     public function livecall()
     {
-        return $this->belongsTo(LiveCall::class);
+        return $this->belongsTo(LiveCall::class, 'live_call_id');
     }
 }

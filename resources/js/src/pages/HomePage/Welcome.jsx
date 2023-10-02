@@ -16,6 +16,9 @@ import AddCircleIcon from "@mui/icons-material/AddCircleOutline";
 import data from "../../../faq.json";
 import TicketsDialog from "../../components/TicketsDialog";
 import axios from "axios";
+import RequestLivecallDialog from "../../components/RequestLivecallDialog";
+import ResponseDialog from "../../components/ResponseDialog";
+import OfflineDialog from "../../components/OfflineDialog";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -63,6 +66,10 @@ const Welcome = ({ handleCallbackOpen }) => {
     const [searchText, setSearchText] = useState("");
     const [currentRatings, setCurrentRatings] = useState(0);
     const [open, setOpen] = useState(false);
+    const [openLivecall, setOpenLivecall] = useState(false);
+    const [openRes, setOpenRes] = useState(false);
+    const [openOffline, setOpenOffline] = useState(false);
+    const [resMessage, setResMessage] = useState("");
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -72,6 +79,54 @@ const Welcome = ({ handleCallbackOpen }) => {
         setOpen(false);
     };
 
+    const handleOfflineOpen = () => {
+        setOpenOffline(true);
+    };
+
+    const handleOfflineClose = () => {
+        setOpenOffline(false);
+    };
+
+    const handleOpenRes = (msg) => {
+        setOpenRes(true);
+        setResMessage(msg);
+    };
+
+    const handleCloseRes = () => {
+        setOpenRes(false);
+        setResMessage("");
+        handleCloseLivecall();
+    };
+
+    const handleOpenLivecall = () => {
+        let isOnline = checkAvailability();
+        if (isOnline) {
+            setOpenLivecall(true);
+        } else {
+            handleOfflineOpen();
+        }
+    };
+
+    const handleCloseLivecall = () => {
+        setOpenLivecall(false);
+    };
+
+    const handleChatWithLiveAgent = () => {
+        let isOnline = checkAvailability();
+        if (isOnline) {
+            let tawkDiv = document.getElementsByClassName("widget-visible")[0];
+            let tawkFrame = tawkDiv.getElementsByTagName("iframe")[0];
+            let tawkBtn =
+                tawkFrame.contentWindow.document.getElementsByClassName(
+                    "tawk-button"
+                )[0];
+
+            tawkBtn.click();
+        } else {
+            handleOfflineOpen();
+        }
+    };
+
     useEffect(() => {
         let _filteredSearch = data.map((data) => ({
             category: data.category,
@@ -79,7 +134,7 @@ const Welcome = ({ handleCallbackOpen }) => {
                 item.question.toLowerCase().includes(searchText.toLowerCase())
             ),
         }));
-        //console.log(_filteredSearch);
+
         _filteredSearch = _filteredSearch.filter(
             (value) => value.items.length > 0
         );
@@ -99,26 +154,53 @@ const Welcome = ({ handleCallbackOpen }) => {
         setCurrentRatings(0);
     };
 
+    const checkAvailability = () => {
+        let _date = new Date();
+        if (
+            OPENINGDAYS.includes(DAYS[_date.getDay()]) &&
+            _date.getHours() >= 9 &&
+            _date.getHours() <= 16
+        ) {
+            return true;
+        }
+        return false;
+    };
+
     return (
         <>
             <TicketsDialog open={open} handleClose={handleClose} />
-            <div className="tw-p-5 tw-h-full">
-                <div className="tw-grid md:tw-grid-cols-3 tw-gap-4 tw-h-full tw-items-center">
-                    <div className="md:tw-col-span-2 tw-p-4">
-                        <div className="tw-mb-10">
-                            <h1 className="tw-text-6xl tw-font-bold tw-text-indigo-950">
+            <RequestLivecallDialog
+                open={openLivecall}
+                handleClose={handleCloseLivecall}
+                handleOpenRes={handleOpenRes}
+            />
+            <ResponseDialog
+                open={openRes}
+                handleClose={handleCloseRes}
+                handleOpenCallback={handleCallbackOpen}
+                message={resMessage}
+            />
+            <OfflineDialog
+                open={openOffline}
+                handleClose={handleOfflineClose}
+            />
+            <div className="tw-p-2 md:tw-p-4 tw-h-full">
+                <div className="md:tw-grid md:tw-grid-cols-3 tw-gap-4 tw-h-full tw-items-center">
+                    <div className="md:tw-col-span-2 tw-p-2">
+                        <div className="tw-mb-8 tw-p-4 tw-shadow-md tw-bg-amber-100 tw-rounded-md">
+                            <h1 className="tw-text-3xl md:tw-text-6xl tw-font-bold tw-text-indigo-950">
                                 Hello!
                             </h1>
                             <div className="tw-text-slate-600">
-                                <p className="tw-text-2xl tw-font-semibold tw-mb-1">
+                                <p className="tw-text-xl md:tw-text-2xl tw-font-semibold tw-mb-1">
                                     Welcome to Tritek Live Support
                                 </p>
-                                <p className="tw-text-2xl tw-font-semibold tw-mb-1">
+                                <p className="tw-text-xl md:tw-text-2xl tw-font-semibold tw-mb-1">
                                     We are available Monday - Friday 9am -4pm
                                 </p>
-                                <p className="tw-text-2xl tw-font-semibold">
+                                <p className="tw-text-xl md:tw-text-2xl tw-font-semibold">
                                     You can explore our various communication
-                                    channels to assist with your
+                                    channels to assist with your query
                                 </p>
                             </div>
                         </div>
@@ -126,14 +208,17 @@ const Welcome = ({ handleCallbackOpen }) => {
                             <div className="tw-bg-teal-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 ">
                                 <div className="tw-mb-2">
                                     <img
-                                        src="/images/chatagent.png"
-                                        alt="chat with an agent"
+                                        src="/images/callback.png"
+                                        alt="Book a call back"
                                         width={130}
                                         className="tw-m-auto"
                                     />
                                 </div>
                                 <div className="tw-pb-5 tw-flex">
-                                    <button className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48">
+                                    <button
+                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                        onClick={handleChatWithLiveAgent}
+                                    >
                                         Chat with an agent
                                     </button>
                                 </div>
@@ -148,7 +233,10 @@ const Welcome = ({ handleCallbackOpen }) => {
                                     />
                                 </div>
                                 <div className="tw-pb-5 tw-flex">
-                                    <button className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48">
+                                    <button
+                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                        onClick={handleOpenLivecall}
+                                    >
                                         Join Live call
                                     </button>
                                 </div>
@@ -156,8 +244,8 @@ const Welcome = ({ handleCallbackOpen }) => {
                             <div className="tw-bg-sky-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4">
                                 <div className="tw-mb-2">
                                     <img
-                                        src="/images/callback.png"
-                                        alt="Book a call back"
+                                        src="/images/chatagent.png"
+                                        alt="chat with an agent"
                                         width={130}
                                         className="tw-m-auto"
                                     />
@@ -172,14 +260,31 @@ const Welcome = ({ handleCallbackOpen }) => {
                                 </div>
                             </div>
                         </div>
+                        <div className="tw-p-2 md:tw-p-4 tw-block md:tw-hidden">
+                            <div className="">
+                                <h5 className="tw-text-xl tw-font-medium">
+                                    Still unable to find answers to your
+                                    enquiry? You can raise a ticket and one of
+                                    our
+                                </h5>
+                            </div>
+                            <div className="tw-pb-5 ">
+                                <button
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-cente tw-w-48"
+                                    onClick={handleClickOpen}
+                                >
+                                    Raise a Ticket
+                                </button>
+                            </div>
+                        </div>
                         <div className="tw-my-8 ">
-                            <div className="tw-flex tw-justify-between tw-mb-2 tw-px-4">
-                                <div className="">
+                            <div className="md:tw-flex tw-justify-between tw-mb-2 md:tw-px-4">
+                                <div className="tw-mb-4 md:tw-mb-2">
                                     <h2 className="tw-text-xl md:tw-text-2xl tw-font-semibold ">
                                         Frequently Asked Questions
                                     </h2>
                                 </div>
-                                <div className="">
+                                <div className="tw-mb-4 md:tw-mb-2">
                                     <Search>
                                         <SearchIconWrapper>
                                             <SearchIcon />
@@ -208,6 +313,15 @@ const Welcome = ({ handleCallbackOpen }) => {
                                             </h2>
                                         </div>
                                         <div className="tw-w-full tw-h-72 tw-bg-white tw-overflow-auto tw-p-5">
+                                            {filteredSearch.length == 0 && (
+                                                <div className="tw-mb-2 tw-py-2 tw-divide-y tw-divide-slate-700">
+                                                    <div className="">
+                                                        <p className="tw-text-xl">
+                                                            No FAQ found
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
                                             {filteredSearch.map(
                                                 (value, key) => (
                                                     <div
@@ -359,7 +473,7 @@ const Welcome = ({ handleCallbackOpen }) => {
                             </div>
                         </div>
 
-                        <div className="tw-p-4">
+                        <div className="tw-p-4 tw-hidden md:tw-block">
                             <div className="tw-w-[32rem]">
                                 <h5 className="tw-text-xl tw-font-medium">
                                     Still unable to find answers to your
@@ -367,7 +481,7 @@ const Welcome = ({ handleCallbackOpen }) => {
                                     our
                                 </h5>
                             </div>
-                            <div className="tw-pb-5 tw-fle">
+                            <div className="tw-pb-2 ">
                                 <button
                                     className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-cente tw-w-48"
                                     onClick={handleClickOpen}
@@ -381,14 +495,17 @@ const Welcome = ({ handleCallbackOpen }) => {
                         <div className="tw-bg-teal-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 ">
                             <div className="tw-mb-2">
                                 <img
-                                    src="/images/chatagent.png"
-                                    alt="chat with an agent"
+                                    src="/images/callback.png"
+                                    alt="Book a call back"
                                     width={130}
                                     className="tw-m-auto"
                                 />
                             </div>
                             <div className="tw-pb-5 tw-flex">
-                                <button className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48">
+                                <button
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                    onClick={handleChatWithLiveAgent}
+                                >
                                     Chat with an agent
                                 </button>
                             </div>
@@ -403,7 +520,10 @@ const Welcome = ({ handleCallbackOpen }) => {
                                 />
                             </div>
                             <div className="tw-pb-5 tw-flex">
-                                <button className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48">
+                                <button
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                    onClick={handleOpenLivecall}
+                                >
                                     Join Live call
                                 </button>
                             </div>
@@ -411,8 +531,8 @@ const Welcome = ({ handleCallbackOpen }) => {
                         <div className="tw-bg-sky-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4">
                             <div className="tw-mb-2">
                                 <img
-                                    src="/images/callback.png"
-                                    alt="Book a call back"
+                                    src="/images/chatagent.png"
+                                    alt="chat with an agent"
                                     width={130}
                                     className="tw-m-auto"
                                 />
@@ -434,3 +554,15 @@ const Welcome = ({ handleCallbackOpen }) => {
 };
 
 export default Welcome;
+
+const DAYS = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+];
+
+const OPENINGDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];

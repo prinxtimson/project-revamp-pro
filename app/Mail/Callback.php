@@ -11,16 +11,16 @@ class Callback extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
+    private $payload;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($name)
+    public function __construct($callback)
     {
-        $this->name = $name;
+        $this->payload = $callback;
     }
 
     /**
@@ -32,6 +32,6 @@ class Callback extends Mailable
     {
         $subject = 'Callback Request Recieved';
 
-        return $this->markdown('emails.callback')->subject($subject);
+        return $this->markdown('emails.callback', ['payload' => $this->payload])->subject($subject);
     }
 }

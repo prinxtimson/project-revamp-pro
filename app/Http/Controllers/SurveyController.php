@@ -38,13 +38,10 @@ class SurveyController extends Controller
     {
         $fields = $request->validate([
             'ratings' => 'required',
-            'livecall' => 'required',
-            'comment' => 'required'
+            'comment' => 'string|nullable'
         ]);
 
-        $livecall = LiveCall::find($fields['livecall']);
-
-        $survey = $livecall->survey()->create([
+        $survey = Survey::create([
             'data' => $fields['ratings'],
             'comment' => $fields['comment']
         ]);
@@ -58,9 +55,9 @@ class SurveyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Survey $survey)
     {
-        return Survey::find($id)->load('livecall');
+        return $survey;
     }
 
     /**
@@ -81,13 +78,12 @@ class SurveyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Survey $survey)
     {
-        $survey = Survey::find($id);
 
         $survey->update($request->all());
 
-        $survey->refresh()->load('livecall');
+        $survey->refresh();
 
         return $survey;
     }
@@ -98,9 +94,8 @@ class SurveyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Survey $survey)
     {
-        $survey = Survey::find($id);
 
         return $survey->delete();
     }

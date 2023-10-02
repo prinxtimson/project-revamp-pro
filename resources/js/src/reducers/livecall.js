@@ -13,7 +13,7 @@ const initialState = {
     loading: true,
     livecalls: null,
     livecall: null,
-    count: 0,
+    count: null,
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export

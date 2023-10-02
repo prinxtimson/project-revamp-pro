@@ -11,9 +11,11 @@ class LiveCall extends Model
 
     protected $fillable = [
         'name',
+        'email',
         'query_type',
         'left_at',
         'answered_at',
+        'canceled_at',
         'session_id',
         'agent_id'
     ];
@@ -21,6 +23,7 @@ class LiveCall extends Model
     protected $casts = [
         'left_at' => 'datetime',
         'answered_at' => 'datetime',
+        'canceled_at' => 'datetime'
     ];
 
     public function user()
@@ -30,11 +33,6 @@ class LiveCall extends Model
 
     public function video_room()
     {
-        return $this->hasOne(VideoRoom::class);
-    }
-
-    public function survey()
-    {
-        return $this->hasOne(Survey::class);
+        return $this->hasOne(VideoRoom::class, 'live_call_id');
     }
 }

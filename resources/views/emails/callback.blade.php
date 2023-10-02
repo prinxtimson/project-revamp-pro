@@ -1,11 +1,10 @@
 @component('mail::message')
 # Callback Request
 
-Hi {{ $name }},
+Hello {{ $payload['name'] }},
 
-Your callback request on Tritek Live Support channel received.
+Your callback request on Tritek Live Support channel received. Click <a href="{{config('app.url')}}/callback/{{$payload['id']}}">here</a> to edit or cancel your schedule.
 
 Thanks,<br>
-Admin
 {{ config('app.name') }}
 @endcomponent

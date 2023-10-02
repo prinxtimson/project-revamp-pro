@@ -294,6 +294,7 @@
     grid-template-columns: repeat(1, minmax(0, 1fr))
   }
 
+
   @media (min-width:640px) {
     .sm\:rounded-lg {
       border-radius: .5rem
@@ -405,10 +406,13 @@
   body {
     font-family: 'Rubik', 'Roboto', sans-serif;
   }
+  iframe .tawk-min-container {
+    display: none !important;
+  }
   </style>
 </head>
 
-<body class="antialiased">
+<body class="antialiased" >
   @if (!empty($user))
   <div id="app" class="relative flex items-top min-h-screen my-custom-bg" data-user="{{$user}}">
   @else
@@ -417,6 +421,21 @@
   
     <script src="{{asset('js/app.js')}}"></script>
   </div>
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6516dd1410c0b2572486db52/1hbgkv7vn';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+
+})();
+</script>
+<!--End of Tawk.to Script-->
+
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
 <script>
     var firebaseConfig = {
@@ -438,7 +457,7 @@
                 return messaging.getToken()
             })
             .then(function (response) {
-              console.log(response)
+              
               localStorage.setItem('device_token', response)
                 
             }).catch(function (error) {
@@ -456,6 +475,7 @@
     });
 
     $(document).ready(function() {
+
       $(document).one('click', function() {
         
         if (!("Notification" in window)) {
@@ -472,7 +492,23 @@
       }
       })
     })
-    
+
+  var timerId = setInterval(myFunc, 1000);
+  function myFunc()  {
+      let tawkDiv = document.getElementsByClassName("widget-visible")[0];
+      if(tawkDiv){
+        clearInterval(timerId)
+        let tawkFrame = tawkDiv.getElementsByTagName("iframe")[0];
+        let tawkBtnContainer =
+            tawkFrame.contentWindow.document.getElementsByClassName(
+                "tawk-min-container"
+            )[0];
+            tawkBtnContainer.style.display = "none"
+        
+      }
+      
+    };
+   
 </script>
 
 </body>

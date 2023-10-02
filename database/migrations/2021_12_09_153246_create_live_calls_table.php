@@ -15,10 +15,12 @@ class CreateLiveCallsTable extends Migration
     {
         Schema::create('live_calls', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->string('query_type')->nullable();
+            $table->string('name');
+            $table->string('email');
+            $table->string('query_type');
             $table->foreignId('agent_id')->nullable();
             $table->timestamp('left_at')->nullable();
+            $table->timestamp('canceled_at')->nullable();
             $table->timestamp('answered_at')->nullable();
             $table->timestamps(); 
         });

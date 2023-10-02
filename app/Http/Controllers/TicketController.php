@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SubmitFeedback;
+use App\Mail\TicketRaised;
+use App\Mail\TicketStatusUpdate;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
@@ -37,6 +41,8 @@ class TicketController extends Controller
 
         $ticket = Ticket::create($fields);
 
+        Mail::to($fields['email'])->send(new TicketRaised($ticket));
+
         return response()->json([
             'msg' => 'Your Ticket ID number ' . $ticket->ticket_id . ' had been successfully submitted, please allow 48hrs for our team to get back to you',
             'data' => $ticket
@@ -66,7 +72,20 @@ class TicketController extends Controller
      */
     public function update(Request $request, Ticket $ticket)
     {
+        $currentStatus = $ticket->status;
+
         $ticket->update($request->all());
+        $ticket->refresh();
+
+        if($currentStatus != $ticket->status){
+            Mail::to($ticket->email)->send(new TicketStatusUpdate($ticket));
+        }
+
+        $ticket->toArray();
+        if($currentStatus == 'close'){
+            $ticket->support_type = 'ticket';
+            Mail::to($ticket->email)->send(new SubmitFeedback($ticket));
+        }
 
         return  response()->json([
             'msg' => 'successful',

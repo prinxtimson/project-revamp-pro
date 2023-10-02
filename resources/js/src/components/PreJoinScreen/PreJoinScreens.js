@@ -13,7 +13,13 @@ export const Steps = {
     deviceSelectionStep: 2,
 };
 
-const PreJoinScreens = ({ user, URLRoomID, password, loading }) => {
+const PreJoinScreens = ({
+    user,
+    candidateName,
+    URLRoomID,
+    password,
+    loading,
+}) => {
     const { getAudioAndVideoTracks, room } = useVideoContext();
 
     const [roomId, setRoomId] = useState("");
@@ -26,6 +32,10 @@ const PreJoinScreens = ({ user, URLRoomID, password, loading }) => {
     useEffect(() => {
         if (user) {
             setName(user?.name);
+            setStep(Steps.deviceSelectionStep);
+        }
+        if (candidateName) {
+            setName(candidateName);
             setStep(Steps.deviceSelectionStep);
         }
         if (URLRoomID) {

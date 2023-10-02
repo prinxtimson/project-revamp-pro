@@ -90,15 +90,15 @@ class VideoRoomController extends Controller
             'host' => $user->id,
             'password' => $hashPassword
         ]);
-
-        $videoRoom->toArray();
-
-        $videoRoom->pwd = $encrptPassword;
         
         $livecall->update([
             'agent_id' => $user->id,
             'answered_at' => Carbon::now()
         ]);
+
+        $videoRoom->refresh()->load(['livecall']);
+        $videoRoom->toArray();
+        $videoRoom->pwd = $encrptPassword;
 
         LivecallUpdate::dispatch($livecall);
         AgentConnected::dispatch($livecall, $videoRoom, $encrptPassword);
@@ -128,7 +128,7 @@ class VideoRoomController extends Controller
             'participants' => $fields['participants']
         ]);
 
-        $videoRoom->refresh()->load('breakouts');
+        $videoRoom->refresh()->load(['breakouts', 'livecall']);
 
         BreakoutRoomCreated::dispatch($videoRoom);
 

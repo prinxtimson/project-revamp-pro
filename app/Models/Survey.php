@@ -17,9 +17,4 @@ class Survey extends Model
     protected $casts = [
         'data' => 'array',
     ];
-
-    public function livecall()
-    {
-        return $this->belongsTo(LiveCall::class);
-    }
 }

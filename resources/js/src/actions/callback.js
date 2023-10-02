@@ -57,6 +57,27 @@ export const getCallbacksByUrl = (url) => async (dispatch) => {
     }
 };
 
+export const getCallbacksByDate = (date) => async (dispatch) => {
+    try {
+        const res = await axios.get(`/api/callback/search/${date}`);
+
+        dispatch({
+            type: SET_CALLBACKS,
+            payload: { data: res.data },
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: CALLBACK_ERROR });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
 export const requestCallback = (id, data, onSuccessful) => async (dispatch) => {
     dispatch({ type: CALLBACK_LOADING });
     try {
@@ -156,6 +177,54 @@ export const callbackSuccessful = (id) => async (dispatch) => {
         if (err.response.status == 401 || err.response.status == 403) {
             window.location.reload();
         }
+        dispatch(setAlert(err.response.data.message, "danger"));
+    }
+};
+
+export const updateCallback =
+    (id, data, onEditSuccessful) => async (dispatch) => {
+        dispatch({ type: CALLBACK_LOADING });
+        try {
+            const res = await axios.put(`/api/callback/${id}`, data);
+
+            onEditSuccessful();
+
+            dispatch({
+                type: UPDATE_CALLBACK,
+                payload: res.data,
+            });
+            dispatch(setAlert("Callback request had been updated", "success"));
+        } catch (err) {
+            console.log(err.response);
+            dispatch({ type: CALLBACK_ERROR });
+            if (err.response.status == 500) {
+                return dispatch(
+                    setAlert("Server errror, please try again.", "danger")
+                );
+            }
+            dispatch(setAlert(err.response.data.message, "danger"));
+        }
+    };
+
+export const cancelCallback = (id, handleClose) => async (dispatch) => {
+    try {
+        const res = await axios.put(`/api/callback/cancel/${id}`);
+
+        dispatch({
+            type: UPDATE_CALLBACK,
+            payload: res.data,
+        });
+        handleClose();
+        dispatch(setAlert("Callback request had been canceled", "success"));
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: CALLBACK_ERROR });
+        if (err.response.status == 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "danger")
+            );
+        }
+
         dispatch(setAlert(err.response.data.message, "danger"));
     }
 };

@@ -13,11 +13,21 @@ import PhoneInput from "react-phone-input-2";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import moment from "moment";
 import { connect } from "react-redux";
-import { requestCallback, getCallbacks } from "../actions/callback";
+import {
+    requestCallback,
+    getCallbacksByDate,
+    clearCallback,
+    getCallbackById,
+    updateCallback,
+    cancelCallback,
+} from "../actions/callback";
+import TimePicker from "./TimePicker";
 
 const QUERY_TYPE = [
     "Second Project Request",
@@ -34,17 +44,27 @@ const QUERY_TYPE = [
 ];
 
 const CallbackDialog = ({
+    id,
     open,
-    setStep,
+    callbacks,
+    callback,
     livecall,
     handleClose,
+    handleOpen,
     loading,
     requestCallback,
-    getCallbacks,
+    getCallbacksByDate,
+    clearCallback,
+    getCallbackById,
+    updateCallback,
+    cancelCallback,
 }) => {
+    const [openRes, setOpenRes] = useState(false);
+    const [msg, setMsg] = useState("");
     let minDate = new Date().toISOString();
     let maxDate = new Date(moment().weekday(5)).toISOString();
     const [formError, setFormError] = useState({});
+    const [selectedTime, setSelectedTime] = useState([]);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -53,42 +73,159 @@ const CallbackDialog = ({
         time: "",
         date: new Date().toISOString().split("T")[0],
     });
+    const emailValidation =
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleOnChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = () => {
+        setFormError({});
+        let name, email, phone, query_type;
+        if (!formData.name) {
+            name = "Name is required!";
+        }
+
+        if (!formData.email) {
+            email = "Email is required!";
+        }
+
+        if (!formData.phone) {
+            phone = "Phone number is required!";
+        }
+
+        if (!formData.query_type) {
+            query_type = "Query Type is required!";
+        }
+
+        if (name || email || phone || query_type) {
+            setFormError({ name, email, phone, query_type });
+            return;
+        }
+
+        if (!formData.email.match(emailValidation)) {
+            setFormError({ email: "Email is invalid" });
+            return;
+        }
         requestCallback(livecall?.id, formData, onSuccessful);
     };
 
+    const handleEditCallback = () => {
+        setFormError({});
+        let name, email, phone, query_type;
+        if (!formData.name) {
+            name = "Name is required!";
+        }
+
+        if (!formData.email) {
+            email = "Email is required!";
+        }
+
+        if (!formData.phone) {
+            phone = "Phone number is required!";
+        }
+
+        if (!formData.query_type) {
+            query_type = "Query Type is required!";
+        }
+
+        if (name || email || phone || query_type) {
+            setFormError({ name, email, phone, query_type });
+            return;
+        }
+
+        if (!formData.email.match(emailValidation)) {
+            setFormError({ email: "Email is invalid" });
+            return;
+        }
+        updateCallback(id, formData, onSuccessful);
+    };
+
     const onSuccessful = () => {
+        setMsg(
+            "Booking successful. A confirmation will be sent to your email shortly."
+        );
+        if (!id) {
+            setFormData({
+                name: "",
+                email: "",
+                phone: "",
+                query_type: "",
+                time: "",
+                date: new Date().toISOString().split("T")[0],
+            });
+        }
+
+        setOpenRes(true);
+    };
+
+    const handleResClose = () => {
+        setOpenRes(false);
+        clearCallback();
+        setMsg("");
         handleClose();
-        setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            query_type: "",
-            time: "",
-            date: new Date().toISOString().split("T")[0],
-        });
     };
 
     useEffect(() => {
-        getCallbacks();
-    }, []);
+        if (id) {
+            getCallbackById(id);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (callback) {
+            const { id, name, email, phone, query_type, time, date } = callback;
+            setFormData({
+                id,
+                name,
+                email,
+                phone,
+                query_type,
+                time,
+                date: new Date(date).toISOString().split("T")[0],
+            });
+            handleOpen();
+        }
+    }, [callback]);
+
+    useEffect(() => {
+        getCallbacksByDate(formData.date);
+    }, [formData.date]);
+
+    useEffect(() => {
+        if (callbacks) {
+            let _t = callbacks.data.map((item) =>
+                item.status == "CANCELED" ? null : item.time
+            );
+
+            setSelectedTime(_t);
+        }
+    }, [callbacks]);
 
     return (
         <div>
             <Dialog open={open} onClose={handleClose} sx={{ padding: 5 }}>
-                <DialogTitle>Request Callback</DialogTitle>
-                <DialogContent>
+                <DialogTitle>Book a Callback</DialogTitle>
+                <IconButton
+                    aria-label="close"
+                    onClick={handleClose}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+                <DialogContent dividers>
                     <DialogContentText>
                         We will be delighted to speak to you about our services
                         and offer advice Please provide your contact information
                         below and a member of our team will call you back at a
                         convenient time.
                     </DialogContentText>
-                    <Box sx={{ mt: 1 }}>
+                    <Box sx={{ mt: 2 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
@@ -101,10 +238,16 @@ const CallbackDialog = ({
                                     value={formData.name}
                                     onChange={handleOnChange}
                                     autoFocus
+                                    error={Boolean(formError.name)}
+                                    helperText={formError.name}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <FormControl fullWidth margin="none">
+                                <FormControl
+                                    fullWidth
+                                    margin="none"
+                                    error={Boolean(formError.query_type)}
+                                >
                                     <InputLabel id="query-type-label">
                                         Query Type
                                     </InputLabel>
@@ -121,6 +264,11 @@ const CallbackDialog = ({
                                             </MenuItem>
                                         ))}
                                     </Select>
+                                    {formError.query_type && (
+                                        <FormHelperText>
+                                            {formError.query_type}
+                                        </FormHelperText>
+                                    )}
                                 </FormControl>
                             </Grid>
 
@@ -134,6 +282,8 @@ const CallbackDialog = ({
                                     value={formData.email}
                                     onChange={handleOnChange}
                                     autoComplete="email"
+                                    error={Boolean(formError.email)}
+                                    helperText={formError.email}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -144,10 +294,6 @@ const CallbackDialog = ({
                                         paddingBottom: "14.5px",
                                         width: "100%",
                                     }}
-                                    // containerStyle={{
-                                    //     marginBottom: 4,
-                                    //     marginTop: 8,
-                                    // }}
                                     specialLabel="Enter Phone Number *"
                                     country={"gb"}
                                     value={formData.phone}
@@ -173,58 +319,61 @@ const CallbackDialog = ({
                                         min: minDate.split("T")[0],
                                         max: maxDate.split("T")[0],
                                     }}
+                                    error={Boolean(formError.date)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <TextField
-                                    fullWidth
-                                    select
-                                    margin="none"
-                                    required
-                                    name="time"
-                                    label="Time"
-                                    value={formData.time}
-                                    onChange={handleOnChange}
-                                    helperText="available time is week days between 8am - 4pm"
-                                    SelectProps={{
-                                        native: true,
-                                    }}
-                                    variant="outlined"
-                                >
-                                    <option />
-                                    <option value="10:00 - 11:00">
-                                        10:00 - 11:00
-                                    </option>
-                                    <option value="11:00 - 12:00">
-                                        11:00 - 12:00
-                                    </option>
-                                    <option value="12:00 - 13:00">
-                                        12:00 - 13:00
-                                    </option>
-                                    <option value="13:00 - 14:00">
-                                        13:00 - 14:00
-                                    </option>
-                                    <option value="14:00 - 15:00">
-                                        14:00 - 15:00
-                                    </option>
-                                    <option value="15:00 - 16:00">
-                                        15:00 - 16:00
-                                    </option>
-                                </TextField>
+                                <TimePicker
+                                    handleOnClick={(val) =>
+                                        setFormData({ ...formData, time: val })
+                                    }
+                                    choosenTime={selectedTime}
+                                    time={formData.time}
+                                />
                             </Grid>
                         </Grid>
+                        <div className="tw-pb-5 tw-flex tw-mt-5 tw-justify-between">
+                            {id && (
+                                <button
+                                    className={`tw-p-4 tw-font-semibold tw-text-sm  tw-text-indigo-500 tw-rounded-md tw-border-2 tw-m-auto tw-self-center tw-w-48 ${
+                                        loading
+                                            ? "tw-border-indigo-300"
+                                            : "tw-border-indigo-500 hover:tw-border-indigo-700"
+                                    }`}
+                                    onClick={() =>
+                                        cancelCallback(id, handleClose)
+                                    }
+                                    disabled={loading}
+                                >
+                                    Cancel Booking
+                                </button>
+                            )}
+                            <button
+                                className={`tw-p-4 tw-font-semibold tw-text-sm  tw-text-white tw-rounded-md tw-shadow-lg tw-border-2 tw-m-auto tw-self-center tw-w-48 ${
+                                    loading
+                                        ? "tw-bg-indigo-300 tw-border-indigo-300"
+                                        : "tw-bg-indigo-500 tw-border-indigo-500 hover:tw-bg-indigo-700 hover:tw-border-indigo-700"
+                                }`}
+                                onClick={id ? handleEditCallback : handleSubmit}
+                                disabled={loading}
+                            >
+                                {id ? "Edit Booking" : "Submit Booking"}
+                            </button>
+                        </div>
                     </Box>
+                    <Dialog open={openRes} maxWidth="xs">
+                        <DialogContent className="tw-bg-gray-200">
+                            <div className="">
+                                <p className="tw-text-xl tw-font-medium">
+                                    {msg}
+                                </p>
+                            </div>
+                        </DialogContent>
+                        <DialogActions className="tw-bg-gray-200">
+                            <Button onClick={handleResClose}>Ok</Button>
+                        </DialogActions>
+                    </Dialog>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button
-                        variant="contained"
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
-                        Submit
-                    </Button>
-                </DialogActions>
             </Dialog>
         </div>
     );
@@ -233,8 +382,15 @@ const CallbackDialog = ({
 const mapStateToProps = (state) => ({
     livecall: state.livecall.livecall,
     loading: state.callback.loading,
+    callbacks: state.callback.callbacks,
+    callback: state.callback.callback,
 });
 
-export default connect(mapStateToProps, { requestCallback, getCallbacks })(
-    CallbackDialog
-);
+export default connect(mapStateToProps, {
+    requestCallback,
+    getCallbacksByDate,
+    updateCallback,
+    clearCallback,
+    getCallbackById,
+    cancelCallback,
+})(CallbackDialog);

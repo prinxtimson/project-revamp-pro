@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\CallbackExport;
 use Maatwebsite\Excel\Excel;
 use App\Mail\Callback;
+use App\Mail\SubmitFeedback;
 use App\Models\CallBack as ModelsCallBack;
 use App\WebPush\WebNotification;
 use Carbon\Carbon;
@@ -74,7 +75,7 @@ class CallBackController extends Controller
 
         // Carbon::createFromDate($fields['date'], $fields['time'])
 
-        Mail::to($fields['email'])->send(new Callback($fields['name']));
+        Mail::to($fields['email'])->send(new Callback($response));
 
         return response($response, 201);
     }
@@ -85,9 +86,9 @@ class CallBackController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ModelsCallBack $callback)
     {
-        return ModelsCallBack::find($id);
+        return $callback;
     }
 
     /**
@@ -105,7 +106,10 @@ class CallBackController extends Controller
             'called_at' => Carbon::now(),
             'status' => 'SUCCESSFUL'
         ]);
-
+        $callback->toArray();
+        $callback->support_type = 'callback';
+        Mail::to($callback->email)->send(new SubmitFeedback($callback));
+    
         return $callback;
     }
 
@@ -117,6 +121,17 @@ class CallBackController extends Controller
             'agent_id' => $user->id,
             'called_at' => Carbon::now(),
             'status' => 'FAILED'
+        ]);
+
+        return $callback;
+    }
+
+    public function cancel($id)
+    {
+        $callback = ModelsCallBack::find($id);
+        $callback->update([
+            
+            'status' => 'CANCELED'
         ]);
 
         return $callback;
@@ -138,6 +153,9 @@ class CallBackController extends Controller
             $search->push($q);
         }
         foreach(ModelsCallBack::where('email', 'like', '%'.$query.'%')->get() as $q) {
+            $search->push($q);
+        }
+        foreach(ModelsCallBack::where('date', $query)->get() as $q) {
             $search->push($q);
         }
 

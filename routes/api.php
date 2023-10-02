@@ -26,12 +26,15 @@ Route::post('livecall', [LiveCallController::class, 'store']);
 Route::post('callback', [CallBackController::class, 'store']);
 Route::put('livecall/{id}', [LiveCallController::class, 'update']);
 Route::put('callback/{id}', [CallBackController::class, 'update']);
+Route::get('callback/{callback}', [CallBackController::class, 'show']);
+Route::put('callback/cancel/{id}', [CallBackController::class, 'cancel']);
+Route::get('callback/search/{query}', [CallBackController::class, 'search']);
 Route::get('livecall/waiting/count', [LiveCallController::class, 'waiting_list_count']);
 Route::get('livecall/leave/{id}', [LiveCallController::class, 'leave']);
 Route::get('room/{id}', [VideoRoomController::class, 'show']);
 Route::post('room/token', [VideoRoomController::class, 'get_access_token']);
 Route::post('feedback', [SurveyController::class, 'store']);
-Route::get('feedback/{id}', [SurveyController::class, 'show']);
+Route::get('feedback/{survey}', [SurveyController::class, 'show']);
 Route::post('/reset-password', [AuthController::class, 'resetPass']);
 
 Route::post('tickets', [TicketController::class, 'store']);
@@ -54,20 +57,19 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('livecall/{id}', [LiveCallController::class, 'destroy']);
     Route::get('livecall/connect/{id}', [LiveCallController::class, 'connect']);
     Route::get('livecall/{id}', [LiveCallController::class, 'show']);
+    Route::get('livecall/send_survey/{livecall}', [LiveCallController::class, 'sendSurveyForm']);
     Route::get('livecall/search/{query_type}', [LiveCallController::class, 'search_by_query_type']);
 
-    //Route::get('callback/{id}', [CallBackController::class, 'show']);
     Route::get('callback/summary', [CallBackController::class, 'summary']); 
-    Route::get('callback/search/{query}', [CallBackController::class, 'search']);
     Route::get('callback', [CallBackController::class, 'index']);
     Route::put('callback/success/{id}', [CallBackController::class, 'success']);
     Route::put('callback/fail/{id}', [CallBackController::class, 'fail']);
     Route::delete('callback/{id}', [CallBackController::class, 'destroy']);
 
     Route::get('feedback', [SurveyController::class, 'index']);
-    Route::delete('feedback/{id}', [SurveyController::class, 'destroy']);
+    Route::delete('feedback/{survey}', [SurveyController::class, 'destroy']);
 
-    // Route::get('/mark-notification', [AuthController::class, 'markNotification']);
+    // Route::get('/mark-notification', [AuthController::class, 'sendSurveyForm']);
     // Route::get('users/activities', [UserController::class, 'user_activities']);
 });
 

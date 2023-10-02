@@ -13,3 +13,7 @@
 .my-custom-bg {
     background-color: #f7fafc;
 }
+
+.tawk-min-container {
+    display: none !important;
+}
