@@ -34,28 +34,25 @@ const MainContainer = ({ children, alerts }) => {
     return (
         <div className="tw-w-full tw-flex-1 tw-flex tw-flex-col">
             <Stack sx={{ width: "100%" }} spacing={2}>
-                {alerts.map(
-                    (alert) =>
-                        alert.alertType === "success" && (
-                            <Snackbar
-                                anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                open={Boolean(alert.id)}
-                                key={alert.id}
-                                autoHideDuration={6000}
-                            >
-                                <Alert
-                                    severity="success"
-                                    variant="filled"
-                                    sx={{ width: "100%" }}
-                                >
-                                    {alert.msg}
-                                </Alert>
-                            </Snackbar>
-                        )
-                )}
+                {alerts.map((alert) => (
+                    <Snackbar
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                        }}
+                        open={Boolean(alert.id)}
+                        key={alert.id}
+                        autoHideDuration={6000}
+                    >
+                        <Alert
+                            severity={alert.alertType}
+                            variant="filled"
+                            sx={{ width: "100%" }}
+                        >
+                            {alert.msg}
+                        </Alert>
+                    </Snackbar>
+                ))}
             </Stack>
 
             <Box

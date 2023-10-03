@@ -19,6 +19,8 @@ import axios from "axios";
 import RequestLivecallDialog from "../../components/RequestLivecallDialog";
 import ResponseDialog from "../../components/ResponseDialog";
 import OfflineDialog from "../../components/OfflineDialog";
+import { setAlert } from "../../actions/alert";
+import { connect } from "react-redux";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -60,7 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const Welcome = ({ handleCallbackOpen }) => {
+const Welcome = ({ handleCallbackOpen, setAlert }) => {
     const [filteredSearch, setFilteredSearch] = useState([]);
     const [searchShow, setSearchShow] = useState(false);
     const [searchText, setSearchText] = useState("");
@@ -150,7 +152,16 @@ const Welcome = ({ handleCallbackOpen }) => {
     }, [searchText]);
 
     const handleOnRatingClick = async (category, question, rating) => {
-        await axios.post("/api/rating", { category, question, rating });
+        const res = await axios.post("/api/rating", {
+            category,
+            question,
+            rating,
+        });
+        if (res.status == 200) {
+            setAlert("Successful", "success");
+        } else {
+            setAlert("An error occur", "error");
+        }
         setCurrentRatings(0);
     };
 
@@ -159,7 +170,7 @@ const Welcome = ({ handleCallbackOpen }) => {
         if (
             OPENINGDAYS.includes(DAYS[_date.getDay()]) &&
             _date.getHours() >= 9 &&
-            _date.getHours() <= 16
+            _date.getHours() <= 24
         ) {
             return true;
         }
@@ -553,7 +564,11 @@ const Welcome = ({ handleCallbackOpen }) => {
     );
 };
 
-export default Welcome;
+const mapStateToProps = (state) => ({
+    livecall: state.livecall.livecall,
+});
+
+export default connect(mapStateToProps, { setAlert })(Welcome);
 
 const DAYS = [
     "Sunday",

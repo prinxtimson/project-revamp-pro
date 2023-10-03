@@ -75,7 +75,7 @@ class CallBackController extends Controller
 
         // Carbon::createFromDate($fields['date'], $fields['time'])
 
-        Mail::to($fields['email'])->send(new Callback($response));
+        Mail::to($fields['email'])->send(new Callback($response)); 
 
         return response($response, 201);
     }
@@ -179,7 +179,13 @@ class CallBackController extends Controller
     {
         $callback = ModelsCallBack::find($id);
 
+        if($callback->status == 'CANCELED' || isset($callback->called_at)){
+            return response('You are not permitted to edit this booking', 400);
+        }
+
         $callback->update($request->all());
+
+        Mail::to($callback->email)->send(new Callback($callback)); 
 
         return $callback;
     }

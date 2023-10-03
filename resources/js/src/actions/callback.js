@@ -24,13 +24,14 @@ export const getCallbacks = () => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         // if (err.response.status === 401 || err.response.status === 403) {
         //     window.location.reload();
         // }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -47,13 +48,14 @@ export const getCallbacksByUrl = (url) => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         // if (err.response.status === 401 || err.response.status === 403) {
         //     window.location.reload();
         // }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -70,11 +72,12 @@ export const getCallbacksByDate = (date) => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -98,11 +101,12 @@ export const requestCallback = (id, data, onSuccessful) => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -119,13 +123,14 @@ export const getCallbackById = (id) => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status == 401 || err.response.status == 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -147,13 +152,14 @@ export const delCallback = (id) => async (dispatch) => {
             dispatch({ type: CALLBACK_ERROR });
             if (err.response.status == 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
             if (err.response.status == 401 || err.response.status == 403) {
                 window.location.reload();
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };
@@ -171,13 +177,14 @@ export const callbackSuccessful = (id) => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status == 401 || err.response.status == 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -193,16 +200,16 @@ export const updateCallback =
                 type: UPDATE_CALLBACK,
                 payload: res.data,
             });
-            dispatch(setAlert("Callback request had been updated", "success"));
+            dispatch(setAlert("Callback request has been updated", "success"));
         } catch (err) {
             console.log(err.response);
             dispatch({ type: CALLBACK_ERROR });
             if (err.response.status == 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            dispatch(setAlert(err.response.data, "error"));
         }
     };
 
@@ -215,17 +222,18 @@ export const cancelCallback = (id, handleClose) => async (dispatch) => {
             payload: res.data,
         });
         handleClose();
-        dispatch(setAlert("Callback request had been canceled", "success"));
+        dispatch(setAlert("Callback request has been canceled", "success"));
     } catch (err) {
         console.log(err.response);
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -242,13 +250,14 @@ export const callbackFailed = (id) => async (dispatch) => {
         dispatch({ type: CALLBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status == 401 || err.response.status == 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 

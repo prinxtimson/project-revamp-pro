@@ -26,14 +26,15 @@ export const getLivecalls = () => async (dispatch) => {
         dispatch({ type: LIVECALL_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         // if (err.response.status === 401 || err.response.status === 403) {
         //     window.location.reload();
         // }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -50,11 +51,12 @@ export const getLivecallsByUrl = (url) => async (dispatch) => {
         dispatch({ type: LIVECALL_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -71,11 +73,12 @@ export const getConnectedLivecalls = () => async (dispatch) => {
         dispatch({ type: LIVECALL_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -106,11 +109,12 @@ export const requestLivecall =
             dispatch({ type: LIVECALL_ERROR });
             if (err.response.status === 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
 
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     };
 
@@ -127,11 +131,12 @@ export const getLivecallById = (id) => async (dispatch) => {
         dispatch({ type: LIVECALL_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -146,11 +151,12 @@ export const leaveLivecall = (id) => async (dispatch) => {
             dispatch({ type: LIVECALL_ERROR });
             if (err.response.status === 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
 
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };
@@ -172,13 +178,13 @@ export const answerLivecall = (id, handleLoading) => async (dispatch) => {
         handleLoading();
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status === 401 || err.response.status === 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.msg, "danger"));
+        dispatch(setAlert(err.response.data.msg, "error"));
     }
 };
 
@@ -194,13 +200,14 @@ export const endLivecall = (id) => async (dispatch) => {
             dispatch({ type: LIVECALL_ERROR });
             if (err.response.status === 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
             if (err.response.status === 401 || err.response.status === 403) {
                 window.location.reload();
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };
@@ -218,10 +225,11 @@ export const getWaitingListCount = () => async (dispatch) => {
         dispatch({ type: LIVECALL_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -260,13 +268,14 @@ export const delLivecall = (id) => async (dispatch) => {
             dispatch({ type: LIVECALL_ERROR });
             if (err.response.status === 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
             if (err.response.status === 401 || err.response.status === 403) {
                 window.location.reload();
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };

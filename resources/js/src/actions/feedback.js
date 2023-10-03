@@ -22,10 +22,11 @@ export const getFeedbacks = () => async (dispatch) => {
         dispatch({ type: FEEDBACK_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -44,11 +45,12 @@ export const submitFeedback = (data, onSuccessful) => async (dispatch) => {
         dispatch({ type: FEEDBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -65,13 +67,14 @@ export const getFeedbackById = (id) => async (dispatch) => {
         dispatch({ type: FEEDBACK_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status == 401 || err.response.status == 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -93,13 +96,14 @@ export const delFeedback = (id) => async (dispatch) => {
             dispatch({ type: FEEDBACK_ERROR });
             if (err.response.status == 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
             if (err.response.status == 401 || err.response.status == 403) {
                 window.location.reload();
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };

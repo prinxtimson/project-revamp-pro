@@ -22,10 +22,11 @@ export const getTickets = () => async (dispatch) => {
         dispatch({ type: TICKET_ERROR });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -39,17 +40,18 @@ export const submitTicket = (data, onSuccessful) => async (dispatch) => {
             type: SET_TICKET,
             payload: res.data,
         });
-        dispatch(setAlert("Ticket had been raised successfully", "success"));
+        dispatch(setAlert("Ticket has been raised successfully", "success"));
     } catch (err) {
         console.log(err.response);
         dispatch({ type: TICKET_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -63,17 +65,18 @@ export const updateTicket = (id, data, onSuccessful) => async (dispatch) => {
             type: SET_TICKET,
             payload: res.data,
         });
-        dispatch(setAlert("Ticket had been updated successfully", "success"));
+        dispatch(setAlert("Ticket has been updated successfully", "success"));
     } catch (err) {
         console.log(err.response);
         dispatch({ type: TICKET_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -90,13 +93,14 @@ export const getTicketById = (id) => async (dispatch) => {
         dispatch({ type: TICKET_ERROR });
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status == 401 || err.response.status == 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -119,13 +123,14 @@ export const delTicket = (id) => async (dispatch) => {
             dispatch({ type: TICKET_ERROR });
             if (err.response.status == 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
             if (err.response.status == 401 || err.response.status == 403) {
                 window.location.reload();
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };

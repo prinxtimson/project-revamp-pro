@@ -62,11 +62,12 @@ export const loginUser = (email, password) => async (dispatch) => {
         dispatch({ type: LOGIN_FAIL });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -82,11 +83,11 @@ export const verifyCode = (data, onSuccessful) => async (dispatch) => {
         dispatch({ type: AUTH_LOADING });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data, "danger"));
+        dispatch(setAlert(err.response.data, "error"));
     }
 };
 
@@ -102,13 +103,14 @@ export const resendCode = (onCodeResend) => async (dispatch) => {
         dispatch({ type: AUTH_LOADING });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status === 401 || err.response.status === 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -126,13 +128,14 @@ export const updateUser = (data) => async (dispatch) => {
         dispatch({ type: AUTH_LOADING });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status === 401 || err.response.status === 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -153,13 +156,14 @@ export const addUser = (formData, handleSuccess) => async (dispatch) => {
         dispatch({ type: AUTH_LOADING });
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status === 401 || err.response.status === 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -182,13 +186,14 @@ export const changePassword = (data) => async (dispatch) => {
         console.log(err.response);
         if (err.response.status == 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
         if (err.response.status === 401 || err.response.status === 403) {
             window.location.reload();
         }
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
 
@@ -218,11 +223,12 @@ export const requestPasswordReset =
             handleError();
             if (err.response.status == 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
 
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     };
 
@@ -250,11 +256,12 @@ export const resetPassword =
             setLoading(false);
             if (err.response.status === 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
 
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     };
 
@@ -267,13 +274,14 @@ export const deleteAccount = () => async (dispatch) => {
             console.log(err.response);
             if (err.response.status === 500) {
                 return dispatch(
-                    setAlert("Server errror, please try again.", "danger")
+                    setAlert("Server errror, please try again.", "error")
                 );
             }
             if (err.response.status === 401 || err.response.status === 403) {
                 window.location.reload();
             }
-            dispatch(setAlert(err.response.data.message, "danger"));
+            let msg = err.response.data.message || err.response.data;
+            dispatch(setAlert(msg, "error"));
         }
     }
 };
@@ -287,10 +295,11 @@ export const logoutUser = () => async (dispatch) => {
         console.log(err.response);
         if (err.response.status === 500) {
             return dispatch(
-                setAlert("Server errror, please try again.", "danger")
+                setAlert("Server errror, please try again.", "error")
             );
         }
 
-        dispatch(setAlert(err.response.data.message, "danger"));
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
     }
 };
