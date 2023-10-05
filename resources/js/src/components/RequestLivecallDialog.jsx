@@ -14,11 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import { connect } from "react-redux";
-import {
-    requestLivecall,
-    getConnectedLivecalls,
-    clearLivecall,
-} from "../actions/livecall";
+import { requestLivecall, leaveLivecall } from "../actions/livecall";
 import axios from "axios";
 
 const QUERY_TYPE = [
@@ -51,9 +47,8 @@ const RequestLivecallDialog = ({
     count,
     loading,
     requestLivecall,
-    getConnectedLivecalls,
-    clearLivecall,
     handleOpenRes,
+    leaveLivecall,
 }) => {
     const [formData, setFormData] = useState({
         name: "",
@@ -104,36 +99,28 @@ const RequestLivecallDialog = ({
     };
 
     const confirm = (e) => {
+        handleClose();
         confirmDialog({
             message: "You will now be transferred to an agent.",
             header: "Confirmation",
             icon: "pi pi-exclamation-triangle",
             accept: () => {
-                // setStep("thank-you");
                 axios.get(`/api/livecall/send_survey/${e.data.livecall.id}`);
 
                 window.open(
                     `/conferencing/${e.data.id}?pwd=${e.password}&name=${e.data.livecall.name}`
                 );
             },
-            reject: () => setStep("thank-you"),
+            reject: () => leaveLivecall(livecall?.id),
         });
     };
 
     useEffect(() => {
-        if (count && count > 0) {
+        if (count && count > 0 && livecall) {
             let msg = `You are number ${count} on the waiting list`;
             handleOpenRes(msg);
         }
     }, [count]);
-
-    useEffect(() => {
-        getConnectedLivecalls();
-
-        return () => {
-            clearLivecall();
-        };
-    }, []);
 
     return (
         <div>
@@ -233,6 +220,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
     requestLivecall,
-    getConnectedLivecalls,
-    clearLivecall,
+    leaveLivecall,
 })(RequestLivecallDialog);

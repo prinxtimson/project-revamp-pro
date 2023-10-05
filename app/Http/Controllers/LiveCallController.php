@@ -36,16 +36,22 @@ class LiveCallController extends Controller
         return $livecall;
     }
 
-    public function waiting_list_count()
+    public function waiting_list_position($id)
     {
-        $count = ModelsLiveCall::whereNull('answered_at')->whereNull('left_at')->count();
+        $livecalls = ModelsLiveCall::whereNull('answered_at')->whereNull('left_at')->whereNull('canceled_at')->get();
+        $livecalls->toArray();
+        foreach($livecalls as $key => $value){
+            if($value->id == $id){
+                return $key + 1;
+            }
+        }
 
-        return $count;
+        return 0;
     }
 
     public function filter_waiting_list()
     {
-        $livecalls = ModelsLiveCall::whereNull('answered_at')->whereNull('left_at')->orderBy('id', 'DESC')->paginate(20);
+        $livecalls = ModelsLiveCall::whereNull('answered_at')->whereNull('left_at')->whereNull('canceled_at')->orderBy('id', 'DESC')->paginate(20);
 
         return $livecalls;
     }
@@ -127,7 +133,7 @@ class LiveCallController extends Controller
         $livecall->support_type = 'livecall';
         Mail::to($livecall->email)->send(new SubmitFeedback($livecall));
 
-        return response();
+        return response()->json($livecall);
     }
 
     /**

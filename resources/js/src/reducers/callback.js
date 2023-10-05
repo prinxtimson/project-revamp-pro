@@ -9,7 +9,7 @@ import {
 } from "../actions/types";
 
 const initialState = {
-    loading: true,
+    loading: false,
     callbacks: null,
     callback: null,
 };
@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
         case CALLBACK_LOADING:
             return {
                 ...state,
-                loading: true,
+                loading: !state.loading,
             };
         case SET_CALLBACKS:
             return {

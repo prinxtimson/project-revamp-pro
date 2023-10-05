@@ -12,16 +12,19 @@ const ResponseDialog = ({ open, message, handleClose, handleOpenCallback }) => {
             </DialogContent>
             <DialogActions className="tw-bg-gray-200">
                 <button
-                    className={`tw-p-2 tw-font-semibold tw-text-sm  tw-text-indigo-500 tw-rounded-md tw-shadow-md tw-border-2 tw-m-auto tw-self-center tw-w-40 
-                                        tw-border-indigo-500 hover:tw-border-indigo-700
+                    className={`tw-p-2 tw-font-semibold tw-text-sm  tw-text-red-500 tw-rounded-md tw-shadow-md tw-border-2 tw-m-auto tw-self-center tw-w-40 
+                                        tw-border-red-500 hover:tw-border-red-700
                                 `}
                     onClick={handleClose}
                 >
-                    Continue
+                    Cancel
                 </button>
                 <button
                     className={`tw-p-2 tw-font-semibold tw-text-sm  tw-text-white tw-rounded-md tw-shadow-md tw-m-auto tw-self-center tw-w-40 tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-border-2 tw-border-indigo-500 hover:tw-border-indigo-700`}
-                    onClick={handleOpenCallback}
+                    onClick={() => {
+                        handleOpenCallback();
+                        handleClose();
+                    }}
                 >
                     Book a Callback
                 </button>

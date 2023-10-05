@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
+import Avatar from "@mui/material/Avatar";
 import { makeStyles } from "@mui/styles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -102,11 +103,21 @@ const IntroContainer = (props) => {
                     <div className={classes.innerContainer}>
                         <div className={classes.swooshContainer}>
                             <div className={classes.logoContainer}>
+                                <div className="tw-mb-2 tw-bg-white tw-p-1 tw-flex tw-justify-center">
+                                    <Avatar
+                                        variant="square"
+                                        alt="Tritek Live"
+                                        src="/images/logo.png"
+                                        sx={{ width: 168 }}
+                                    >
+                                        Tritek Live
+                                    </Avatar>
+                                </div>
                                 <Typography
                                     variant="h6"
                                     className={classes.title}
                                 >
-                                    Tritek Consulting Lid
+                                    Tritek Consulting Ltd
                                 </Typography>
                             </div>
                         </div>

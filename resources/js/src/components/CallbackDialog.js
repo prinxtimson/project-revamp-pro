@@ -62,7 +62,7 @@ const CallbackDialog = ({
     const [openRes, setOpenRes] = useState(false);
     const [msg, setMsg] = useState("");
     let minDate = new Date().toISOString();
-    let maxDate = new Date(moment().weekday(5)).toISOString();
+    let maxDate = new Date(moment().add("2", "weeks")).toISOString();
     const [formError, setFormError] = useState({});
     const [selectedTime, setSelectedTime] = useState([]);
     const [formData, setFormData] = useState({
@@ -76,8 +76,23 @@ const CallbackDialog = ({
     const emailValidation =
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    const handleOnChange = (e) =>
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleOnChange = (e) => {
+        if (e.target.name == "date") {
+            setFormData({
+                ...formData,
+                [e.target.name]: e.target.value,
+                time: "",
+            });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+    };
+
+    useEffect(() => {
+        let endOfWeek = moment().endOf("week");
+        let _dd = moment(endOfWeek.toDate()).add("2", "weeks");
+        console.log(_dd.toDate());
+    }, []);
 
     const handleSubmit = () => {
         setFormError({});
@@ -312,7 +327,17 @@ const CallbackDialog = ({
                                     value={
                                         formData.date || minDate.split("T")[0]
                                     }
-                                    onChange={handleOnChange}
+                                    onChange={(e) => {
+                                        let _d = new Date(e.target.value);
+                                        if (
+                                            _d.getDay() == 0 ||
+                                            _d.getDay() == 6
+                                        ) {
+                                            alert("Weekends days not allow");
+                                        } else {
+                                            handleOnChange(e);
+                                        }
+                                    }}
                                     type="date"
                                     helperText="you can only select available date in the current week."
                                     inputProps={{
@@ -357,7 +382,7 @@ const CallbackDialog = ({
                                 onClick={id ? handleEditCallback : handleSubmit}
                                 disabled={loading}
                             >
-                                {id ? "Edit Booking" : "Submit Booking"}
+                                {id ? "Confirm Booking" : "Submit Booking"}
                             </button>
                         </div>
                     </Box>

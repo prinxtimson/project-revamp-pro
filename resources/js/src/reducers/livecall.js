@@ -10,7 +10,7 @@ import {
 } from "../actions/types";
 
 const initialState = {
-    loading: true,
+    loading: false,
     livecalls: null,
     livecall: null,
     count: null,

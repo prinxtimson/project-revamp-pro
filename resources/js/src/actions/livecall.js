@@ -62,7 +62,7 @@ export const getLivecallsByUrl = (url) => async (dispatch) => {
 
 export const getConnectedLivecalls = () => async (dispatch) => {
     try {
-        const res = await axios.get("/api/livecall/filter");
+        const res = await axios.get("/api/livecall/filter/get");
 
         dispatch({
             type: SET_LIVECALLS,
@@ -102,7 +102,7 @@ export const requestLivecall =
 
             onSuccessful();
 
-            dispatch(getConnectedLivecalls());
+            dispatch(getWaitingListPosition(res.data.id));
             dispatch(setAlert("You are connected", "success"));
         } catch (err) {
             console.log(err.response);
@@ -212,9 +212,9 @@ export const endLivecall = (id) => async (dispatch) => {
     }
 };
 
-export const getWaitingListCount = () => async (dispatch) => {
+export const getWaitingListPosition = (id) => async (dispatch) => {
     try {
-        const res = await axios.get("api/livecall/waiting/count");
+        const res = await axios.get(`api/livecall/waiting/position/${id}`);
 
         dispatch({
             type: SET_WAITING_COUNT,

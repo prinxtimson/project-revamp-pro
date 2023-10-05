@@ -3,7 +3,7 @@
 
 Hello {{$payload['name']}},
 
-Thank you for using our customer support platform, please we will love to have your feedback. Click the button below, It takes less than a minutes.
+Thank you for using our Live Support Platform. Please click the link below to complete a short feedback survey, it'll take less than a minute. Your feedback is important to us.
 
 @component('mail::button', ['url' => config('app.url').'/feedback/'.$payload['support_type']])
 Submit Feedback

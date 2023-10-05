@@ -43,7 +43,7 @@ const Survey = ({ livecall }) => {
         setSurvey({ ...survey, loading: true });
         let surveyData = {
             ratings: survey.ratings,
-            livecall: livecall.id,
+            support_type: channel,
             comment: survey.comment,
         };
 
@@ -84,22 +84,26 @@ const Survey = ({ livecall }) => {
         <Container>
             <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-2 tw-h-full">
                 <div className="tw-shadow-md tw-rounded-md tw-border tw-p-2 md:tw-p-5">
-                    <div className="tw-my-4 ">
-                        <h2 className="tw-text-2xl tw-font-semibold">
-                            Leave Your Feedback
+                    <div className="tw-my-2 ">
+                        <h2 className="tw-text-2xl tw-font-semibold tw-text-center">
+                            {survey.successfull
+                                ? "Thank You!"
+                                : "Leave Your Feedback"}
                         </h2>
                     </div>
-                    <Box maxWidth={545}>
+                    <Box maxWidth={545} minWidth={465}>
                         {survey.successfull ? (
                             <Box
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "center",
+                                    marginY: 5,
                                 }}
                             >
-                                <Typography component="p" variant="h5" mb={2}>
-                                    Thank you for your feedback.
+                                <Typography component="p" variant="h5" mb={5}>
+                                    Your feedback has been successfully
+                                    submitted.
                                 </Typography>
                                 <Button
                                     variant="text"
@@ -107,7 +111,7 @@ const Survey = ({ livecall }) => {
                                     href="https://tritekconsulting.co.uk/"
                                     size="small"
                                 >
-                                    Return to Home
+                                    Return to Tritek Consulting Ltd
                                 </Button>
                             </Box>
                         ) : (

@@ -497,14 +497,13 @@ s0.parentNode.insertBefore(s1,s0);
   function myFunc()  {
       let tawkDiv = document.getElementsByClassName("widget-visible")[0];
       if(tawkDiv){
-        clearInterval(timerId)
         let tawkFrame = tawkDiv.getElementsByTagName("iframe")[0];
         let tawkBtnContainer =
             tawkFrame.contentWindow.document.getElementsByClassName(
                 "tawk-min-container"
             )[0];
             tawkBtnContainer.style.display = "none"
-        
+            clearInterval(timerId)
       }
       
     };

@@ -29,8 +29,9 @@ Route::put('callback/{id}', [CallBackController::class, 'update']);
 Route::get('callback/{callback}', [CallBackController::class, 'show']);
 Route::put('callback/cancel/{id}', [CallBackController::class, 'cancel']);
 Route::get('callback/search/{query}', [CallBackController::class, 'search']);
-Route::get('livecall/waiting/count', [LiveCallController::class, 'waiting_list_count']);
+Route::get('livecall/waiting/position/{id}', [LiveCallController::class, 'waiting_list_position']);
 Route::get('livecall/leave/{id}', [LiveCallController::class, 'leave']);
+Route::get('livecall/send_survey/{livecall}', [LiveCallController::class, 'sendSurveyForm']);
 Route::get('room/{id}', [VideoRoomController::class, 'show']);
 Route::post('room/token', [VideoRoomController::class, 'get_access_token']);
 Route::post('feedback', [SurveyController::class, 'store']);
@@ -52,15 +53,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/update', [UserController::class, 'update']);
 
     Route::get('livecall', [LiveCallController::class, 'index']);
-    Route::get('livecall/filter', [LiveCallController::class, 'filter_waiting_list']);
-    Route::get('livecall/summary', [LiveCallController::class, 'summary']);
+    Route::get('livecall/filter/get', [LiveCallController::class, 'filter_waiting_list']);
+    Route::get('livecall/summary/get', [LiveCallController::class, 'summary']);
     Route::delete('livecall/{id}', [LiveCallController::class, 'destroy']);
     Route::get('livecall/connect/{id}', [LiveCallController::class, 'connect']);
     Route::get('livecall/{id}', [LiveCallController::class, 'show']);
-    Route::get('livecall/send_survey/{livecall}', [LiveCallController::class, 'sendSurveyForm']);
     Route::get('livecall/search/{query_type}', [LiveCallController::class, 'search_by_query_type']);
 
-    Route::get('callback/summary', [CallBackController::class, 'summary']); 
+    Route::get('callback/summary/get', [CallBackController::class, 'summary']); 
     Route::get('callback', [CallBackController::class, 'index']);
     Route::put('callback/success/{id}', [CallBackController::class, 'success']);
     Route::put('callback/fail/{id}', [CallBackController::class, 'fail']);

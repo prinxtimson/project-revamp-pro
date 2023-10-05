@@ -22,7 +22,7 @@ const Dashboard = () => {
 
     React.useEffect(() => {
         axios
-            .get("/api/callback/summary")
+            .get("/api/callback/summary/get")
             .then((res) => {
                 const { total_successful, total_failed, total_waiting } =
                     res.data;
@@ -49,7 +49,7 @@ const Dashboard = () => {
                     ],
                 });
 
-                return axios.get("/api/livecall/summary");
+                return axios.get("/api/livecall/summary/get");
             })
             .then((res) => {
                 const { total_answered, total_left } = res.data;

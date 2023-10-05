@@ -38,6 +38,7 @@ class SurveyController extends Controller
     {
         $fields = $request->validate([
             'ratings' => 'required',
+            'support_type' => 'required|string',
             'comment' => 'string|nullable'
         ]);
 

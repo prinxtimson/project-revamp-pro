@@ -12,6 +12,7 @@ import {
 } from "./types";
 
 export const getCallbacks = () => async (dispatch) => {
+    dispatch({ type: CALLBACK_LOADING });
     try {
         const res = await axios.get("/api/callback");
 
@@ -36,6 +37,7 @@ export const getCallbacks = () => async (dispatch) => {
 };
 
 export const getCallbacksByUrl = (url) => async (dispatch) => {
+    dispatch({ type: CALLBACK_LOADING });
     try {
         const res = await axios.get(url);
 
@@ -111,6 +113,7 @@ export const requestCallback = (id, data, onSuccessful) => async (dispatch) => {
 };
 
 export const getCallbackById = (id) => async (dispatch) => {
+    dispatch({ type: CALLBACK_LOADING });
     try {
         const res = await axios.get(`/api/callback/${id}`);
 

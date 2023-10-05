@@ -10,7 +10,7 @@ import { Provider } from "react-redux";
 
 import store from "./store";
 import { loadUser, logoutUser, onNewNotification } from "./actions/auth";
-import { getWaitingListCount, updateLivecalls } from "./actions/livecall";
+import { getWaitingListPosition, updateLivecalls } from "./actions/livecall";
 
 import { useIdleTimer } from "react-idle-timer";
 
@@ -77,7 +77,10 @@ const App = (props) => {
     useEffect(() => {
         window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
             store.dispatch(updateLivecalls(e.livecall));
-            store.dispatch(getWaitingListCount());
+            let livecall = store.getState().livecall.livecall;
+            if (livecall && livecall.id) {
+                store.dispatch(getWaitingListPosition(livecall.id));
+            }
         });
     }, []);
 

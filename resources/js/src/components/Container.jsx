@@ -1,5 +1,3 @@
-import React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -62,11 +60,13 @@ const MainContainer = ({ children, alerts }) => {
             >
                 <Avatar
                     variant="square"
+                    component="a"
                     alt="Tritek Live"
                     src="/images/logo.png"
+                    href="/"
                     sx={{ width: 168 }}
                 >
-                    Tritek Live
+                    Tritek Consulting
                 </Avatar>
             </Box>
             <div className="tw-flex-1">{children}</div>

@@ -20,6 +20,7 @@ import RequestLivecallDialog from "../../components/RequestLivecallDialog";
 import ResponseDialog from "../../components/ResponseDialog";
 import OfflineDialog from "../../components/OfflineDialog";
 import { setAlert } from "../../actions/alert";
+import { leaveLivecall } from "../../actions/livecall";
 import { connect } from "react-redux";
 
 const Search = styled("div")(({ theme }) => ({
@@ -62,16 +63,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const Welcome = ({ handleCallbackOpen, setAlert }) => {
+const Welcome = ({
+    handleCallbackOpen,
+    setAlert,
+    livecall,
+    leaveLivecall,
+    alert,
+}) => {
     const [filteredSearch, setFilteredSearch] = useState([]);
     const [searchShow, setSearchShow] = useState(false);
     const [searchText, setSearchText] = useState("");
-    const [currentRatings, setCurrentRatings] = useState(0);
+    const [currentRatings, setCurrentRatings] = useState({});
     const [open, setOpen] = useState(false);
     const [openLivecall, setOpenLivecall] = useState(false);
     const [openRes, setOpenRes] = useState(false);
     const [openOffline, setOpenOffline] = useState(false);
     const [resMessage, setResMessage] = useState("");
+    const [ratingSuccessful, setRatingSuccessful] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -98,6 +106,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
         setOpenRes(false);
         setResMessage("");
         handleCloseLivecall();
+        leaveLivecall(livecall?.id);
     };
 
     const handleOpenLivecall = () => {
@@ -110,6 +119,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
     };
 
     const handleCloseLivecall = () => {
+        setOpenRes(false);
         setOpenLivecall(false);
     };
 
@@ -124,6 +134,25 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                 )[0];
 
             tawkBtn.click();
+            let tawkBtnContainer =
+                tawkFrame.contentWindow.document.getElementsByClassName(
+                    "tawk-min-container"
+                )[0];
+            if (tawkBtnContainer.style.display == "none") {
+                tawkBtnContainer.style.display = "block";
+            }
+            tawkBtnContainer.addEventListener("click", () => {
+                let tawkDiv =
+                    document.getElementsByClassName("widget-visible")[0];
+                let tawkFrame = tawkDiv.getElementsByTagName("iframe")[0];
+                let tawkBtnContainer =
+                    tawkFrame.contentWindow.document.getElementsByClassName(
+                        "tawk-min-container"
+                    )[0];
+                if (tawkBtnContainer.style.display == "block") {
+                    tawkBtnContainer.style.display = "none";
+                }
+            });
         } else {
             handleOfflineOpen();
         }
@@ -158,11 +187,12 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
             rating,
         });
         if (res.status == 200) {
-            setAlert("Successful", "success");
-        } else {
-            setAlert("An error occur", "error");
+            setRatingSuccessful(true);
+            setTimeout(() => {
+                setCurrentRatings({});
+                setRatingSuccessful(false);
+            }, 3000);
         }
-        setCurrentRatings(0);
     };
 
     const checkAvailability = () => {
@@ -170,7 +200,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
         if (
             OPENINGDAYS.includes(DAYS[_date.getDay()]) &&
             _date.getHours() >= 9 &&
-            _date.getHours() <= 24
+            _date.getHours() <= 21
         ) {
             return true;
         }
@@ -207,7 +237,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                     Welcome to Tritek Live Support
                                 </p>
                                 <p className="tw-text-xl md:tw-text-2xl tw-font-semibold tw-mb-1">
-                                    We are available Monday - Friday 9am -4pm
+                                    We are available Monday - Friday 9am - 4pm
                                 </p>
                                 <p className="tw-text-xl md:tw-text-2xl tw-font-semibold">
                                     You can explore our various communication
@@ -230,7 +260,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                         className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
                                         onClick={handleChatWithLiveAgent}
                                     >
-                                        Chat with an agent
+                                        Chat with Agent
                                     </button>
                                 </div>
                             </div>
@@ -248,7 +278,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                         className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
                                         onClick={handleOpenLivecall}
                                     >
-                                        Join Live call
+                                        Join Live Call
                                     </button>
                                 </div>
                             </div>
@@ -266,7 +296,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                         className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
                                         onClick={handleCallbackOpen}
                                     >
-                                        Book a call back
+                                        Book a Call Back
                                     </button>
                                 </div>
                             </div>
@@ -276,7 +306,8 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                 <h5 className="tw-text-xl tw-font-medium">
                                     Still unable to find answers to your
                                     enquiry? You can raise a ticket and one of
-                                    our
+                                    our support agents will get back to you as
+                                    soon as possible.
                                 </h5>
                             </div>
                             <div className="tw-pb-5 ">
@@ -446,6 +477,22 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                                                     </div>
                                                                     <div className="tw-float-right">
                                                                         <div className="tw-flex">
+                                                                            {ratingSuccessful &&
+                                                                                currentRatings.key ==
+                                                                                    key &&
+                                                                                currentRatings.id ==
+                                                                                    id && (
+                                                                                    <div className="tw-mx-2 tw-text-green-500">
+                                                                                        <span>
+                                                                                            <i className="pi pi-check-circle"></i>
+                                                                                        </span>{" "}
+                                                                                        <span>
+                                                                                            rating
+                                                                                            received
+                                                                                        </span>
+                                                                                    </div>
+                                                                                )}
+
                                                                             <p className="tw-mx-4">
                                                                                 How
                                                                                 useful
@@ -455,14 +502,23 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                                                             <Rating
                                                                                 name="rating"
                                                                                 value={
-                                                                                    currentRatings
+                                                                                    currentRatings.key ==
+                                                                                        key &&
+                                                                                    currentRatings.id ==
+                                                                                        id
+                                                                                        ? currentRatings.newValue
+                                                                                        : 0
                                                                                 }
                                                                                 onChange={(
                                                                                     event,
                                                                                     newValue
                                                                                 ) => {
                                                                                     setCurrentRatings(
-                                                                                        newValue
+                                                                                        {
+                                                                                            key,
+                                                                                            id,
+                                                                                            newValue,
+                                                                                        }
                                                                                     );
                                                                                     handleOnRatingClick(
                                                                                         key,
@@ -489,7 +545,8 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                 <h5 className="tw-text-xl tw-font-medium">
                                     Still unable to find answers to your
                                     enquiry? You can raise a ticket and one of
-                                    our
+                                    our support agents will get back to you as
+                                    soon as possible.
                                 </h5>
                             </div>
                             <div className="tw-pb-2 ">
@@ -517,7 +574,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                     className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
                                     onClick={handleChatWithLiveAgent}
                                 >
-                                    Chat with an agent
+                                    Chat with an Agent
                                 </button>
                             </div>
                         </div>
@@ -535,7 +592,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                     className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
                                     onClick={handleOpenLivecall}
                                 >
-                                    Join Live call
+                                    Join Live Call
                                 </button>
                             </div>
                         </div>
@@ -553,7 +610,7 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
                                     className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
                                     onClick={handleCallbackOpen}
                                 >
-                                    Book a call back
+                                    Book a Call Back
                                 </button>
                             </div>
                         </div>
@@ -566,9 +623,10 @@ const Welcome = ({ handleCallbackOpen, setAlert }) => {
 
 const mapStateToProps = (state) => ({
     livecall: state.livecall.livecall,
+    alert: state.alert,
 });
 
-export default connect(mapStateToProps, { setAlert })(Welcome);
+export default connect(mapStateToProps, { setAlert, leaveLivecall })(Welcome);
 
 const DAYS = [
     "Sunday",

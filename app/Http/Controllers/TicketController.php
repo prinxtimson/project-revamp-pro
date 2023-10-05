@@ -44,7 +44,7 @@ class TicketController extends Controller
         Mail::to($fields['email'])->send(new TicketRaised($ticket));
 
         return response()->json([
-            'msg' => 'Your Ticket ID number ' . $ticket->ticket_id . ' had been successfully submitted, please allow 48hrs for our team to get back to you',
+            'msg' => 'Your Ticket ID number ' . $ticket->ticket_id . ' has been successfully submitted, please allow 48hrs for our team to get back to you',
             'data' => $ticket
         ]);
     }
@@ -82,7 +82,7 @@ class TicketController extends Controller
         }
 
         $ticket->toArray();
-        if($currentStatus == 'close'){
+        if($request['status'] == 'close'){
             $ticket->support_type = 'ticket';
             Mail::to($ticket->email)->send(new SubmitFeedback($ticket));
         }
@@ -104,7 +104,7 @@ class TicketController extends Controller
         $ticket->delete();
 
         return  response()->json([
-            'msg' => 'Ticket had benn deleted successfully',
+            'msg' => 'Ticket has benn deleted successfully',
             'data' => $ticket
         ]);
     }

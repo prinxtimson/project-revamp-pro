@@ -10,6 +10,7 @@ import {
 } from "./types";
 
 export const getFeedbacks = () => async (dispatch) => {
+    dispatch({ type: FEEDBACK_LOADING });
     try {
         const res = await axios.get("/api/feedback");
 

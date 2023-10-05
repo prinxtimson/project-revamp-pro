@@ -11,8 +11,8 @@ Please be sure to change your password on your first login to the platform.
 # Password: {{ $user['password'] }}
 @endcomponent
 
-@component('mail::button', ['url' => {{config('app.admin_url')}}, 'color' => 'success'])
-Visit Website
+@component('mail::button', ['url' => config('app.admin_url'), 'color' => 'success'])
+Visit Website 
 @endcomponent
 
 Thanks,<br>
