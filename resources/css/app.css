@@ -17,3 +17,7 @@
 .tawk-min-container {
     display: none !important;
 }
+
+.p-datatable-wrapper {
+    overflow: auto;
+}

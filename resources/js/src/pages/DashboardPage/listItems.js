@@ -5,9 +5,10 @@ import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import Badge from "@mui/material/Badge";
-import PhoneIcon from "@mui/icons-material/Phone";
+import VideoCallIcon from "@mui/icons-material/VideoCall";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
+import ErrorIcon from "@mui/icons-material/Error";
 import SecurityIcon from "@mui/icons-material/Security";
 import { Link } from "react-router-dom";
 
@@ -39,7 +40,7 @@ const ListItems = ({ livecalls, user }) => {
             <Link to="../livecall">
                 <ListItem>
                     <ListItemIcon>
-                        <PhoneIcon />
+                        <VideoCallIcon />
                     </ListItemIcon>
                     <Badge
                         badgeContent={
@@ -59,6 +60,14 @@ const ListItems = ({ livecalls, user }) => {
                         <PhoneCallbackIcon />
                     </ListItemIcon>
                     <ListItemText primary="Call Back" />
+                </ListItem>
+            </Link>
+            <Link to="../ticket">
+                <ListItem>
+                    <ListItemIcon>
+                        <ErrorIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Ticket Raised" />
                 </ListItem>
             </Link>
             <a href="https://www.sans.org/uk_en/" target="_blank">

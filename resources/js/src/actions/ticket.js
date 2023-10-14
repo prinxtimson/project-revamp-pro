@@ -30,6 +30,27 @@ export const getTickets = () => async (dispatch) => {
     }
 };
 
+export const getTicketsByPageNo = (page) => async (dispatch) => {
+    try {
+        const res = await axios.get("/api/tickets?page=" + page);
+
+        dispatch({
+            type: SET_TICKETS,
+            payload: res.data,
+        });
+    } catch (err) {
+        console.log(err.response);
+        dispatch({ type: TICKET_ERROR });
+        if (err.response.status === 500) {
+            return dispatch(
+                setAlert("Server errror, please try again.", "error")
+            );
+        }
+        let msg = err.response.data.message || err.response.data;
+        dispatch(setAlert(msg, "error"));
+    }
+};
+
 export const submitTicket = (data, onSuccessful) => async (dispatch) => {
     dispatch({ type: TICKET_LOADING });
     try {
@@ -55,12 +76,13 @@ export const submitTicket = (data, onSuccessful) => async (dispatch) => {
     }
 };
 
-export const updateTicket = (id, data, onSuccessful) => async (dispatch) => {
-    dispatch({ type: TICKET_LOADING });
+export const updateTicket = (id, data) => async (dispatch) => {
+    // dispatch({ type: TICKET_LOADING });
+    console.log(data);
     try {
         const res = await axios.put(`/api/tickets/${id}`, data);
 
-        onSuccessful();
+        //onSuccessful();
         dispatch({
             type: SET_TICKET,
             payload: res.data,

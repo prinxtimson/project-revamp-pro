@@ -200,7 +200,7 @@ const Welcome = ({
         if (
             OPENINGDAYS.includes(DAYS[_date.getDay()]) &&
             _date.getHours() >= 9 &&
-            _date.getHours() <= 21
+            _date.getHours() <= 16
         ) {
             return true;
         }

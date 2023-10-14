@@ -32,6 +32,7 @@ import ChangePasswordForm from "./pages/DashboardPage/ChangePasswordForm";
 import axios from "axios";
 import IdleDialog from "./components/IdleDialog";
 import Survey from "./pages/HomePage/Survey";
+import TicketsTable from "./pages/DashboardPage/TicketsTable";
 
 const timeout = 500_000;
 const promptBeforeIdle = 20_000;
@@ -65,14 +66,14 @@ const App = (props) => {
         }
     };
 
-    const { getRemainingTime, activate } = useIdleTimer({
-        onIdle,
-        onActive,
-        onPrompt,
-        timeout,
-        promptBeforeIdle,
-        throttle: 500,
-    });
+    // const { getRemainingTime, activate } = useIdleTimer({
+    //     onIdle,
+    //     onActive,
+    //     onPrompt,
+    //     timeout,
+    //     promptBeforeIdle,
+    //     throttle: 500,
+    // });
 
     useEffect(() => {
         window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
@@ -84,15 +85,15 @@ const App = (props) => {
         });
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setRemaining(Math.ceil(getRemainingTime() / 1000));
-        }, 500);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setRemaining(Math.ceil(getRemainingTime() / 1000));
+    //     }, 500);
 
-        return () => {
-            clearInterval(interval);
-        };
-    });
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // });
 
     const handleStillHere = () => {
         activate();
@@ -162,6 +163,7 @@ const App = (props) => {
                                 path="feedback"
                                 element={<FeedbackTable />}
                             />
+                            <Route path="ticket" element={<TicketsTable />} />
                             <Route
                                 path="change-password"
                                 element={<ChangePasswordForm />}
@@ -171,11 +173,11 @@ const App = (props) => {
                     <Route path="/*" element={<ErrorPage />} />
                 </Routes>
             </Router>
-            <IdleDialog
+            {/* <IdleDialog
                 open={open}
                 remaining={remaining}
                 onClose={handleStillHere}
-            />
+            /> */}
         </Provider>
     );
 };
