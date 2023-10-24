@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
@@ -10,25 +11,18 @@ import Tooltip from "@mui/material/Tooltip";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Column } from "primereact/column";
 import Moment from "react-moment";
-import { connect } from "react-redux";
 import {
     getTickets,
-    clearTicket,
-    getTicketsByPageNo,
+    clear,
+    getTicketsByPage,
     updateTicket,
-} from "../../actions/ticket";
+} from "../../features/ticket/ticketSlice";
 
 import DrawerContainer from "./DrawerContainer";
 
-const TicketsTable = ({
-    loading,
-    tickets,
-    getTickets,
-    clearTicket,
-    updateTicket,
-    getTicketsByPageNo,
-}) => {
+const TicketsTable = () => {
     const [data, setData] = useState([]);
+    const [selectedTicket, setSelectedTicket] = useState(null);
     const [total, setTotal] = useState();
     const [statuses] = useState([
         { name: "OPEN", value: "open" },
@@ -46,8 +40,13 @@ const TicketsTable = ({
         email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     });
 
+    const dispatch = useDispatch();
+
+    const { tickets, isLoading, isSuccess, type, isError, message } =
+        useSelector((state) => state.ticket);
+
     useEffect(() => {
-        getTickets();
+        dispatch(getTickets());
     }, []);
 
     useEffect(() => {
@@ -69,7 +68,7 @@ const TicketsTable = ({
 
     const renderHeader = () => {
         return (
-            <div className="flex justify-content-end">
+            <div className="flex justify-content-end tw-overflow-auto">
                 <span className="p-input-icon-left">
                     <i className="pi pi-search" />
                     <InputText
@@ -142,71 +141,38 @@ const TicketsTable = ({
 
     const statusBodyTemplate = (rowData) => {
         return (
-            <Tag
-                severity={getSeverity(rowData.status)}
-                style={{ cursor: "pointer" }}
-            >
+            <Tag severity={getSeverity(rowData.status)}>
                 <div className="tw-flex tw-items-center tw-gap-2">
                     <span className="tw-text-xs">
                         {rowData.status.toUpperCase()}
                     </span>
-                    <i className="pi pi-angle-down tw-text-xs"></i>
                 </div>
             </Tag>
         );
-    };
-
-    const statusEditor = (options) => {
-        return (
-            <Dropdown
-                value={options.value}
-                autoFocus
-                size={10}
-                optionLabel="name"
-                optionValue="value"
-                options={statuses}
-                onChange={(e) => {
-                    options.editorCallback(e.value);
-                    let newData = { ...options.rowData, status: e.value };
-                    updateTicket(newData.id, newData);
-                }}
-                placeholder="Select a Status"
-                itemTemplate={(option) => {
-                    let val = option.value;
-                    return (
-                        <Tag
-                            value={val.toUpperCase()}
-                            severity={getSeverity(val)}
-                        ></Tag>
-                    );
-                }}
-            />
-        );
-    };
-
-    const handleUpdateTicket = (e) => {
-        let { newRowData, rowIndex, originalEvent: event } = e;
-
-        let _data = data;
-        _data[rowIndex] = newRowData;
-        setData(_data);
     };
 
     return (
         <DrawerContainer>
             <div className="tw-grow tw-p-5 tw-flex tw-flex-col ">
                 <div className="tw-flex tw-justify-between tw-items-center tw-m-5"></div>
-                <div className="">
-                    <div className="tw-shadow-md tw-p-6 tw-mb-1 tw-bg-white tw-rounded-md">
+                <div className="tw-flex tw-gap-2">
+                    <div
+                        className={`tw-shadow-md tw-p-6 tw-mb-1 tw-bg-white tw-rounded-md ${
+                            selectedTicket
+                                ? "tw-hidden sm:tw-block sm:tw-w-1/6 md:tw-w-1/2"
+                                : "tw-w-full"
+                        }`}
+                    >
                         <DataTable
                             value={data}
                             paginator
                             rows={20}
                             totalRecords={total}
-                            onPage={({ page }) => getTicketsByPageNo(page + 1)}
-                            //rowsPerPageOptions={[25]}
+                            onPage={({ page }) =>
+                                dispatch(getTicketsByPage(page + 1))
+                            }
                             tableStyle={{ minWidth: "50rem" }}
-                            loading={loading}
+                            loading={isLoading}
                             globalFilterFields={[
                                 "name",
                                 "phone",
@@ -215,10 +181,15 @@ const TicketsTable = ({
                                 "query_type",
                                 "status",
                             ]}
+                            selectionMode="single"
+                            selection={selectedTicket}
+                            onSelectionChange={(e) =>
+                                setSelectedTicket(e.value)
+                            }
                             dataKey="id"
                             filters={filters}
                             header={header}
-                            editMode="cell"
+                            breakpoint="0px"
                         >
                             <Column
                                 field="id"
@@ -248,18 +219,18 @@ const TicketsTable = ({
                             ></Column>
                             <Column
                                 field="query_type"
-                                header="Event"
+                                header="Query Type"
                                 style={{ minWidth: "15%" }}
+                                resizeable={true}
                                 sortable
                             ></Column>
                             <Column
                                 field="status"
                                 header="Status"
+                                align="center"
                                 style={{ minWidth: "10%" }}
                                 sortable
                                 body={statusBodyTemplate}
-                                editor={statusEditor}
-                                onCellEditComplete={handleUpdateTicket}
                             ></Column>
 
                             <Column
@@ -270,21 +241,108 @@ const TicketsTable = ({
                             ></Column>
                         </DataTable>
                     </div>
+                    <div
+                        className={
+                            selectedTicket
+                                ? "tw-w-full sm:tw-w-5/6 md:tw-w-1/2 tw-min-h-full"
+                                : "tw-hidden"
+                        }
+                    >
+                        {selectedTicket && (
+                            <div className="tw-shadow-md tw-p-4 tw-mb-1 tw-bg-white tw-rounded-md tw-h-full">
+                                <div className="tw-float-left tw-mt-3">
+                                    <p className="tw-font-semibold tw-mb-1">
+                                        {selectedTicket.ticket_id}
+                                    </p>
+                                </div>
+                                <div className="tw-float-right tw-mb-2">
+                                    <button
+                                        className="tw-p-3 tw-font-semibold tw-bg-slate-400 tw-text-white tw-rounded-full tw-w-12"
+                                        onClick={() => setSelectedTicket(null)}
+                                    >
+                                        <i className="pi pi-times"></i>
+                                    </button>
+                                </div>
+                                <div className="tw-clear-both" />
+
+                                <div className="tw-m-2 ">
+                                    <div className="tw-mb-6">
+                                        <Dropdown
+                                            value={selectedTicket.status}
+                                            optionLabel="name"
+                                            optionValue="value"
+                                            options={statuses}
+                                            onChange={(e) => {
+                                                setSelectedTicket({
+                                                    ...selectedTicket,
+                                                    status: e.value,
+                                                });
+
+                                                dispatch(
+                                                    updateTicket({
+                                                        ...selectedTicket,
+                                                        status: e.value,
+                                                    })
+                                                );
+                                            }}
+                                            className="tw-w-1/2"
+                                            placeholder="Select a Status"
+                                            itemTemplate={(option) => {
+                                                let val = option.value;
+                                                return (
+                                                    <Tag
+                                                        value={val.toUpperCase()}
+                                                        severity={getSeverity(
+                                                            val
+                                                        )}
+                                                    ></Tag>
+                                                );
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="tw-mb-4">
+                                        <p className="tw-font-semibold tw-mb-1">
+                                            Fullname
+                                        </p>
+                                        <p>{selectedTicket.name}</p>
+                                    </div>
+
+                                    <div className="tw-mb-4">
+                                        <p className="tw-font-semibold tw-mb-1">
+                                            Email
+                                        </p>
+                                        <p>{selectedTicket.email}</p>
+                                    </div>
+
+                                    <div className="tw-mb-4">
+                                        <p className="tw-font-semibold tw-mb-1">
+                                            Phone Number
+                                        </p>
+                                        <p>{selectedTicket.phone}</p>
+                                    </div>
+
+                                    <div className="tw-mb-4">
+                                        <p className="tw-font-semibold tw-mb-1">
+                                            Query Type
+                                        </p>
+                                        <p>{selectedTicket.query_type}</p>
+                                    </div>
+
+                                    <div className="tw-mb-4">
+                                        <p className="tw-font-semibold tw-mb-1">
+                                            Description
+                                        </p>
+                                        <p>{selectedTicket.description}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </DrawerContainer>
     );
 };
 
-const mapStateToProps = (state) => ({
-    loading: state.ticket.loading,
-    message: state.ticket.message,
-    tickets: state.ticket.tickets,
-});
-
-export default connect(mapStateToProps, {
-    getTickets,
-    clearTicket,
-    getTicketsByPageNo,
-    updateTicket,
-})(TicketsTable);
+export default TicketsTable;

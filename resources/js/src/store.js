@@ -1,19 +1,38 @@
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunk from 'redux-thunk';
-import rootReducer from './reducers';
+import { configureStore } from "@reduxjs/toolkit";
+import auth from "./features/auth/authSlice";
+import callback from "./features/callback/callbackSlice";
+import feedback from "./features/feedback/feedbackSlice";
+import livecall from "./features/livecall/livecallSlice";
+import notification from "./features/notification/notificationSlice";
+import profile from "./features/profile/profileSlice";
+import ticket from "./features/ticket/ticketSlice";
 
-// create initial state
-const initialState = {};
+// import { createStore, applyMiddleware } from 'redux';
+// import { composeWithDevTools } from 'redux-devtools-extension';
+// import thunk from 'redux-thunk';
+// import rootReducer from './reducers';
 
-// set redux middleware
-const middleware = [thunk];
+// // create initial state
+// const initialState = {};
 
-// create store
-const store = createStore(
-	rootReducer,
-	initialState,
-	composeWithDevTools(applyMiddleware(...middleware))
-);
+// // set redux middleware
+// const middleware = [thunk];
 
-export default store;
+// // create store
+// const storeOld = createStore(
+// 	rootReducer,
+// 	initialState,
+// 	composeWithDevTools(applyMiddleware(...middleware))
+// );
+
+export const store = configureStore({
+    reducer: {
+        auth,
+        callback,
+        feedback,
+        livecall,
+        notification,
+        profile,
+        ticket,
+    },
+});

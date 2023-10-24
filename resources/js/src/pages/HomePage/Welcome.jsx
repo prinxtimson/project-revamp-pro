@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { styled, alpha } from "@mui/material/styles";
 import Rating from "@mui/material/Rating";
 import Accordion from "@mui/material/Accordion";
@@ -19,9 +20,7 @@ import axios from "axios";
 import RequestLivecallDialog from "../../components/RequestLivecallDialog";
 import ResponseDialog from "../../components/ResponseDialog";
 import OfflineDialog from "../../components/OfflineDialog";
-import { setAlert } from "../../actions/alert";
-import { leaveLivecall } from "../../actions/livecall";
-import { connect } from "react-redux";
+import { leaveLivecall } from "../../features/livecall/livecallSlice";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -63,13 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const Welcome = ({
-    handleCallbackOpen,
-    setAlert,
-    livecall,
-    leaveLivecall,
-    alert,
-}) => {
+const Welcome = ({ handleCallbackOpen }) => {
     const [filteredSearch, setFilteredSearch] = useState([]);
     const [searchShow, setSearchShow] = useState(false);
     const [searchText, setSearchText] = useState("");
@@ -80,6 +73,10 @@ const Welcome = ({
     const [openOffline, setOpenOffline] = useState(false);
     const [resMessage, setResMessage] = useState("");
     const [ratingSuccessful, setRatingSuccessful] = useState(false);
+
+    const { livecall } = useSelector((state) => state.livecall);
+
+    const dispatch = useDispatch();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -106,7 +103,9 @@ const Welcome = ({
         setOpenRes(false);
         setResMessage("");
         handleCloseLivecall();
-        leaveLivecall(livecall?.id);
+        if (livecall) {
+            dispatch(leaveLivecall(livecall.id));
+        }
     };
 
     const handleOpenLivecall = () => {
@@ -621,12 +620,7 @@ const Welcome = ({
     );
 };
 
-const mapStateToProps = (state) => ({
-    livecall: state.livecall.livecall,
-    alert: state.alert,
-});
-
-export default connect(mapStateToProps, { setAlert, leaveLivecall })(Welcome);
+export default Welcome;
 
 const DAYS = [
     "Sunday",

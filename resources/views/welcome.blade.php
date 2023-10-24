@@ -409,6 +409,9 @@
   iframe .tawk-min-container {
     display: none !important;
   }
+  .my-custom-bg {
+    background-color: #f5f7ff;
+}
   </style>
 </head>
 

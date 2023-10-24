@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -13,8 +14,10 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import { connect } from "react-redux";
-import { requestLivecall, leaveLivecall } from "../actions/livecall";
+import {
+    requestLivecall,
+    leaveLivecall,
+} from "../features/livecall/livecallSlice";
 import axios from "axios";
 
 const QUERY_TYPE = [
@@ -40,16 +43,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const RequestLivecallDialog = ({
-    open,
-    handleClose,
-    livecall,
-    count,
-    loading,
-    requestLivecall,
-    handleOpenRes,
-    leaveLivecall,
-}) => {
+const RequestLivecallDialog = ({ open, handleClose, handleOpenRes }) => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -58,6 +52,11 @@ const RequestLivecallDialog = ({
     const [formError, setFormError] = useState({});
     const emailValidation =
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    const dispatch = useDispatch();
+
+    const { livecall, count, isLoading, isSuccess, type, isError, message } =
+        useSelector((state) => state.livecall);
 
     const handleOnChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -87,7 +86,7 @@ const RequestLivecallDialog = ({
             return;
         }
 
-        requestLivecall(formData, onSuccessful, confirm);
+        dispatch(requestLivecall(formData));
     };
 
     const onSuccessful = () => {
@@ -111,9 +110,23 @@ const RequestLivecallDialog = ({
                     `/conferencing/${e.data.id}?pwd=${e.password}&name=${e.data.livecall.name}`
                 );
             },
-            reject: () => leaveLivecall(livecall?.id),
+            reject: () => dispatch(leaveLivecall(livecall?.id)),
         });
     };
+
+    useEffect(() => {
+        if (isSuccess && type == "livecall/request/fulfilled") {
+            onSuccessful();
+            if (livecall) {
+                window.Echo.channel(`livecall.${livecall.id}`).listen(
+                    "AgentConnected",
+                    (e) => {
+                        confirm(e);
+                    }
+                );
+            }
+        }
+    }, [isLoading, isSuccess, type, isError, message]);
 
     useEffect(() => {
         if (count && count > 0 && livecall) {
@@ -195,12 +208,12 @@ const RequestLivecallDialog = ({
                         <div className="tw-pb-5 tw-flex tw-mt-3">
                             <button
                                 className={`tw-p-4 tw-font-semibold tw-text-sm  tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48 ${
-                                    loading
+                                    isLoading
                                         ? "tw-bg-indigo-300"
                                         : "tw-bg-indigo-500 hover:tw-bg-indigo-700"
                                 }`}
                                 onClick={handleSubmit}
-                                disabled={loading}
+                                disabled={isLoading}
                             >
                                 Request Livecall
                             </button>
@@ -212,13 +225,4 @@ const RequestLivecallDialog = ({
     );
 };
 
-const mapStateToProps = (state) => ({
-    livecall: state.livecall.livecall,
-    count: state.livecall.count,
-    loading: state.livecall.loading,
-});
-
-export default connect(mapStateToProps, {
-    requestLivecall,
-    leaveLivecall,
-})(RequestLivecallDialog);
+export default RequestLivecallDialog;

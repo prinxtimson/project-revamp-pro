@@ -2,11 +2,6 @@ import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
-import Snackbar from "@mui/material/Snackbar";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { connect } from "react-redux";
 
 function Copyright(props) {
     return (
@@ -26,33 +21,9 @@ function Copyright(props) {
     );
 }
 
-const theme = createTheme();
-
-const MainContainer = ({ children, alerts }) => {
+const MainContainer = ({ children }) => {
     return (
         <div className="tw-w-full tw-flex-1 tw-flex tw-flex-col">
-            <Stack sx={{ width: "100%" }} spacing={2}>
-                {alerts.map((alert) => (
-                    <Snackbar
-                        anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                        }}
-                        open={Boolean(alert.id)}
-                        key={alert.id}
-                        autoHideDuration={6000}
-                    >
-                        <Alert
-                            severity={alert.alertType}
-                            variant="filled"
-                            sx={{ width: "100%" }}
-                        >
-                            {alert.msg}
-                        </Alert>
-                    </Snackbar>
-                ))}
-            </Stack>
-
             <Box
                 sx={{
                     margin: 2,
@@ -76,8 +47,4 @@ const MainContainer = ({ children, alerts }) => {
     );
 };
 
-const mapStateToProps = (state) => ({
-    alerts: state.alert,
-});
-
-export default connect(mapStateToProps)(MainContainer);
+export default MainContainer;

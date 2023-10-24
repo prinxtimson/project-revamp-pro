@@ -15,7 +15,7 @@ class SurveyController extends Controller
      */
     public function index()
     {
-        return Survey::with('livecall')->get();
+        return Survey::get();
     }
 
     /**

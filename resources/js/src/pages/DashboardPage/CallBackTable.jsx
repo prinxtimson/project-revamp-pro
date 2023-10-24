@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Column } from "primereact/column";
@@ -18,29 +19,19 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import { Tag } from "primereact/tag";
 import Moment from "react-moment";
-import { connect } from "react-redux";
 import {
     getCallbacks,
-    clearCallback,
-    delCallback,
+    clear,
+    deleteCallback,
     callbackFailed,
     callbackSuccessful,
-    getCallbacksByUrl,
-} from "../../actions/callback";
+    getCallbacksByPage,
+} from "../../features/callback/callbackSlice";
 import DrawerContainer from "./DrawerContainer";
 
 const axios = window.axios;
 
-const CallBackTable = ({
-    loading,
-    callbacks,
-    getCallbacks,
-    clearCallback,
-    delCallback,
-    callbackFailed,
-    callbackSuccessful,
-    getCallbacksByUrl,
-}) => {
+const CallBackTable = () => {
     const [searchCallbacks, setSearchCallbacks] = useState([]);
     const [query, setQuery] = useState("");
     const [data, setData] = useState({
@@ -48,14 +39,19 @@ const CallBackTable = ({
         to: "",
     });
 
+    const dispatch = useDispatch();
+
+    const { callbacks, isLoading, isSuccess, type, isError, message } =
+        useSelector((state) => state.callback);
+
     const handleOnDownload = () => {
         window.location.href = `/callback/download?from=${data.from}&to=${data.to}`;
     };
 
     useEffect(() => {
-        getCallbacks();
+        dispatch(getCallbacks());
 
-        return clearCallback;
+        return () => dispatch(clear());
     }, []);
 
     useEffect(() => {
@@ -82,19 +78,15 @@ const CallBackTable = ({
     }, [query]);
 
     const handleDelete = (row) => {
-        delCallback(row);
+        dispatch(deleteCallback(row));
     };
 
-    const handleCheck = (id) => callbackSuccessful(id);
+    const handleCheck = (id) => dispatch(callbackSuccessful(id));
 
-    const handleCancel = (id) => callbackFailed(id);
+    const handleCancel = (id) => dispatch(callbackFailed(id));
 
     const handleChangePage = (newPage) => {
-        if (callbacks.current_page > newPage + 1) {
-            getCallbacksByUrl(callbacks.prev_page_url);
-        } else {
-            getCallbacksByUrl(callbacks.next_page_url);
-        }
+        dispatch(getCallbacksByPage(newPage + 1));
     };
 
     const renderHeader = () => {
@@ -277,10 +269,11 @@ const CallBackTable = ({
                         onPage={({ page }) => handleChangePage(page)}
                         //rowsPerPageOptions={[25]}
                         tableStyle={{ minWidth: "50rem" }}
-                        loading={loading}
+                        loading={isLoading}
                         dataKey="id"
                         header={header}
                         emptyMessage="No data found"
+                        breakpoint="0px"
                     >
                         <Column
                             field="id"
@@ -333,16 +326,4 @@ const CallBackTable = ({
     );
 };
 
-const mapStateToProps = (state) => ({
-    loading: state.callback.loading,
-    callbacks: state.callback.callbacks,
-});
-
-export default connect(mapStateToProps, {
-    getCallbacks,
-    clearCallback,
-    delCallback,
-    callbackFailed,
-    callbackSuccessful,
-    getCallbacksByUrl,
-})(CallBackTable);
+export default CallBackTable;

@@ -31,10 +31,15 @@ export default (state = initialState, action) => {
                 tickets: payload,
             };
         case SET_TICKET:
+            let index = state.tickets.data.findIndex(
+                (val) => val.id == payload.data.id
+            );
+            state.tickets.data.splice(index, 1, payload.data);
             return {
                 ...state,
                 loading: false,
                 ticket: payload.data,
+                tickets: { ...state.tickets, data: [...state.tickets.data] },
                 message: payload.msg,
             };
         case DELETE_TICKET:

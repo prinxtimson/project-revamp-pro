@@ -53,7 +53,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/update', [UserController::class, 'update']);
 
     Route::get('livecall', [LiveCallController::class, 'index']);
-    Route::get('livecall/filter/get', [LiveCallController::class, 'filter_waiting_list']);
+    Route::get('livecall/connected/on', [LiveCallController::class, 'filter_waiting_list']);
     Route::get('livecall/summary/get', [LiveCallController::class, 'summary']);
     Route::delete('livecall/{id}', [LiveCallController::class, 'destroy']);
     Route::get('livecall/connect/{id}', [LiveCallController::class, 'connect']);

@@ -1,16 +1,20 @@
+import React, { useEffect, useState } from "react";
+import { PrimeReactProvider } from "primereact/api";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.css";
 import "../../css/app.css";
 
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-
 import store from "./store";
-import { loadUser, logoutUser, onNewNotification } from "./actions/auth";
-import { getWaitingListPosition, updateLivecalls } from "./actions/livecall";
+import { getCurrentUser, logout } from "./features/auth/authSlice";
+import {
+    getWaitingListPosition,
+    onUpdateLivecall,
+} from "./features/livecall/livecallSlice";
 
 import { useIdleTimer } from "react-idle-timer";
 
@@ -43,19 +47,19 @@ const App = (props) => {
     const [auth, setAuth] = useState(store.getState().auth);
 
     useEffect(() => {
-        store.dispatch(loadUser());
+        store.dispatch(getCurrentUser());
     }, []);
 
     const onIdle = () => {
         if (auth.user) {
-            store.dispatch(logoutUser());
+            store.dispatch(logout());
             setOpen(false);
         }
     };
 
     const onActive = () => {
         if (auth.user) {
-            store.dispatch(loadUser());
+            store.dispatch(getCurrentUser());
             setOpen(false);
         }
     };
@@ -77,7 +81,7 @@ const App = (props) => {
 
     useEffect(() => {
         window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
-            store.dispatch(updateLivecalls(e.livecall));
+            store.dispatch(onUpdateLivecall(e.livecall));
             let livecall = store.getState().livecall.livecall;
             if (livecall && livecall.id) {
                 store.dispatch(getWaitingListPosition(livecall.id));
@@ -191,5 +195,10 @@ if (document.getElementById("app")) {
 
     const props = Object.assign({}, element.dataset);
 
-    ReactDOM.render(<App {...props} />, element);
+    ReactDOM.render(
+        <React.StrictMode>
+            <App {...props} />
+        </React.StrictMode>,
+        element
+    );
 }

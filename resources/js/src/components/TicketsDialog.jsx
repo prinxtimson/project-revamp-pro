@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
@@ -16,8 +17,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import { connect } from "react-redux";
-import { submitTicket, clearTicket } from "../actions/ticket";
+import { submitTicket, clear } from "../features/ticket/ticketSlice";
 
 const QUERY_TYPE = [
     "Second Project Request",
@@ -42,14 +42,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const TicketsDialog = ({
-    open,
-    handleClose,
-    loading,
-    message,
-    submitTicket,
-    clearTicket,
-}) => {
+const TicketsDialog = ({ open, handleClose }) => {
     const [openRes, setOpenRes] = useState(false);
     const [remainingWords, setRemainingWords] = useState(500);
     const [formData, setFormData] = useState({
@@ -62,6 +55,12 @@ const TicketsDialog = ({
     const [formError, setFormError] = useState({});
     const emailValidation =
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    const dispatch = useDispatch();
+
+    const { isLoading, isSuccess, type, isError, message } = useSelector(
+        (state) => state.ticket
+    );
 
     const handleOnChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -94,7 +93,6 @@ const TicketsDialog = ({
         }
 
         if (name || email || phone || query_type || description) {
-            console.log({ name, email, phone, query_type, description });
             setFormError({ name, email, phone, query_type, description });
             return;
         }
@@ -104,8 +102,17 @@ const TicketsDialog = ({
             return;
         }
 
-        submitTicket(formData, onSuccessful);
+        dispatch(submitTicket(formData));
     };
+
+    useEffect(() => {
+        if (isSuccess) {
+            onSuccessful();
+        }
+        if (message) {
+            setOpenRes(true);
+        }
+    }, [isLoading, isSuccess, type, isError, message]);
 
     const onSuccessful = () => {
         setFormData({
@@ -117,15 +124,9 @@ const TicketsDialog = ({
         });
     };
 
-    useEffect(() => {
-        if (message) {
-            setOpenRes(true);
-        }
-    }, [message]);
-
     const handleResClose = () => {
         setOpenRes(false);
-        clearTicket();
+        dispatch(clear());
         handleClose();
     };
 
@@ -261,12 +262,12 @@ const TicketsDialog = ({
                         <div className="tw-pb-5 tw-flex tw-mt-3">
                             <button
                                 className={`tw-p-4 tw-font-semibold tw-text-sm  tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48 ${
-                                    loading
+                                    isLoading
                                         ? "tw-bg-indigo-300"
                                         : "tw-bg-indigo-500 hover:tw-bg-indigo-700"
                                 }`}
                                 onClick={handleSubmit}
-                                disabled={loading}
+                                disabled={isLoading}
                             >
                                 Submit Ticket
                             </button>
@@ -290,11 +291,4 @@ const TicketsDialog = ({
     );
 };
 
-const mapStateToProps = (state) => ({
-    loading: state.ticket.loading,
-    message: state.ticket.message,
-});
-
-export default connect(mapStateToProps, { submitTicket, clearTicket })(
-    TicketsDialog
-);
+export default TicketsDialog;
