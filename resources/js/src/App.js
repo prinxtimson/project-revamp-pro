@@ -133,7 +133,7 @@ const App = (props) => {
                     <Route exact path="/callback/:id" element={<HomePage />} />
                     <Route
                         exact
-                        path="/feedback/:channel"
+                        path="/feedback/:channel/:id"
                         element={<Survey />}
                     />
                     <Route

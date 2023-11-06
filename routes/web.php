@@ -47,7 +47,7 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     });
 
-    Route::get('/feedback/{channel}', function () {
+    Route::get('/feedback/{channel}/{id}', function () {
         return view('welcome');
     });
 

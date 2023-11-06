@@ -238,7 +238,7 @@ const DrawerContainer = ({ children }) => {
                                 notifications && notifications.length > 0
                                     ? notifications.slice(0, 9).map((val) =>
                                           val.type ==
-                                          "App\\Notifications\\BookingCancel"
+                                          "App\\Notifications\\NegativeFeedback"
                                               ? {
                                                     label: val.data.read_at,
                                                     template: (
@@ -248,9 +248,11 @@ const DrawerContainer = ({ children }) => {
                                                         <div className="tw-py-2 tw-px-4">
                                                             <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
                                                                 <p className="tw-my-0 tw-grow">
-                                                                    Booking had
+                                                                    A new
+                                                                    negative
+                                                                    feedback had
                                                                     been
-                                                                    cancelled
+                                                                    submitted.
                                                                 </p>
                                                                 <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
                                                                 <small>

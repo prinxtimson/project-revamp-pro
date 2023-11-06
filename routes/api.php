@@ -60,6 +60,7 @@ Route::get('summary/callback', [SummaryController::class, 'callback']);
 Route::get('summary/ticket', [SummaryController::class, 'ticket']);
 Route::get('summary/livecall', [SummaryController::class, 'livecall']);
 
+Route::get('livecall/{id}', [LiveCallController::class, 'show']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/me', [AuthController::class, 'me']);
@@ -74,7 +75,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('livecall/summary/get', [LiveCallController::class, 'summary']);
     Route::delete('livecall/{id}', [LiveCallController::class, 'destroy']);
     Route::get('livecall/connect/{id}', [LiveCallController::class, 'connect']);
-    Route::get('livecall/{id}', [LiveCallController::class, 'show']);
     Route::get('livecall/search/{query_type}', [LiveCallController::class, 'search_by_query_type']);
 
     Route::get('callback/summary/get', [CallBackController::class, 'summary']); 

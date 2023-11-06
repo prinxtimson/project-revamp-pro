@@ -19,6 +19,8 @@ class CreateSurveysTable extends Migration
             $table->tinyText('comment');
             $table->foreignId('user_id')
             ->constrained()->nullOnDelete();
+            $table->string('support_type')->nullable();
+            $table->foreignId('support_id')->nullable();
             $table->timestamps();
         });
     }

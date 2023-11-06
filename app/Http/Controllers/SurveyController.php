@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\LiveCall;
 use App\Models\Survey;
+use App\Models\User;
+use App\Notifications\NegativeFeedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class SurveyController extends Controller
 {
@@ -44,14 +47,28 @@ class SurveyController extends Controller
         $fields = $request->validate([
             'ratings' => 'required',
             'support_type' => 'required|string',
-            'comment' => 'string|nullable'
+            'support_id' => 'required|integer',
+            'comment' => 'string|nullable',
+            'user_id' => 'required|integer' 
         ]);
 
         $survey = Survey::create([
             'data' => $fields['ratings'],
-            'comment' => $fields['comment']
+            'comment' => $fields['comment'],
+            'support_type' => $fields['support_type'],
+            'support_id' => $fields['support_id'],
+            'user_id' => $fields['user_id']
         ]);
 
+        $total_ratings = (array_reduce($fields['ratings'], function($a, $b) {
+            return $a+$b['rating'];
+        }, 0)/3);
+
+        if($total_ratings < 5){
+            $users = User::role('manager')->get();
+
+            Notification::send($users, new NegativeFeedback($survey));
+        }
         return response($survey, 201);
     }
 

@@ -29,8 +29,9 @@ const TicketSurveyQuestion = [
 ];
 
 const Survey = ({ livecall }) => {
+    const [support, setSupport] = useState(null);
     const [surveyQuestions, setSurveyQuestion] = useState([]);
-    const { channel } = useParams();
+    const { channel, id } = useParams();
     const [survey, setSurvey] = useState({
         ratings: [],
         comment: "",
@@ -41,9 +42,12 @@ const Survey = ({ livecall }) => {
 
     const handleSubmitSurvey = () => {
         setSurvey({ ...survey, loading: true });
+
         let surveyData = {
             ratings: survey.ratings,
             support_type: channel,
+            support_id: support.id,
+            user_id: support.user_id || support.agent_id,
             comment: survey.comment,
         };
 
@@ -62,16 +66,40 @@ const Survey = ({ livecall }) => {
         setSurvey({ ...survey, comment: e.target.value });
     };
 
+    const getTicket = (id) => {
+        axios
+            .get(`/api/tickets/${id}`)
+            .then((res) => setSupport(res.data))
+            .catch((e) => console.log(e.response.data));
+    };
+
+    const getLivecall = (id) => {
+        axios
+            .get(`/api/livecall/${id}`)
+            .then((res) => setSupport(res.data))
+            .catch((e) => console.log(e.response.data));
+    };
+
+    const getCallback = (id) => {
+        axios
+            .get(`/api/callback/${id}`)
+            .then((res) => setSupport(res.data))
+            .catch((e) => console.log(e.response.data));
+    };
+
     useEffect(() => {
         if (channel) {
             switch (channel) {
                 case "livecall":
+                    getLivecall(id);
                     setSurveyQuestion(LiveSupportSurveyQuestions);
                     break;
                 case "callback":
+                    getCallback(id);
                     setSurveyQuestion(CallbackSurveyQuestion);
                     break;
                 case "ticket":
+                    getTicket(id);
                     setSurveyQuestion(TicketSurveyQuestion);
                     break;
                 default:
