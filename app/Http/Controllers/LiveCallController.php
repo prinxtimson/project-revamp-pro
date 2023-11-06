@@ -90,7 +90,7 @@ class LiveCallController extends Controller
         $from = $request->from;
         $to = $request->to;
 
-        return $this->excel->download(new LiveCallExport($from, $to), 'live_support_call.xlsx');
+        return $this->excel->download(new LiveCallExport($from, $to), 'live_support_livecall.xlsx');
     }
 
     /**

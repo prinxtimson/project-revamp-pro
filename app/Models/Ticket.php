@@ -16,6 +16,12 @@ class Ticket extends Model
         'phone',
         'query_type',
         'description',
-        'status' 
+        'status',
+        'user_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -34,10 +34,13 @@ import {
     getConnectedLivecalls,
     getLivecalls,
     getLivecallsByPage,
+    reset,
+    clear,
 } from "../../features/livecall/livecallSlice";
 import Moment from "react-moment";
 import Typography from "@mui/material/Typography";
 import DrawerContainer from "./DrawerContainer";
+import { toast } from "react-toastify";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     head: {
@@ -67,6 +70,7 @@ const LiveCallTable = () => {
 
     const { livecalls, isLoading, isSuccess, type, isError, message } =
         useSelector((state) => state.livecall);
+    const { user } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
 
@@ -89,7 +93,7 @@ const LiveCallTable = () => {
     };
 
     const handleOnDownload = () => {
-        window.location.href = `/livecall/download?from=${formData.from}&to=${formData.to}`;
+        window.location.href = `/livecall/report/download?from=${formData.from}&to=${formData.to}`;
     };
 
     const handleChangePage = (event, newPage) => {
@@ -130,22 +134,16 @@ const LiveCallTable = () => {
         }
     };
 
+    useEffect(() => {
+        if (isSuccess && message) {
+            toast.success(message);
+        }
+
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
+
     return (
         <DrawerContainer>
-            <Stack sx={{ width: "100%" }} spacing={2}>
-                {isError && message && (
-                    <Snackbar
-                        anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                        }}
-                        open={Boolean(message)}
-                        autoHideDuration={6000}
-                    >
-                        <Alert severity="error">{message}</Alert>
-                    </Snackbar>
-                )}
-            </Stack>
             <Container component="main" maxWidth="lg">
                 <CssBaseline />
 
@@ -159,83 +157,87 @@ const LiveCallTable = () => {
                         padding: 3,
                     }}
                 >
-                    <Card
-                        sx={{
-                            my: 2,
-                            padding: 3,
-                        }}
-                        variant="outlined"
-                    >
-                        <Typography
-                            component="p"
-                            variant="h6"
+                    {user && user?.roles[0].name != "agent" && (
+                        <Card
                             sx={{
-                                marginY: 2,
+                                my: 2,
+                                padding: 3,
                             }}
+                            variant="outlined"
                         >
-                            Download Report
-                        </Typography>
-                        <Grid
-                            container
-                            spacing={3}
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Grid item xs={12} sm={5}>
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    margin="dense"
-                                    id="start"
-                                    label="Start Date"
-                                    type="date"
-                                    size="small"
-                                    value={formData.from}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            from: e.target.value,
-                                        })
-                                    }
-                                />
+                            <Typography
+                                component="p"
+                                variant="h6"
+                                sx={{
+                                    marginY: 2,
+                                }}
+                            >
+                                Download Report
+                            </Typography>
+                            <Grid
+                                container
+                                spacing={3}
+                                justifyContent="center"
+                                alignItems="center"
+                            >
+                                <Grid item xs={12} sm={5}>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="dense"
+                                        id="start"
+                                        label="Start Date"
+                                        type="date"
+                                        size="small"
+                                        value={formData.from}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                from: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={5}>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="dense"
+                                        id="end"
+                                        label="End Date"
+                                        type="date"
+                                        value={formData.to}
+                                        size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                to: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={2}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        onClick={handleOnDownload}
+                                        disabled={
+                                            !formData.from || !formData.to
+                                        }
+                                    >
+                                        Download
+                                    </Button>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} sm={5}>
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    margin="dense"
-                                    id="end"
-                                    label="End Date"
-                                    type="date"
-                                    value={formData.to}
-                                    size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            to: e.target.value,
-                                        })
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={2}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    size="small"
-                                    onClick={handleOnDownload}
-                                    disabled={!formData.from || !formData.to}
-                                >
-                                    Download
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Card>
+                        </Card>
+                    )}
                     <div style={{ margin: 10 }}>
                         <Grid container spacing={5}>
                             <Grid item xs>

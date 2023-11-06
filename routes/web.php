@@ -8,6 +8,7 @@ use App\Http\Controllers\TwoFactorAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
+use App\Http\Controllers\ReportTemplateController;
 use App\Http\Controllers\VideoRoomController;
 
 /*
@@ -64,7 +65,7 @@ Route::get('admin/two-factor-auth', [TwoFactorAuthController::class, 'index'])->
 
 Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name('2fa.store')->middleware('auth');
 
-Route::get('two-factor-auth/resent', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend')->middleware("auth");
+Route::get('two-factor-auth/resend', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend')->middleware("auth");
 
 Route::middleware(['auth', '2fa'])->group(function () {
 
@@ -76,13 +77,17 @@ Route::middleware(['auth', '2fa'])->group(function () {
         return view('welcome');
     })->where('name', '.*')->name('dashboard');
 
+    Route::get('admin/dashboard/agent/{id}', function () {
+        return view('welcome');
+    })->name('dashboard.agent.single');
+
     Route::put('/change-password', [AuthController::class, 'changePass']);
     Route::put('/update', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/save-token', [AuthController::class, 'saveToken']);
 
-    Route::get('livecall/download', [LiveCallController::class, 'download']);
-    Route::get('callback/download', [CallBackController::class, 'download']);
+    Route::get('livecall/report/download', [LiveCallController::class, 'download']);
+    Route::get('callback/report/download', [CallBackController::class, 'download']);
 
     Route::post('recordingrules', [VideoRoomController::class, 'recording']);
 });
@@ -104,5 +109,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 Route::get('conferencing/{URLRoomName?}', function () {
     return view('welcome');
 });
+
+Route::get('report/download/{filename}', [ReportTemplateController::class, 'download']);
 
 Auth::routes();

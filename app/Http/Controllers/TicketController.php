@@ -72,9 +72,15 @@ class TicketController extends Controller
      */
     public function update(Request $request, Ticket $ticket)
     {
+        $user = auth()->user();
         $currentStatus = $ticket->status;
+        $fields = $request->all();
 
-        $ticket->update($request->all());
+        if(!isset($ticket->user_id)){
+            $fields['user_id'] = $user->id;
+        }
+
+        $ticket->update($fields);
         $ticket->refresh();
 
         if($currentStatus != $ticket->status){

@@ -1,4 +1,4 @@
-import axios from "axios";
+const axios = window.axios;
 
 const API_URL = "/api";
 
@@ -25,13 +25,14 @@ const isEmailVerify = async () => {
 };
 
 const logout = async () => {
-    localStorage.removeItem("user");
-    await axios.post(API_URL + "/logout");
+    const res = await axios.post(`${API_URL}/logout`);
+
+    return res.data;
 };
 
 const login = async (userData) => {
     await axios.get(`/sanctum/csrf-cookie`);
-    const res = await axios.post(API_URL + "/login", userData);
+    const res = await axios.post(`/login`, userData);
 
     return res.data;
 };

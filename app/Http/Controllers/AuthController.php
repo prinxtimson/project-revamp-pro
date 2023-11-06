@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Mail\AccountLocked;
+use App\Models\LiveCall;
 use App\Models\Setting;
+use App\Models\Survey;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\WebPush\WebNotification;
@@ -45,21 +48,17 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user->update([
-                'login_attempt' => 0
+                'login_attempt' => 0,
+                'login_at' => Carbon::now()
             ]);
 
             $request->session()->regenerate();
 
             $token = auth()->user()->createToken('access_token')->plainTextToken;
-            $notifications = auth()->user()->notifications;
-            $count = auth()->user()->unreadNotifications->count();
+            auth()->user()->generate_token();
 
             $response = [
-                'user' => auth()->user()->load(['roles', 'profile']),
-                'notifications' => [
-                    'data' => $notifications,
-                    'count' => $count
-                ],
+                'user' => auth()->user()->load(['roles', 'profile']),    
                 'token' => $token
             ];
 
@@ -86,6 +85,11 @@ class AuthController extends Controller
 
     public function me() {
         $user = auth()->user()->load(['roles', 'profile']);
+        $user->update([
+            'login_at' => Carbon::now()
+        ]);
+        $user->refresh();
+
         $notifications = auth()->user()->notifications;
         $count = auth()->user()->unreadNotifications->count();
 
@@ -99,6 +103,90 @@ class AuthController extends Controller
         return $response;
     }
 
+    private function get_customer_satisfaction($user_id){
+        $surveys = Survey::select('data')->where('user_id', $user_id)->get();
+        $surveys = array_column($surveys->toArray(), 'data');
+                        
+        $surveys = array_column(array_merge(...$surveys), 'rating');
+        $total = count($surveys);
+        $surveys = $total > 0 ? round(((array_reduce($surveys, function($a, $b) {
+                                    return $a+$b;
+                            }, 0)/($total*10))*100), 1) : 0;
+        return $surveys;
+    }
+
+    private function get_average_handle_time($user_id)
+    {
+        $tickets = Ticket::where('user_id', $user_id)->where('status', 'close')->get();
+        $tickets = $tickets->toArray();
+        $total = count($tickets);
+        $tickets = $total > 0 ? round((array_reduce($tickets, function($a, $b) {
+            if($b['status'] == 'close'){
+                $startTime = new Carbon($b['created_at']);
+                $endTime = new Carbon($b['updated_at']);
+                $diff = $startTime->diffInMinutes($endTime);
+                return $a+$diff;
+            }
+            return $a;
+        }, 0)/$total), 1) : 0;
+
+        return $tickets;
+    }
+
+    private function get_average_response_time($user_id)
+    {
+        $livecalls = LiveCall::where('agent_id', $user_id)->whereNotNull('answered_at')->get();
+        $livecalls = $livecalls->toArray();
+        $total = count($livecalls);
+        $livecalls = $total > 0 ? round((array_reduce($livecalls, function($a, $b) {
+            $startTime = new Carbon($b['created_at']);
+            $endTime = new Carbon($b['answered_at']);
+            $diff = $startTime->diffInMinutes($endTime);
+            return $a+$diff;
+        }, 0)/$total), 1) : 0;
+
+        return $livecalls;
+    }
+
+    private function get_abandonment_rate()
+    {
+        $total_abandon = LiveCall::whereNotNull('left_at')->count();
+        $total_livecalls = LiveCall::count();
+        $rate = $total_livecalls > 0 ? round((($total_abandon/$total_livecalls)*100), 1) : 0;
+
+        return $rate;
+    }
+
+    private function get_customer_wait_time($user_id)
+    {
+        $livecalls = LiveCall::where('agent_id', $user_id)->whereNotNull('answered_at')->get();
+        $livecalls = $livecalls->toArray();
+        $total = count($livecalls);
+        $livecalls = $total > 0 ? round((array_reduce($livecalls, function($a, $b) {
+            $startTime = new Carbon($b['created_at']);
+            $endTime = new Carbon($b['answered_at']);
+            $diff = $startTime->diffInMinutes($endTime);
+            return $a+$diff;
+        }, 0)/$total), 1) : 0;
+
+        return $livecalls;
+    }
+
+    private function get_call_wrap_up_time($user_id)
+    {
+        $livecalls = LiveCall::where('agent_id', $user_id)->whereNotNull('answered_at')->get();
+        $livecalls = $livecalls->toArray();
+        $total = count($livecalls);
+        $livecalls = $total > 0 ? round((array_reduce($livecalls, function($a, $b) {
+            $startTime = new Carbon($b['answered_at']);
+            $endTime = new Carbon($b['ended_at']);
+            $diff = $startTime->diffInMinutes($endTime);
+            return $a+$diff;
+        }, 0)/$total), 1) : 0;
+
+        return $livecalls;
+    }
+
     public function saveToken(Request $request) {
         $user = auth()->user();
 
@@ -106,34 +194,38 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request) {
+        $user = auth()->user();
+        $user->update([
+            'login_at' => null
+        ]);
         auth()->user()->tokens()->delete();
 
-        WebNotification::removeToken(auth()->user());
-
-        Auth::logout();
+        WebNotification::removeToken($user);
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return response()->json([
+            'message' => "Logout successful"
+        ]);
     }
 
     public function update(Request $request)
     {
-        $user = auth()->user();
-
         $fields = $request->validate([
-            'name' => 'required|string',
+            'firstname' => 'required|string',
+            'lastname' => 'required|string',
+            'username' => 'string|unique:users,username'
         ]);
 
-        $username = str_replace(' ', '', trim($fields['name']));
+        $user = Auth::user();
+        $user->name = $fields['firstname'] .' '. $fields['lastname'];
 
-        //$user = User::find($user);
-        $user->update([
-            'name' =>  $fields['name'],
-            'username' => strtolower($username),
-        ]);
+        if(isset($fields['username'])){
+            $user->username = strtolower($fields['username']);
+        }
+        
+        $user->save();
 
         $user->profile()->update($request->except(['avatar', '_method' ]));
 
@@ -333,6 +425,18 @@ class AuthController extends Controller
             ], 401);
         }
 
+    }
+
+    public function delete()
+    {
+        //
+        $user = Auth::user();
+
+        $deleted = $user->forceDelete();
+
+        //Mail::to($user)->send(new UserDelete($user->profile));
+
+        return $deleted;
     }
 
 }

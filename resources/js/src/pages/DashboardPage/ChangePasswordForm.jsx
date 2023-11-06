@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import CssBaseline from "@mui/material/CssBaseline";
 import Avatar from "@mui/material/Avatar";
@@ -13,8 +13,9 @@ import Container from "@mui/material/Container";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
 import { classNames } from "primereact/utils";
-import { changePassword } from "../../features/auth/authSlice";
+import { changePass, reset } from "../../features/auth/authSlice";
 import DrawerContainer from "./DrawerContainer";
+import { toast } from "react-toastify";
 
 const ChangePasswordForm = () => {
     const passwordValidation = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
@@ -45,12 +46,20 @@ const ChangePasswordForm = () => {
         </>
     );
 
+    useEffect(() => {
+        if (isSuccess && message) {
+            toast.success(message);
+        }
+
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
+
     const handleOnChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(changePassword(formData));
+        dispatch(changePass(formData));
     };
 
     return (
@@ -76,9 +85,6 @@ const ChangePasswordForm = () => {
                     <Stack sx={{ width: "100%" }} spacing={2}>
                         {isError && message && (
                             <Alert severity="error">{message}</Alert>
-                        )}
-                        {isSuccess && message && (
-                            <Alert severity="success">{message}</Alert>
                         )}
                     </Stack>
                     <Box

@@ -16,9 +16,11 @@ import {
     clear,
     getTicketsByPage,
     updateTicket,
+    reset,
 } from "../../features/ticket/ticketSlice";
 
 import DrawerContainer from "./DrawerContainer";
+import { toast } from "react-toastify";
 
 const TicketsTable = () => {
     const [data, setData] = useState([]);
@@ -47,6 +49,8 @@ const TicketsTable = () => {
 
     useEffect(() => {
         dispatch(getTickets());
+
+        return () => dispatch(clear());
     }, []);
 
     useEffect(() => {
@@ -55,6 +59,13 @@ const TicketsTable = () => {
             setTotal(tickets.total);
         }
     }, [tickets]);
+
+    useEffect(() => {
+        if (isSuccess && message) {
+            toast.success(message);
+        }
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;

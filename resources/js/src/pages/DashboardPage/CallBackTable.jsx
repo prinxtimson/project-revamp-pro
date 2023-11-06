@@ -26,8 +26,10 @@ import {
     callbackFailed,
     callbackSuccessful,
     getCallbacksByPage,
+    reset,
 } from "../../features/callback/callbackSlice";
 import DrawerContainer from "./DrawerContainer";
+import { toast } from "react-toastify";
 
 const axios = window.axios;
 
@@ -43,9 +45,10 @@ const CallBackTable = () => {
 
     const { callbacks, isLoading, isSuccess, type, isError, message } =
         useSelector((state) => state.callback);
+    const { user } = useSelector((state) => state.auth);
 
     const handleOnDownload = () => {
-        window.location.href = `/callback/download?from=${data.from}&to=${data.to}`;
+        window.location.href = `/callback/report/download?from=${data.from}&to=${data.to}`;
     };
 
     useEffect(() => {
@@ -59,6 +62,14 @@ const CallBackTable = () => {
             setSearchCallbacks(callbacks.data);
         }
     }, [callbacks]);
+
+    useEffect(() => {
+        if (isSuccess && message) {
+            toast.success(message);
+        }
+
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
 
     useEffect(() => {
         if (query) {
@@ -182,85 +193,86 @@ const CallBackTable = () => {
                         padding: 3,
                     }}
                 >
-                    <Card
-                        sx={{
-                            my: 2,
-                            padding: 3,
-                            width: "100%",
-                        }}
-                        variant="outlined"
-                    >
-                        <Typography
-                            component="p"
-                            variant="h6"
+                    {user && user?.roles[0].name != "agent" && (
+                        <Card
                             sx={{
-                                marginY: 2,
+                                my: 2,
+                                padding: 3,
+                                width: "100%",
                             }}
+                            variant="outlined"
                         >
-                            Download Report
-                        </Typography>
-                        <Grid
-                            container
-                            spacing={3}
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Grid item xs={12} sm={5}>
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    margin="dense"
-                                    id="start"
-                                    label="Start Date"
-                                    type="date"
-                                    size="small"
-                                    value={data.from}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            from: e.target.value,
-                                        })
-                                    }
-                                />
+                            <Typography
+                                component="p"
+                                variant="h6"
+                                sx={{
+                                    marginY: 2,
+                                }}
+                            >
+                                Download Report
+                            </Typography>
+                            <Grid
+                                container
+                                spacing={3}
+                                justifyContent="center"
+                                alignItems="center"
+                            >
+                                <Grid item xs={12} sm={5}>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="dense"
+                                        id="start"
+                                        label="Start Date"
+                                        type="date"
+                                        size="small"
+                                        value={data.from}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        onChange={(e) =>
+                                            setData({
+                                                ...data,
+                                                from: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={5}>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="dense"
+                                        id="end"
+                                        label="End Date"
+                                        type="date"
+                                        value={data.to}
+                                        size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        onChange={(e) =>
+                                            setData({
+                                                ...data,
+                                                to: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={2}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        onClick={handleOnDownload}
+                                        disabled={!data.from || !data.to}
+                                    >
+                                        Download
+                                    </Button>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} sm={5}>
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    margin="dense"
-                                    id="end"
-                                    label="End Date"
-                                    type="date"
-                                    value={data.to}
-                                    size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            to: e.target.value,
-                                        })
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={2}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    size="small"
-                                    onClick={handleOnDownload}
-                                    disabled={!data.from || !data.to}
-                                >
-                                    Download
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Card>
-
+                        </Card>
+                    )}
                     <DataTable
                         value={searchCallbacks}
                         paginator

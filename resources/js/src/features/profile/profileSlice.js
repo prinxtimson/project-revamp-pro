@@ -4,28 +4,31 @@ import profileService from "./profileService";
 const initialState = {
     users: null,
     user: null,
+    type: "",
     isError: false,
     isSuccess: false,
     isLoading: false,
     message: "",
 };
 
-export const getProfiles = createAsyncThunk("profile/get", async (thunkAPI) => {
-    try {
-        return await profileService.getProfiles();
-    } catch (err) {
-        if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            thunkAPI.dispatch(clearUser());
-        }
-        const msg =
-            (err.response && err.response.data && err.response.data.message) ||
-            err.message ||
-            err.toString();
+export const getProfiles = createAsyncThunk(
+    "profile/get-all",
+    async (args, thunkAPI) => {
+        try {
+            return await profileService.getProfiles();
+        } catch (err) {
+            console.log(err);
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
 
-        return thunkAPI.rejectWithValue(msg);
+            return thunkAPI.rejectWithValue(msg);
+        }
     }
-});
+);
 
 export const getProfilesByPage = createAsyncThunk(
     "profile/get-by-page",
@@ -33,10 +36,43 @@ export const getProfilesByPage = createAsyncThunk(
         try {
             return await profileService.getProfilesByPage(page);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
+export const getAgents = createAsyncThunk(
+    "profile/get-all-agents",
+    async (args, thunkAPI) => {
+        try {
+            return await profileService.getAgents();
+        } catch (err) {
+            console.log(err);
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
+export const getAgentsByPage = createAsyncThunk(
+    "profile/get-agents-by-page",
+    async (page, thunkAPI) => {
+        try {
+            return await profileService.getAgentsByPage(page);
+        } catch (err) {
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -55,10 +91,6 @@ export const addNewUser = createAsyncThunk(
         try {
             return await profileService.addNewUser(data);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -89,16 +121,30 @@ export const updateUser = createAsyncThunk(
     }
 );
 
+export const getProfileById = createAsyncThunk(
+    "profile/get-singe-user",
+    async (id, thunkAPI) => {
+        try {
+            return await profileService.getProfileById(id);
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
 export const enableUser = createAsyncThunk(
     "profile/enable",
     async (id, thunkAPI) => {
         try {
             return await profileService.enableUser(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -117,10 +163,6 @@ export const disableUser = createAsyncThunk(
         try {
             return await profileService.disableUser(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -139,10 +181,6 @@ export const approveUser = createAsyncThunk(
         try {
             return await profileService.approveUser(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -161,10 +199,6 @@ export const deleteUser = createAsyncThunk(
         try {
             return await profileService.deleteUser(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -186,6 +220,7 @@ export const profileSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.message = "";
+            state.type = "";
         },
         clear: (state) => {
             state.users = null;
@@ -194,6 +229,7 @@ export const profileSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.message = "";
+            state.type = "";
         },
     },
     extraReducers: (builder) => {
@@ -203,6 +239,7 @@ export const profileSlice = createSlice({
             })
             .addCase(getProfiles.fulfilled, (state, action) => {
                 state.isLoading = false;
+                state.type = action.type;
                 state.users = action.payload;
             })
             .addCase(getProfiles.rejected, (state, action) => {
@@ -215,9 +252,50 @@ export const profileSlice = createSlice({
             })
             .addCase(getProfilesByPage.fulfilled, (state, action) => {
                 state.isLoading = false;
+                state.type = action.type;
                 state.users = action.payload;
             })
             .addCase(getProfilesByPage.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(getAgents.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getAgents.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.type = action.type;
+                state.users = action.payload;
+            })
+            .addCase(getAgents.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(getAgentsByPage.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getAgentsByPage.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.type = action.type;
+                state.users = action.payload;
+            })
+            .addCase(getAgentsByPage.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(getProfileById.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getProfileById.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.type = action.type;
+                state.user = action.payload;
+            })
+            .addCase(getProfileById.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
@@ -228,7 +306,9 @@ export const profileSlice = createSlice({
             .addCase(addNewUser.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.user = action.payload;
+                state.type = action.type;
+                state.user = action.payload.user;
+                state.message = action.payload.msg;
             })
             .addCase(addNewUser.rejected, (state, action) => {
                 state.isLoading = false;
@@ -239,17 +319,18 @@ export const profileSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(enableUser.fulfilled, (state, action) => {
-                let index = state.users.data.findIndex(
-                    (item) => item.id === payload.id
+                let index = state.users?.data.findIndex(
+                    (item) => item.id === action.payload.id
                 );
-                state.users.data.splice(index, 1, payload);
+                state.users?.data.splice(index, 1, action.payload);
 
                 state.isLoading = false;
                 state.isSuccess = true;
+                state.type = action.type;
                 state.users = { ...state.users };
                 state.user = action.payload;
             })
-            .addCase(addNewUser.rejected, (state, action) => {
+            .addCase(enableUser.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
@@ -258,15 +339,10 @@ export const profileSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(updateUser.fulfilled, (state, action) => {
-                let index = state.users.data.findIndex(
-                    (item) => item.id === payload.id
-                );
-                state.users.data.splice(index, 1, payload);
-
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.users = { ...state.users };
-                state.user = action.payload;
+                state.type = action.type;
+                state.user = action.payload.user;
             })
             .addCase(updateUser.rejected, (state, action) => {
                 state.isLoading = false;
@@ -284,6 +360,7 @@ export const profileSlice = createSlice({
 
                 state.isLoading = false;
                 state.isSuccess = true;
+                state.type = action.type;
                 state.users = { ...state.users };
                 state.user = action.payload;
             })
@@ -303,6 +380,7 @@ export const profileSlice = createSlice({
 
                 state.isLoading = false;
                 state.isSuccess = true;
+                state.type = action.type;
                 state.users = { ...state.users };
                 state.user = action.payload;
             })
@@ -321,6 +399,7 @@ export const profileSlice = createSlice({
 
                 state.isLoading = false;
                 state.isSuccess = true;
+                state.type = action.type;
                 state.users = { ...state.users, data };
                 state.user = action.payload;
             })

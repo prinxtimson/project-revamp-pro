@@ -18,7 +18,7 @@ class CreateSettingsTable extends Migration
             $table->foreignId('user_id')
                   ->constrained()->onDelete('cascade');
             $table->string('key');
-            $table->string('value');
+            $table->text('value');
             $table->timestamps();
         });
     }

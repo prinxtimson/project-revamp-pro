@@ -254,6 +254,8 @@ class VideoRoomController extends Controller
         $client = new Client($this->api_key, $this->api_secret);
         $room = $client->video->v1->rooms($id)->update('completed');
 
+        $videoRoom->livecall()->update(['ended_at' => Carbon::now()]);
+
         if($videoRoom){
             $breakouts = $videoRoom->breakouts;         
 

@@ -19,7 +19,7 @@ class TwoFactorAuth
     {
         
         if (!$request->session()->exists('user_2fa')) {
-            return redirect()->route('2fa.index');
+            return redirect()->route('2fa.index')->withErrors(['message', 'Two factor verification required']);
         }
  
         return $next($request);

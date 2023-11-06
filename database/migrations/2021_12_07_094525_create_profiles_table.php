@@ -18,6 +18,7 @@ class CreateProfilesTable extends Migration
             $table->string('firstname');
             $table->string('lastname');
             $table->string('phone')->nullable();
+            $table->string('job_title')->nullable();
             $table->foreignId('user_id')
                   ->constrained()->onDelete('cascade');
             $table->timestamps();

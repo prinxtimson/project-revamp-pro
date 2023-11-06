@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\AccountLocked;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Mail;
@@ -67,12 +68,15 @@ class LoginController extends Controller
              
         if (Auth::attempt($validated)) {
             $user->update([
-                'login_attempt' => 0
+                'login_attempt' => 0,
+                'login_at' => Carbon::now()
             ]);
 
+            $request->session()->regenerate();
+            $token = auth()->user()->createToken('access_token')->plainTextToken;
             auth()->user()->generate_code();
   
-            return redirect()->route('2fa.index');
+            return redirect()->route('2fa.index')->with(['token' => $token]);
         }
 
         $user->update([

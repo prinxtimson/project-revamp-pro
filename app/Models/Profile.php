@@ -12,6 +12,7 @@ class Profile extends Model
         'firstname',
         'lastname',
         'phone',
+        'job_title'
     ];
 
     public function user() {

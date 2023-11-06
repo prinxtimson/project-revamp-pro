@@ -14,7 +14,7 @@ const initialState = {
 
 export const getLivecalls = createAsyncThunk(
     "livecall/get-all",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await livecallService.getLivecalls();
         } catch (err) {
@@ -68,7 +68,7 @@ export const getLivecallById = createAsyncThunk(
 
 export const getConnectedLivecalls = createAsyncThunk(
     "livecall/get-connected",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await livecallService.getConnectedLivecalls();
         } catch (err) {

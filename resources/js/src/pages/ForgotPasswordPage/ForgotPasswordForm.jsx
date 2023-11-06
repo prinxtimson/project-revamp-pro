@@ -1,119 +1,96 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 import Container from "../../components/Container";
-import { forgotPass } from "../../features/auth/authSlice";
+import { forgotPass, reset } from "../../features/auth/authSlice";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ForgotPasswordForm = () => {
-    const [email, setEmail] = useState("");
+    const [data, setData] = useState({
+        email: "",
+    });
 
     const dispatch = useDispatch();
 
-    const { isLoading, isSuccess, type, isError, message } = useSelector(
+    const { isLoading, isSuccess, isError, message } = useSelector(
         (state) => state.auth
     );
 
-    const handleSuccess = () => {
-        setEmail("");
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        dispatch(forgotPass({ email }));
-    };
-
     useEffect(() => {
-        if (isSuccess) {
-            handleSuccess();
+        if (isError) {
+            toast.error(message);
         }
-    }, [isLoading, isSuccess, type, isError, message]);
+
+        if (isSuccess) {
+            toast.success(message);
+            setData({
+                email: "",
+            });
+        }
+
+        dispatch(reset());
+    }, [isError, isSuccess, message, dispatch]);
+
+    const onHandleChange = (event) => {
+        setData({ ...data, [event.target.name]: event.target.value });
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+        dispatch(forgotPass(data));
+    };
 
     return (
         <Container>
-            <Box
-                sx={{
-                    marginTop: 5,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                    padding: 3,
-                    width: "100%",
-                    maxWidth: 456,
-                    mx: "auto",
-                }}
-            >
-                <Box
-                    component="span"
-                    sx={{
-                        margin: 2,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Avatar
-                        variant="square"
-                        alt="Tritek Live"
-                        src="/images/logo.png"
-                        sx={{ width: 128, height: 32 }}
-                    >
-                        Tritek Live
-                    </Avatar>
-                </Box>
-                <Typography component="h1" variant="h5">
-                    Forgot Password
-                </Typography>
-                <Stack sx={{ width: "100%" }} spacing={2}>
-                    {isError && message && (
-                        <Alert severity="error">{message}</Alert>
-                    )}
-                </Stack>
-                <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                    sx={{ mt: 1, width: "100%" }}
-                >
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        disabled={isLoading}
-                    >
-                        Submit
-                    </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            Remember Password?{" "}
-                            <Link to="/admin" variant="body2">
-                                Login
-                            </Link>
-                        </Grid>
-                        <Grid item></Grid>
-                    </Grid>
-                </Box>
-            </Box>
+            <div className="tw-grow tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center">
+                <div className="tw-shadow-md tw-rounded-md tw-w-full md:tw-w-[34.5rem] tw-w-auto tw-bg-white tw-p-3 md:tw-p-6">
+                    <div className="form-demo">
+                        <div className="card">
+                            <div className="tw-text-center tw-mb-6">
+                                <h2 className="tw-text-2xl tw-font-semimedium  tw-mb-2">
+                                    Forgot Password
+                                </h2>
+                            </div>
+
+                            <form onSubmit={submit} className="p-fluid">
+                                <div className="field">
+                                    <span className="p-float-label p-input-icon-right custom-label">
+                                        <i className="pi pi-envelope" />
+                                        <InputText
+                                            name="email"
+                                            value={data.email}
+                                            autoFocus
+                                            onChange={onHandleChange}
+                                            required
+                                        />
+                                        <label htmlFor="email">Email *</label>
+                                    </span>
+                                </div>
+                                <Button
+                                    className="tw-mb-2 custom-btn"
+                                    type="submit"
+                                    label="Reset Password"
+                                    disabled={isLoading}
+                                />
+                                <div className="tw-mb-5"></div>
+                                <div className="">
+                                    <span className="">
+                                        Remember password?{" "}
+                                        <Link
+                                            to="/admin"
+                                            className="tw-underline tw-text-blue-500 hover:tw-text-blue-800"
+                                        >
+                                            Sign-in
+                                        </Link>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </Container>
     );
 };

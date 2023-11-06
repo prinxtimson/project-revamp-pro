@@ -18,6 +18,11 @@ class SurveyController extends Controller
         return Survey::get();
     }
 
+    public function getSurveyByUserId($id)
+    {
+        return Survey::where('user_id', $id)->get();
+    }
+
     /**
      * Show the form for creating a new resource.
      *

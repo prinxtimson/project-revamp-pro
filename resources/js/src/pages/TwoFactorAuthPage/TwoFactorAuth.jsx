@@ -1,58 +1,71 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import { verifyOTP, resendOTP } from "../../features/auth/authSlice";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { getCurrentUser, reset } from "../../features/auth/authSlice";
 import Container from "../../components/Container";
+import { toast } from "react-toastify";
+import axios from "axios";
 
-const TwoFactorAuth = (props) => {
+const TwoFactorAuth = () => {
     const [reset, setReset] = useState(0);
-    const { user } = props;
-    const [authUser, setAuthUser] = useState(null);
     const [remainingTime, setRemainingTime] = useState(0);
+    const [data, setData] = useState({
+        code: "",
+    });
+    const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
+    const { code } = data;
+
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const { isLoading, isSuccess, type, isError, message } = useSelector(
-        (state) => state.auth
-    );
+    const { user, isAuthenticated } = useSelector((state) => state.auth);
 
     useEffect(() => {
-        const userJson = JSON.parse(user || "{}");
-        setAuthUser(userJson);
-
-        return () => setAuthUser(null);
-    }, [user]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const code = data.get("code");
-
-        if (code) {
-            dispatch(verifyOTP({ code }));
+        if (user) {
+            navigate("/admin/dashboard");
         }
+        if (!isAuthenticated) {
+            navigate("/admin");
+        }
+    }, [user, isAuthenticated]);
+
+    const handleOnChange = (event) => {
+        setData({
+            ...data,
+            [event.target.name]: event.target.value,
+        });
     };
 
-    useEffect(() => {
-        if (isSuccess && type == "auth/verify-otp/fulfilled") {
-            onSuccessful();
-        }
+    const onSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        axios
+            .post("/two-factor-auth", data)
+            .then(() => {
+                dispatch(getCurrentUser());
+            })
+            .catch((e) => {
+                setLoading(false);
+                toast.error(e.response.data.message);
+            });
+    };
 
-        if (isSuccess && type == "auth/resend-otp/fulfilled") {
-            onCodeResend();
-        }
-    }, [isSuccess, isError, message, type]);
-
-    const onSuccessful = () => {
-        navigate("/admin/dashboard");
+    const handleResendToken = () => {
+        setLoading(true);
+        axios
+            .get("/two-factor-auth/resend")
+            .then(() => {
+                setLoading(false);
+                onCodeResend();
+                toast.success("OTP sent successful");
+            })
+            .catch((e) => {
+                setLoading(false);
+                toast.error(e.response.data.message);
+            });
     };
 
     useEffect(() => {
@@ -72,101 +85,62 @@ const TwoFactorAuth = (props) => {
 
     return (
         <Container>
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                    padding: 3,
-                    width: "100%",
-                    maxWidth: 456,
-                    mx: "auto",
-                }}
-            >
-                <Box
-                    component="span"
-                    sx={{
-                        margin: 2,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Avatar
-                        variant="square"
-                        alt="Tritek Live"
-                        src="/images/logo.png"
-                        sx={{ width: 128, height: 32 }}
-                    >
-                        Tritek Live
-                    </Avatar>
-                </Box>
-                <Typography component="h1" variant="h5">
-                    Two Factor Verification
-                </Typography>
-                <Stack sx={{ width: "100%" }} spacing={2}>
-                    {isError && message && (
-                        <Alert severity="error">{message}</Alert>
-                    )}
-                </Stack>
+            <div className="tw-grow tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center">
+                <div className="tw-shadow-lg tw-bg-white tw-rounded-md md:tw-p-6 tw-w-full md:tw-w-[34.5rem] tw-w-auto  tw-p-3 ">
+                    <div className="form-demo">
+                        <div className="card">
+                            <div className="tw-text-center tw-mb-5">
+                                <h2 className="tw-text-2xl tw-font-semimedium  tw-mb-2">
+                                    Two Factor Verification
+                                </h2>
+                            </div>
+                            <form onSubmit={onSubmit} className="p-fluid">
+                                <div className="field">
+                                    <span className="p-float-label ">
+                                        <InputText
+                                            name="code"
+                                            value={code}
+                                            autoComplete="off"
+                                            onChange={handleOnChange}
+                                        />
+                                        <label htmlFor="code">Code</label>
+                                    </span>
+                                </div>
 
-                <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                    sx={{ mt: 1 }}
-                >
-                    <Box>
-                        <Typography>
-                            We sent code to your Email :
-                            {` ${authUser?.email?.substring(
-                                0,
-                                3
-                            )}******${authUser?.email?.substring(
-                                authUser?.email?.length - 8
-                            )}`}
-                        </Typography>
-                    </Box>
-                    <TextField
-                        margin="dense"
-                        required
-                        fullWidth
-                        id="code"
-                        label="Enter Code"
-                        name="code"
-                        size="small"
-                    />
-                    <Button
-                        type="button"
-                        fullWidth
-                        variant="outlined"
-                        onClick={() => dispatch(resendOTP(onCodeResend))}
-                        disabled={remainingTime > 1000 || isLoading}
-                        sx={{ mb: 1.5, mt: 1 }}
-                    >
-                        Resend Code in{" "}
-                        {remainingTime === 0
-                            ? "00:00"
-                            : `${Math.floor(
-                                  (remainingTime % (1000 * 60 * 60)) /
-                                      (1000 * 60)
-                              )}:${Math.floor(
-                                  (remainingTime % (1000 * 60)) / 1000
-                              )}`}
-                    </Button>
-
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        //sx={{ mt: 3, mb: 2 }}
-                        disabled={isLoading}
-                    >
-                        Verify
-                    </Button>
-                </Box>
-            </Box>
+                                <div className="tw-my-4 tw-flex tw-items-center tw-justify-between tw-gap-2">
+                                    <Button
+                                        type="submit"
+                                        label="Verify"
+                                        disabled={loading}
+                                        className="custom-btn "
+                                    />
+                                    <Button
+                                        type="button"
+                                        label={`Resend OTP (${
+                                            remainingTime === 0
+                                                ? "00:00"
+                                                : `${Math.floor(
+                                                      (remainingTime %
+                                                          (1000 * 60 * 60)) /
+                                                          (1000 * 60)
+                                                  )}:${Math.floor(
+                                                      (remainingTime %
+                                                          (1000 * 60)) /
+                                                          1000
+                                                  )}`
+                                        })`}
+                                        disabled={Boolean(
+                                            remainingTime > 1000 || loading
+                                        )}
+                                        className="custom-btn p-button-outlined"
+                                        onClick={handleResendToken}
+                                    />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </Container>
     );
 };

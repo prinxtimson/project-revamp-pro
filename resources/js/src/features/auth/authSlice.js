@@ -1,11 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 
-// Get user from local storage
-const user = localStorage.getItem("user");
-
 const initialState = {
-    user: user == undefined ? null : JSON.parse(user),
+    user: null,
     isAuthenticated: false,
     type: "",
     isError: false,
@@ -14,7 +11,7 @@ const initialState = {
     message: "",
 };
 
-// Register user
+//  user
 export const register = createAsyncThunk(
     "auth/register",
     async (data, thunkAPI) => {
@@ -124,26 +121,27 @@ export const changePass = createAsyncThunk(
     }
 );
 
-export const getCurrentUser = createAsyncThunk("auth/me", async (thunkAPI) => {
-    try {
-        return await authService.getCurrentUser();
-    } catch (err) {
-        if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            thunkAPI.dispatch(clearUser());
-        }
-        const msg =
-            (err.response && err.response.data && err.response.data.message) ||
-            err.message ||
-            err.toString();
+export const getCurrentUser = createAsyncThunk(
+    "auth/me",
+    async (args, thunkAPI) => {
+        try {
+            return await authService.getCurrentUser();
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
 
-        return thunkAPI.rejectWithValue(msg);
+            return thunkAPI.rejectWithValue(msg);
+        }
     }
-});
+);
 
 export const resendVerification = createAsyncThunk(
     "auth/resend-verification",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await authService.resendVerification();
         } catch (err) {
@@ -187,7 +185,7 @@ export const verifyOTP = createAsyncThunk(
 
 export const resendOTP = createAsyncThunk(
     "auth/resend-otp",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await authService.resendOTP();
         } catch (err) {
@@ -209,7 +207,7 @@ export const resendOTP = createAsyncThunk(
 
 export const deleteAccount = createAsyncThunk(
     "auth/delete-account",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await authService.deleteAccount();
         } catch (err) {
@@ -230,7 +228,7 @@ export const deleteAccount = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk("auth/logout", async () => {
-    await authService.logout();
+    return await authService.logout();
 });
 
 export const authSlice = createSlice({

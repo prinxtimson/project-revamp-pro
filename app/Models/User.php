@@ -33,9 +33,10 @@ class User extends Authenticatable implements HasMedia
         'login_attempt',
         'username',
         'password',
+        'login_at'
     ];
 
-   // protected $guard_name = 'api';
+    protected $guard_name = 'api';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -54,6 +55,7 @@ class User extends Authenticatable implements HasMedia
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'login_at' => 'datetime'
     ];
 
     public function profile () 
@@ -64,6 +66,11 @@ class User extends Authenticatable implements HasMedia
     public function settings () 
     {
         return $this->hasMany(Setting::class);
+    }
+
+    public function surveys () 
+    {
+        return $this->hasMany(Survey::class);
     }
 
     public function user_code ()
@@ -79,6 +86,16 @@ class User extends Authenticatable implements HasMedia
     public function livecalls()
     {
         return $this->hasMany(LiveCall::class, 'agent_id');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function report_templates () 
+    {
+        return $this->hasMany(ReportTemplate::class);
     }
 
     public function generate_code ()

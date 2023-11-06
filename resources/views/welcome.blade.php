@@ -410,17 +410,14 @@
     display: none !important;
   }
   .my-custom-bg {
-    background-color: #f5f7ff;
+    background-color: #f5f7ff !important;
 }
   </style>
 </head>
 
 <body class="antialiased" >
-  @if (!empty($user))
-  <div id="app" class="relative flex items-top min-h-screen my-custom-bg" data-user="{{$user}}">
-  @else
+ 
   <div id="app" class="relative flex items-top min-h-screen my-custom-bg"  >
-  @endif
   
     <script src="{{asset('js/app.js')}}"></script>
   </div>

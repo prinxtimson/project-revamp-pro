@@ -79,10 +79,12 @@ const Dashboard = () => {
             <DrawerContainer>
                 <Box
                     sx={{
+                        flexGrow: 1,
                         marginTop: 5,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        justifyContent: "center",
                     }}
                 >
                     <Typography>Loading .....</Typography>
@@ -95,6 +97,7 @@ const Dashboard = () => {
         <DrawerContainer>
             <Box
                 sx={{
+                    flexGrow: 1,
                     marginTop: 5,
                     display: "flex",
                     flexDirection: "column",

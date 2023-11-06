@@ -12,7 +12,8 @@ import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import { addNewUser } from "../../features/profile/profileSlice";
+import { addNewUser, reset } from "../../features/profile/profileSlice";
+import { toast } from "react-toastify";
 
 const AddUserForm = ({ handleGetUsers }) => {
     const [data, setData] = useState({
@@ -37,9 +38,15 @@ const AddUserForm = ({ handleGetUsers }) => {
     };
 
     useEffect(() => {
+        if (isError) {
+            toast.error(message);
+        }
         if (isSuccess) {
+            toast.success(message);
             onSuccessfull();
         }
+
+        dispatch(reset());
     }, [isLoading, isSuccess, type, isError, message]);
 
     const onSuccessfull = () => {
@@ -93,14 +100,7 @@ const AddUserForm = ({ handleGetUsers }) => {
             <Typography component="h1" variant="h5">
                 Add Admin
             </Typography>
-            <Stack sx={{ width: "100%" }} spacing={2}>
-                {isError && message && (
-                    <Alert severity="error">{message}</Alert>
-                )}
-                {isSuccess && message && (
-                    <Alert severity="success">{message}</Alert>
-                )}
-            </Stack>
+
             <Box
                 component="form"
                 onSubmit={handleSubmit}

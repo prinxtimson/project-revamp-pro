@@ -12,22 +12,27 @@ const initialState = {
 };
 
 // get tickets
-export const getTickets = createAsyncThunk("ticket/get", async (thunkAPI) => {
-    try {
-        return await ticketService.getTickets();
-    } catch (err) {
-        if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            thunkAPI.dispatch(clearUser());
-        }
-        const msg =
-            (err.response && err.response.data && err.response.data.message) ||
-            err.message ||
-            err.toString();
+export const getTickets = createAsyncThunk(
+    "ticket/get",
+    async (args, thunkAPI) => {
+        try {
+            return await ticketService.getTickets();
+        } catch (err) {
+            if (err.response.status === 401) {
+                localStorage.removeItem("user");
+                thunkAPI.dispatch(clearUser());
+            }
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
 
-        return thunkAPI.rejectWithValue(msg);
+            return thunkAPI.rejectWithValue(msg);
+        }
     }
-});
+);
 
 export const getTicketsByPage = createAsyncThunk(
     "ticket/get-by-page",
@@ -155,7 +160,7 @@ export const ticketSlice = createSlice({
             })
             .addCase(getTickets.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.tickets = action.payload.data;
+                state.tickets = action.payload;
             })
             .addCase(getTickets.rejected, (state, action) => {
                 state.isLoading = false;
@@ -167,7 +172,7 @@ export const ticketSlice = createSlice({
             })
             .addCase(getTicketsByPage.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.tickets = action.payload.data;
+                state.tickets = action.payload;
             })
             .addCase(getTicketsByPage.rejected, (state, action) => {
                 state.isLoading = false;

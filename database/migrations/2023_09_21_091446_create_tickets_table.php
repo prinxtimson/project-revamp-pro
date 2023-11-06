@@ -21,6 +21,7 @@ class CreateTicketsTable extends Migration
             $table->string('phone');
             $table->string('query_type');
             $table->text('description');
+            $table->foreignId('user_id')->nullable();
             $table->enum('status', ['open', 'pending', 'close'])->default('open');
             $table->timestamps();
         });

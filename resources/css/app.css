@@ -1,14 +1,5 @@
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.p-password-input {
-    width: 100%;
-}
-
-.p-password {
-    width: 100%;
-}
 
 .tawk-min-container {
     display: none !important;
@@ -16,4 +7,36 @@
 
 .p-datatable-wrapper {
     overflow: auto;
+}
+.form-demo .card form {
+    margin-top: 2rem;
+}
+.form-demo .card .field {
+    margin-bottom: 2rem;
+}
+.p-progressbar-label {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+    background-color: #22c561 !important;
+}
+
+.p-menu {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.field-checkbox,
+.field-radiobutton {
+    display: flex;
+    align-items: center;
+}
+
+.field-checkbox > label,
+.field-radiobutton > label {
+    margin-left: 0.5rem;
+    line-height: 1;
 }

@@ -14,14 +14,10 @@ const initialState = {
 // get feedbacks
 export const getFeedbacks = createAsyncThunk(
     "feedback/get",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await feedbackService.getFeedbacks();
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -34,16 +30,12 @@ export const getFeedbacks = createAsyncThunk(
     }
 );
 
-export const getFeedbacksByPage = createAsyncThunk(
-    "feedback/get-by-page",
-    async (page, thunkAPI) => {
+export const getFeedbacksByAgent = createAsyncThunk(
+    "feedback/get-by-agent",
+    async (id, thunkAPI) => {
         try {
-            return await feedbackService.getFeedbacksByPage(page);
+            return await feedbackService.getFeedbacksByAgent(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -160,21 +152,21 @@ export const feedbackSlice = createSlice({
             })
             .addCase(getFeedbacks.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.feedbacks = action.payload.data;
+                state.feedbacks = action.payload;
             })
             .addCase(getFeedbacks.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
             })
-            .addCase(getFeedbacksByPage.pending, (state) => {
+            .addCase(getFeedbacksByAgent.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(getFeedbacksByPage.fulfilled, (state, action) => {
+            .addCase(getFeedbacksByAgent.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.feedbacks = action.payload.data;
+                state.feedbacks = action.payload;
             })
-            .addCase(getFeedbacksByPage.rejected, (state, action) => {
+            .addCase(getFeedbacksByAgent.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

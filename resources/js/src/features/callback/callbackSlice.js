@@ -13,14 +13,10 @@ const initialState = {
 
 export const getCallbacks = createAsyncThunk(
     "callback/get-all",
-    async (thunkAPI) => {
+    async (args, thunkAPI) => {
         try {
             return await callbackService.getCallbacks();
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -39,10 +35,6 @@ export const getCallbacksByPage = createAsyncThunk(
         try {
             return await callbackService.getCallbacksByPage(page);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -61,10 +53,6 @@ export const getCallbacksByDate = createAsyncThunk(
         try {
             return await callbackService.getCallbacksByDate(date);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -83,10 +71,6 @@ export const requestCallback = createAsyncThunk(
         try {
             return await callbackService.requestCallback(data);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -105,10 +89,6 @@ export const getCallbackById = createAsyncThunk(
         try {
             return await callbackService.getCallbackById(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -127,10 +107,6 @@ export const callbackSuccessful = createAsyncThunk(
         try {
             return await callbackService.callbackSuccessful(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -149,10 +125,6 @@ export const callbackFailed = createAsyncThunk(
         try {
             return await callbackService.callbackFailed(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -189,10 +161,6 @@ export const cancelCallback = createAsyncThunk(
         try {
             return await callbackService.cancelCallback(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&
@@ -211,10 +179,6 @@ export const deleteCallback = createAsyncThunk(
         try {
             return await callbackService.deleteCallback(id);
         } catch (err) {
-            if (err.response.status === 401) {
-                localStorage.removeItem("user");
-                thunkAPI.dispatch(clearUser());
-            }
             const msg =
                 (err.response &&
                     err.response.data &&

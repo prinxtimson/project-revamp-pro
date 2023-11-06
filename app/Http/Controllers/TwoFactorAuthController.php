@@ -37,10 +37,10 @@ class TwoFactorAuthController extends Controller
         if ($exists) {
             $request->session()->put('user_2fa', auth()->user()->id);
             
-            return redirect()->route('dashboard');
+            return response()->json(['message' => 'Two factor token confirmed.']);
         }
   
-        return response('You entered wrong OTP code., please request a new OTP', 401);
+        return response(['message' =>'You entered wrong OTP code., please request a new OTP'], 401);
     }
     /**
      * resend otp code

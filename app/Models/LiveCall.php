@@ -17,13 +17,15 @@ class LiveCall extends Model
         'answered_at',
         'canceled_at',
         'session_id',
-        'agent_id'
+        'agent_id',
+        'ended_at'
     ];
 
     protected $casts = [
         'left_at' => 'datetime',
         'answered_at' => 'datetime',
-        'canceled_at' => 'datetime'
+        'canceled_at' => 'datetime',
+        'ended_at' => 'datetime'
     ];
 
     public function user()

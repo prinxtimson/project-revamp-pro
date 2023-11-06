@@ -23,7 +23,10 @@ function Copyright(props) {
 
 const MainContainer = ({ children }) => {
     return (
-        <div className="tw-w-full tw-flex-1 tw-flex tw-flex-col">
+        <div
+            className="tw-w-full tw-flex-1 tw-flex tw-flex-col"
+            style={{ backgroundColor: "#f5f7ff" }}
+        >
             <Box
                 sx={{
                     margin: 2,
@@ -40,7 +43,12 @@ const MainContainer = ({ children }) => {
                     Tritek Consulting
                 </Avatar>
             </Box>
-            <div className="tw-flex-1">{children}</div>
+            <div
+                className="tw-grow tw-flex tw-flex-col"
+                style={{ backgroundColor: "#f5f7ff" }}
+            >
+                {children}
+            </div>
 
             <Copyright sx={{ mt: 2, mb: 2 }} />
         </div>

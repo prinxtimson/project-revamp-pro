@@ -1,97 +1,138 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import CssBaseline from "@mui/material/CssBaseline";
-import Container from "@mui/material/Container";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableFooter from "@mui/material/TableFooter";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import ClearIcon from "@mui/icons-material/Cancel";
+import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { Column } from "primereact/column";
 import DrawerContainer from "./DrawerContainer";
-import AddUserForm from "./AddUserForm";
 import {
-    getProfiles,
+    getAgents,
     enableUser,
     disableUser,
     deleteUser,
-    getProfilesByPage,
+    getAgentsByPage,
     clear,
+    reset,
 } from "../../features/profile/profileSlice";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import AddUser from "../../components/AddUser";
 
 const axios = window.axios;
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    head: {
-        backgroundColor: theme.palette.common.white,
-        color: theme.palette.common.black,
-    },
-    body: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    root: {
-        "&:nth-of-type(odd)": {
-            backgroundColor: theme.palette.action.hover,
-        },
-    },
-}));
-
 const AgentsTable = () => {
-    const [searchUsers, setSearchUsers] = useState([]);
+    const [openDialog, setOpenDialog] = useState(false);
     const [query, setQuery] = useState("");
+    const [data, setData] = useState([]);
+    const [total, setTotal] = useState();
+    const [globalFilterValue, setGlobalFilterValue] = useState("");
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        event_title: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        phone: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        status: { value: null, matchMode: FilterMatchMode.EQUALS },
+        email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    });
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { users, isLoading, isSuccess, type, isError, message } = useSelector(
         (state) => state.profile
     );
 
     useEffect(() => {
-        dispatch(getProfiles());
+        dispatch(getAgents());
 
         return () => dispatch(clear());
     }, []);
 
     const handleGetUsers = () => {
-        dispatch(getProfiles());
+        dispatch(getAgents());
     };
 
     useEffect(() => {
         if (users) {
-            setSearchUsers(users.data);
+            setData(users.data);
+            setTotal(data.total);
         }
-    }, [users]);
+    }, [users, isSuccess]);
+
+    useEffect(() => {
+        if (isSuccess && message) {
+            toast.success(message);
+        }
+
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
 
     useEffect(() => {
         if (query) {
             axios
                 .get(`/api/users/search/${query}`)
                 .then((res) => {
-                    setSearchUsers(res.data);
+                    setData(res.data);
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
             if (users) {
-                setSearchUsers(users.data);
+                setData(users.data);
             }
         }
     }, [query]);
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters["global"].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
+
+    const renderHeader = () => {
+        return (
+            <div className="tw-flex tw-justify-between tw-items-center">
+                <span className="p-input-icon-left tw-w-80">
+                    <i className="pi pi-search" />
+                    <Dropdown
+                        value={globalFilterValue}
+                        options={data}
+                        onChange={onGlobalFilterChange}
+                        optionLabel="name"
+                        optionValue="name"
+                        filter
+                        showClear
+                        filterBy="name"
+                        placeholder="Search Agent"
+                        className="tw-w-full"
+                    />
+                </span>
+                <Button
+                    type="button"
+                    onClick={() => setOpenDialog(true)}
+                    label="Add Agent"
+                    className="p-button-outlined"
+                />
+            </div>
+        );
+    };
+
+    const header = renderHeader();
+
+    const roleBodyTemplate = (rowData) => {
+        return (
+            <div className="tw-text-base">
+                {rowData.roles[0].name.replace("-", " ")}
+            </div>
+        );
+    };
 
     const handleDelete = (row) => dispatch(deleteUser(row));
 
@@ -99,178 +140,64 @@ const AgentsTable = () => {
 
     const handleEnable = (row) => dispatch(enableUser(row));
 
-    const handleChangePage = (event, newPage) => {
-        dispatch(getProfilesByPage(newPage + 1));
-    };
-
     return (
         <DrawerContainer>
-            <Container component="main" maxWidth="lg">
-                <CssBaseline />
-
-                <Box
-                    sx={{
-                        marginTop: 4,
-                        display: "flex",
-                        flexDirection: "column",
-                        backgroundColor: "white",
-                        borderRadius: 2,
-                        padding: 3,
-                    }}
-                >
-                    <Box sx={{ maxWidth: 480, mb: 2, width: "100%" }}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            label="Search"
-                            type="search"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            InputProps={{
-                                endAdornment: (
-                                    <IconButton
-                                        sx={{
-                                            visibility: query
-                                                ? "visible"
-                                                : "hidden",
-                                        }}
-                                        onClick={() => setQuery("")}
-                                    >
-                                        <ClearIcon />
-                                    </IconButton>
-                                ),
-                            }}
-                        />
-                    </Box>
-                    <Divider />
-                    <TableContainer
-                        variant="elevation"
-                        style={{
-                            borderTopLeftRadius: 0,
-                            borderTopRightRadius: 0,
-                        }}
-                        elevation={0}
-                        component={Paper}
+            <div className="tw-w-full tw-h-full tw-p-5 tw-flex tw-flex-col ">
+                <div className="tw-shadow tw-rounded">
+                    <DataTable
+                        value={data}
+                        paginator
+                        rows={20}
+                        totalRecords={total}
+                        loading={
+                            isLoading &&
+                            type == "profile/get-all-agents/pending"
+                        }
+                        dataKey="id"
+                        filters={filters}
+                        header={header}
+                        onPage={({ page }) =>
+                            dispatch(getAgentsByPage(page + 1))
+                        }
+                        responsiveLayout="scroll"
+                        selectionMode="single"
+                        onSelectionChange={(e) =>
+                            navigate(`/admin/dashboard/agent/${e.value.id}`)
+                        }
+                        breakpoint="0px"
                     >
-                        <Table aria-label="customized table">
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell>ID</StyledTableCell>
-                                    <StyledTableCell>Name</StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Username
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Email
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        Role
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                        Actions
-                                    </StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {isLoading ? (
-                                    <TableRow>
-                                        <StyledTableCell scope="row">
-                                            Loading.....
-                                        </StyledTableCell>
-                                    </TableRow>
-                                ) : !searchUsers || searchUsers.length === 0 ? (
-                                    <TableRow>
-                                        <StyledTableCell scope="row">
-                                            No Data Available.
-                                        </StyledTableCell>
-                                    </TableRow>
-                                ) : (
-                                    searchUsers.map((row) => (
-                                        <StyledTableRow key={row.email}>
-                                            <StyledTableCell>
-                                                {row.id}
-                                            </StyledTableCell>
-                                            <StyledTableCell scope="row">
-                                                {row.name}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.username}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.email}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="left">
-                                                {row.roles[0].name}
-                                            </StyledTableCell>
-                                            <StyledTableCell align="center">
-                                                {row.roles[0].name ===
-                                                "super-admin" ? null : (
-                                                    <Grid container spacing={2}>
-                                                        <Grid item xs={6}>
-                                                            {row.deleted_at ? (
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="outlined"
-                                                                    onClick={() =>
-                                                                        handleEnable(
-                                                                            row.id
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Enable
-                                                                </Button>
-                                                            ) : (
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="outlined"
-                                                                    onClick={() =>
-                                                                        handleDisable(
-                                                                            row.id
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Disable
-                                                                </Button>
-                                                            )}
-                                                        </Grid>
-                                                        <Grid item xs={6}>
-                                                            <Button
-                                                                variant="contained"
-                                                                color="error"
-                                                                size="small"
-                                                                onClick={() =>
-                                                                    handleDelete(
-                                                                        row.id
-                                                                    )
-                                                                }
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                        </Grid>
-                                                    </Grid>
-                                                )}
-                                            </StyledTableCell>
-                                        </StyledTableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                        rowsPerPageOptions={[20]}
-                                        rowsPerPage={users?.per_page || 0}
-                                        count={users?.total || 0}
-                                        page={users?.current_page - 1 || 0}
-                                        onPageChange={handleChangePage}
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
-                    </TableContainer>
-                </Box>
-                <AddUserForm handleGetUsers={handleGetUsers} />
-            </Container>
+                        <Column field="id" header="ID"></Column>
+                        <Column
+                            field="name"
+                            header="Full name"
+                            style={{ width: "20%" }}
+                        ></Column>
+                        <Column
+                            field="username"
+                            header="Username"
+                            style={{ width: "15%" }}
+                        ></Column>
+                        <Column
+                            field="email"
+                            header="Email"
+                            style={{ width: "15%" }}
+                        ></Column>
+                        <Column
+                            field="role"
+                            header="Role"
+                            body={roleBodyTemplate}
+                        ></Column>
+                    </DataTable>
+                </div>
+
+                <AddUser
+                    open={openDialog}
+                    title="Add Agent"
+                    user_type="agent"
+                    handleOnHide={() => setOpenDialog(false)}
+                    handleOnSuccess={handleGetUsers}
+                />
+            </div>
         </DrawerContainer>
     );
 };

@@ -8,8 +8,8 @@ const getFeedbacks = async () => {
     return res.data;
 };
 
-const getFeedbacksByPage = async (page) => {
-    const res = await axios.get(`${API_URL}?page=${page}`);
+const getFeedbacksByAgent = async (id) => {
+    const res = await axios.get(`${API_URL}/agent/${id}`);
 
     return res.data;
 };
@@ -42,7 +42,7 @@ const feedbackService = {
     getFeedbacks,
     getFeedback,
     sendFeedback,
-    getFeedbacksByPage,
+    getFeedbacksByAgent,
     updateFeedback,
     deleteFeedback,
 };

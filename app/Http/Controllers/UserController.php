@@ -11,6 +11,11 @@ use Illuminate\Http\Response;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Mail\NewUser;
+use App\Mail\TrainingRecommend;
+use App\Models\LiveCall;
+use App\Models\Survey;
+use App\Models\Ticket;
+use Exception;
 
 class UserController extends Controller
 {
@@ -24,6 +29,13 @@ class UserController extends Controller
         $users = User::withTrashed()->with(['roles'])->paginate(20);
 
         return $users;
+    }
+
+    public function agents()
+    {
+        $agents = User::role('agent')->with(['roles'])->paginate(20);
+
+        return $agents;
     }
 
     /**
@@ -61,23 +73,24 @@ class UserController extends Controller
             'role' => 'required|string',
             'email' => 'required|string|unique:users,email',
             'phone' => 'max:255|unique:users,phone',
-            'password' => 'required|string'
+            'password' => 'required|string',
+            'job_title' => 'string|required'
         ]);
-
-        $hash = md5(strtolower(trim($fields['email'])));
 
         $user = User::create([
             'name' =>  $fields['firstname'].' '.$fields['lastname'],
             'email' => $fields['email'],
             'phone' => $fields['phone'],
             'username' => strtolower($fields['firstname'].$fields['lastname']),
-            'avatar' => 'https://www.gravatar.com/avatar/'.$hash,
+            'avatar' => '/images/no_img.png',
             'password' => bcrypt($fields['password'])
         ]);
 
         $user->profile()->create([
             'firstname' => $fields['firstname'],
             'lastname' => $fields['lastname'],
+            'phone' => $fields['phone'],
+            'job_title' => $fields['job_title'],
         ]);
 
         $user->assignRole($fields['role']);
@@ -101,8 +114,103 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::find($id)
+        $user = User::find($id)
                     ->load(['profile', 'roles']);
+        if($user->hasRole('agent')){
+            $user->performance_indicators = [
+                'customer_satisfaction' => $this->get_customer_satisfaction($user->id),
+                'average_handle_time' => $this->get_average_handle_time($user->id),
+                'average_response_time' => $this->get_average_response_time($user->id),
+                'customer_wait_time' => $this->get_customer_wait_time($user->id),
+                'call_wrap_up_time' => $this->get_call_wrap_up_time($user->id),
+            ];
+        }
+
+        return $user;
+    }
+
+    private function get_customer_satisfaction($user_id){
+        $surveys = Survey::select('data')->where('user_id', $user_id)->get();
+        $surveys = array_column($surveys->toArray(), 'data');
+                        
+        $surveys = array_column(array_merge(...$surveys), 'rating');
+        $total = count($surveys);
+        $surveys = $total > 0 ? round(((array_reduce($surveys, function($a, $b) {
+                                    return $a+$b;
+                            }, 0)/($total*10))*100), 1) : 0;
+        return $surveys;
+    }
+
+    private function get_average_handle_time($user_id)
+    {
+        $tickets = Ticket::where('user_id', $user_id)->where('status', 'close')->get();
+        $tickets = $tickets->toArray();
+        $total = count($tickets);
+        $tickets = $total > 0 ? round((array_reduce($tickets, function($a, $b) {
+            if($b['status'] == 'close'){
+                $startTime = new Carbon($b['created_at']);
+                $endTime = new Carbon($b['updated_at']);
+                $diff = $startTime->diffInMinutes($endTime);
+                return $a+$diff;
+            }
+            return $a;
+        }, 0)/$total), 1) : 0;
+
+        return $tickets;
+    }
+
+    private function get_average_response_time($user_id)
+    {
+        $livecalls = LiveCall::where('agent_id', $user_id)->whereNotNull('answered_at')->get();
+        $livecalls = $livecalls->toArray();
+        $total = count($livecalls);
+        $livecalls = $total > 0 ? round((array_reduce($livecalls, function($a, $b) {
+            $startTime = new Carbon($b['created_at']);
+            $endTime = new Carbon($b['answered_at']);
+            $diff = $startTime->diffInMinutes($endTime);
+            return $a+$diff;
+        }, 0)/$total), 1) : 0;
+
+        return $livecalls;
+    }
+
+    private function get_abandonment_rate()
+    {
+        $total_abandon = LiveCall::whereNotNull('left_at')->count();
+        $total_livecalls = LiveCall::count();
+        $rate = $total_livecalls > 0 ? round((($total_abandon/$total_livecalls)*100), 1) : 0;
+
+        return $rate;
+    }
+
+    private function get_customer_wait_time($user_id)
+    {
+        $livecalls = LiveCall::where('agent_id', $user_id)->whereNotNull('answered_at')->get();
+        $livecalls = $livecalls->toArray();
+        $total = count($livecalls);
+        $livecalls = $total > 0 ? round((array_reduce($livecalls, function($a, $b) {
+            $startTime = new Carbon($b['created_at']);
+            $endTime = new Carbon($b['answered_at']);
+            $diff = $startTime->diffInMinutes($endTime);
+            return $a+$diff;
+        }, 0)/$total), 1) : 0;
+
+        return $livecalls;
+    }
+
+    private function get_call_wrap_up_time($user_id)
+    {
+        $livecalls = LiveCall::where('agent_id', $user_id)->whereNotNull('answered_at')->get();
+        $livecalls = $livecalls->toArray();
+        $total = count($livecalls);
+        $livecalls = $total > 0 ? round((array_reduce($livecalls, function($a, $b) {
+            $startTime = new Carbon($b['answered_at']);
+            $endTime = new Carbon($b['ended_at']);
+            $diff = $startTime->diffInMinutes($endTime);
+            return $a+$diff;
+        }, 0)/$total), 1) : 0;
+
+        return $livecalls;
     }
 
     /**
@@ -145,22 +253,28 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, User $user)
     {
         //
         $fields = $request->validate([
             'firstname' => 'required|string',
             'lastname' => 'required|string',
+            'phone' => 'max:255|nullable',
+            'username' => 'string|nullable'
         ]);
 
-        $user = Auth::user();
+        $user->name = $fields['firstname'] .' '. $fields['lastname'];
+
+        if(isset($fields['username'])){
+            $user->username = strtolower($fields['username']);
+        }
+        if(isset($fields['phone'])){
+            $user->phone = $fields['phone'];
+        }
         
-        $user->update([
-            'name' =>  $fields['firstname'] .' '. $fields['lastname'],
-            'username' => strtolower($fields['firstname'].$fields['lastname']),
-        ]);
+        $user->save();
 
-        $user->profile()->update($request->except(['avatar', '_method' ]));
+        $user->profile()->update($request->except(['avatar', '_method', 'email', 'username' ]));
 
         if ($request->hasFile('avatar')) {
             $user->clearMediaCollection('avatars');
@@ -207,6 +321,29 @@ class UserController extends Controller
         return $user;
     }
 
+    public function recommend_training(Request $request)
+    {
+        $fields = $request->validate([
+            'user_id' => 'required|integer',
+            'course' => 'required|string',
+            'reason' => 'required|string',
+            'expected_end_date' => 'required|string'
+        ]);
+
+        try {
+            $user = User::find($fields['user_id']);
+
+            $fields['name'] = $user->name;
+            $fields['expected_end_date'] = Carbon::parse($fields['expected_end_date'])->format('M d Y');
+
+            Mail::to($user)->send(new TrainingRecommend($fields));
+
+            return response()->json(['message' => 'Training recommended successful']);
+        } catch (Exception $e) {
+            return response(['message' => $e->getMessage()], 400);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -219,18 +356,6 @@ class UserController extends Controller
         $user = User::withTrashed()->find($id)->load(['roles']);
 
         $deleted = $user->forceDelete($id);
-
-        //Mail::to($user)->send(new UserDelete($user->profile));
-
-        return $deleted;
-    }
-
-    public function delete()
-    {
-        //
-        $user = Auth::user();
-
-        $deleted = $user->forceDelete();
 
         //Mail::to($user)->send(new UserDelete($user->profile));
 

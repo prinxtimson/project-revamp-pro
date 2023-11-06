@@ -22,6 +22,7 @@ class CreateLiveCallsTable extends Migration
             $table->timestamp('left_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
             $table->timestamp('answered_at')->nullable();
+            $table->timestamp('ended_at')->nullable();
             $table->timestamps(); 
         });
     }

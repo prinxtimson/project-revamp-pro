@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "/api";
 
 const getCallbacks = async () => {
-    const res = await axios.get(`${API_URL}/callback`, userData);
+    const res = await axios.get(`${API_URL}/callback`);
 
     return res.data;
 };

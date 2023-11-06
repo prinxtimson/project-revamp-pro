@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -24,9 +24,16 @@ import MenuItem from "@mui/material/MenuItem";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MainListItems from "./ListItems";
+import { Menu as PRMenu } from "primereact/menu";
 import { Link as RouterLink } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
 import { getLivecalls, clear } from "../../features/livecall/livecallSlice";
+import {
+    getNotification,
+    markNotification,
+    onNewNotification,
+} from "../../features/notification/notificationSlice";
+import moment from "moment";
 
 function Copyright(props) {
     return (
@@ -105,10 +112,12 @@ const DrawerContainer = ({ children }) => {
     const [open, setOpen] = useState(false);
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const notificationRef = useRef(null);
 
     const dispatch = useDispatch();
 
-    const { user, isError, message } = useSelector((state) => state.auth);
+    const { user } = useSelector((state) => state.auth);
+    const { notifications, count } = useSelector((state) => state.notification);
 
     useEffect(() => {
         dispatch(getLivecalls());
@@ -141,198 +150,384 @@ const DrawerContainer = ({ children }) => {
     };
 
     return (
-        <ThemeProvider theme={mdTheme}>
-            <Box sx={{ display: "flex", flexGrow: 1, maxWidth: "100%" }}>
-                <CssBaseline />
-                <AppBar position="absolute" open={open}>
-                    <Toolbar
-                        sx={{
-                            pr: "24px", // keep right padding when drawer closed
-                        }}
-                    >
-                        <Box
-                            component="span"
-                            sx={{
-                                ...(open && { display: "none" }),
-                                marginX: 2,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                backgroundColor: "white",
-                                borderRadius: 2,
-                                padding: 1,
-                            }}
-                        >
-                            <Avatar
-                                variant="square"
-                                alt="Dev Arena"
-                                src="/images/logo.png"
-                                sx={{ width: 128, height: 32 }}
-                            >
-                                Dev Arena
-                            </Avatar>
-                        </Box>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={toggleDrawer}
-                            sx={{
-                                marginRight: "36px",
-                                ...(open && { display: "none" }),
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{ flexGrow: 1 }}
-                        >
-                            Dashboard
-                        </Typography>
-                        {/*<IconButton color="inherit">
-                            <Badge badgeContent={0} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>*/}
-                        <Box sx={{ flexGrow: 0 }}>
-                            <Tooltip title="Open settings">
-                                <IconButton
-                                    onClick={handleOpenUserMenu}
-                                    sx={{ p: 0 }}
-                                >
-                                    <Avatar alt={user?.name} src={user?.avatar}>
-                                        {`${user?.profile?.firstname.charAt(
-                                            0
-                                        )}${user?.profile?.lastname.charAt(0)}`}
-                                    </Avatar>
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                sx={{ mt: "45px" }}
-                                id="menu-appbar"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-                            >
-                                {settings.map((setting) =>
-                                    setting.name === "Logout" ? (
-                                        <Link
-                                            key={setting.name}
-                                            href={setting.route}
-                                            onClick={handleLogout}
-                                        >
-                                            <MenuItem
-                                                onClick={handleCloseNavMenu}
-                                            >
-                                                <Typography textAlign="center">
-                                                    {setting.name}
-                                                </Typography>
-                                            </MenuItem>
-                                        </Link>
-                                    ) : (
-                                        <RouterLink
-                                            to={setting.route}
-                                            key={setting.name}
-                                        >
-                                            <MenuItem
-                                                onClick={handleCloseNavMenu}
-                                            >
-                                                <Typography textAlign="center">
-                                                    {setting.name}
-                                                </Typography>
-                                            </MenuItem>
-                                        </RouterLink>
-                                    )
-                                )}
-                            </Menu>
-                        </Box>
-                    </Toolbar>
-                </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <Box sx={{ display: "flex" }}>
-                        <Box
-                            component="span"
-                            sx={{
-                                flexGrow: 1,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <Avatar
-                                variant="square"
-                                alt="Dev Arena"
-                                src="/images/logo.png"
-                                sx={{ width: 128, height: 32 }}
-                            >
-                                Dev Arena
-                            </Avatar>
-                        </Box>
-                        <Toolbar
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "flex-end",
-                                px: [1],
-                            }}
-                        >
-                            <IconButton onClick={toggleDrawer}>
-                                <ChevronLeftIcon />
-                            </IconButton>
-                        </Toolbar>
-                    </Box>
-                    <Divider />
-                    <List>
-                        <MainListItems />
-                    </List>
-                </Drawer>
-                <Box
-                    component="main"
+        <Box
+            sx={{
+                display: "flex",
+                flexGrow: 1,
+                maxWidth: "100%",
+                backgroundColor: "#f5f7ff",
+            }}
+        >
+            <CssBaseline />
+            <AppBar position="absolute" open={open}>
+                <Toolbar
                     sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === "light"
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
-                        flexGrow: 1,
-                        height: "100vh",
-                        overflow: "auto",
-                        width: { sm: `calc(100vw - ${drawerWidth}px)` },
+                        pr: "24px", // keep right padding when drawer closed
                     }}
                 >
-                    <Toolbar />
-                    <Stack sx={{ width: "100%" }} spacing={2}>
-                        {isError && message && (
-                            <Snackbar
-                                anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                open={Boolean(message)}
-                                autoHideDuration={6000}
+                    <Box
+                        component="span"
+                        sx={{
+                            ...(open && { display: "none" }),
+                            marginX: 2,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            backgroundColor: "white",
+                            borderRadius: 2,
+                            padding: 1,
+                        }}
+                    >
+                        <Avatar
+                            variant="square"
+                            alt="Dev Arena"
+                            src="/images/logo.png"
+                            sx={{ width: 128, height: 32 }}
+                        >
+                            Dev Arena
+                        </Avatar>
+                    </Box>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={toggleDrawer}
+                        sx={{
+                            marginRight: "36px",
+                            ...(open && { display: "none" }),
+                        }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography
+                        component="h1"
+                        variant="h6"
+                        color="inherit"
+                        noWrap
+                        sx={{ flexGrow: 1 }}
+                    >
+                        Dashboard
+                    </Typography>
+                    <IconButton
+                        color="inherit"
+                        onClick={(e) => notificationRef.current?.toggle(e)}
+                        style={{ marginRight: 10 }}
+                    >
+                        <Badge badgeContent={0} color="secondary">
+                            <NotificationsIcon />
+                        </Badge>
+
+                        <PRMenu
+                            baseZIndex={5000}
+                            model={[
+                                {
+                                    label: "Notification history",
+                                    template: (item) => (
+                                        <div className="tw-px-4 tw-py-2 tw-bg-gray-200 ">
+                                            <div className="tw-float-right">
+                                                <RouterLink
+                                                    to="/admin/dashboard/notification-history"
+                                                    className="tw-text-blue-500 "
+                                                >
+                                                    {item.label}
+                                                </RouterLink>
+                                            </div>
+                                            <div className="tw-clear-both"></div>
+                                        </div>
+                                    ),
+                                },
+                                notifications && notifications.length > 0
+                                    ? notifications.slice(0, 9).map((val) =>
+                                          val.type ==
+                                          "App\\Notifications\\BookingCancel"
+                                              ? {
+                                                    label: val.data.read_at,
+                                                    template: (
+                                                        item,
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    Booking had
+                                                                    been
+                                                                    cancelled
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {item.label
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment().fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : val.type ==
+                                                "App\\Notifications\\BookingComplete"
+                                              ? {
+                                                    label: val.data.read_at,
+                                                    template: (
+                                                        item,
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    Booking had
+                                                                    been
+                                                                    completed
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {item.label
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment().fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : val.type ==
+                                                "App\\Notifications\\BookingRescheduled"
+                                              ? {
+                                                    label: val.data.read_at,
+                                                    template: (
+                                                        item,
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    Booking had
+                                                                    been
+                                                                    rescheduled
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {item.label
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment().fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : val.type ==
+                                                "App\\Notifications\\CheckIn"
+                                              ? {
+                                                    label: val.data.read_at,
+                                                    template: (
+                                                        item,
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    A candidate
+                                                                    had joined
+                                                                    the meeting
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {item.label
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment().fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : val.type ==
+                                                "App\\Notifications\\CheckOut"
+                                              ? {
+                                                    label: val.data.read_at,
+                                                    template: (
+                                                        item,
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    A candidate
+                                                                    had left the
+                                                                    meeting
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {item.label
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment().fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : {}
+                                      )
+                                    : [
+                                          {
+                                              label: "No notiffication yet...",
+                                              template: (item, options) => (
+                                                  <div className="tw-py-2 tw-px-4">
+                                                      <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                          <p className="tw-my-0 tw-grow">
+                                                              {item.label}
+                                                          </p>
+                                                          <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                      </div>
+                                                  </div>
+                                              ),
+                                          },
+                                      ],
+                            ].flat()}
+                            popup
+                            ref={notificationRef}
+                            onShow={() => dispatch(markNotification())}
+                            style={{ width: 460 }}
+                            //className="tw-w-full sm:tw-w-[640px]"
+                        />
+                    </IconButton>
+                    <Box sx={{ flexGrow: 0 }}>
+                        <Tooltip title="Open settings">
+                            <IconButton
+                                onClick={handleOpenUserMenu}
+                                sx={{ p: 0 }}
                             >
-                                <Alert severity="error">{message}</Alert>
-                            </Snackbar>
-                        )}
-                    </Stack>
-                    <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
-                        {children}
-                        <Copyright sx={{ pt: 4 }} />
-                    </Container>
+                                <Avatar alt={user?.name} src={user?.avatar}>
+                                    {`${user?.profile?.firstname.charAt(
+                                        0
+                                    )}${user?.profile?.lastname.charAt(0)}`}
+                                </Avatar>
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            sx={{ mt: "45px" }}
+                            id="menu-appbar"
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                            }}
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
+                        >
+                            {settings.map((setting) =>
+                                setting.name === "Logout" ? (
+                                    <Link
+                                        key={setting.name}
+                                        href={setting.route}
+                                        onClick={handleLogout}
+                                    >
+                                        <MenuItem onClick={handleCloseNavMenu}>
+                                            <Typography textAlign="center">
+                                                {setting.name}
+                                            </Typography>
+                                        </MenuItem>
+                                    </Link>
+                                ) : (
+                                    <RouterLink
+                                        to={setting.route}
+                                        key={setting.name}
+                                    >
+                                        <MenuItem onClick={handleCloseNavMenu}>
+                                            <Typography textAlign="center">
+                                                {setting.name}
+                                            </Typography>
+                                        </MenuItem>
+                                    </RouterLink>
+                                )
+                            )}
+                        </Menu>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+            <Drawer variant="permanent" open={open}>
+                <Box sx={{ display: "flex" }}>
+                    <Box
+                        component="span"
+                        sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Avatar
+                            variant="square"
+                            alt="Dev Arena"
+                            src="/images/logo.png"
+                            sx={{ width: 128, height: 32 }}
+                        >
+                            Dev Arena
+                        </Avatar>
+                    </Box>
+                    <Toolbar
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-end",
+                            px: [1],
+                        }}
+                    >
+                        <IconButton onClick={toggleDrawer}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                    </Toolbar>
                 </Box>
+                <Divider />
+                <List>
+                    <MainListItems />
+                </List>
+            </Drawer>
+            <Box
+                component="main"
+                sx={{
+                    backgroundColor: "#f5f7ff",
+                    flexGrow: 1,
+                    height: "100vh",
+                    overflow: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    width: { sm: `calc(100vw - ${drawerWidth}px)` },
+                }}
+            >
+                <Toolbar />
+
+                <Container
+                    maxWidth="lg"
+                    sx={{
+                        mt: 2,
+                        mb: 2,
+                        flexGrow: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    {children}
+                    <Copyright sx={{ pt: 4 }} />
+                </Container>
             </Box>
-        </ThemeProvider>
+        </Box>
     );
 };
 

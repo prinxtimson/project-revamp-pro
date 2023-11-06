@@ -13,8 +13,13 @@ import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import { deleteAccount, updateUser } from "../../features/auth/authSlice";
+import {
+    deleteAccount,
+    updateUser,
+    reset,
+} from "../../features/auth/authSlice";
 import DrawerContainer from "./DrawerContainer";
+import { toast } from "react-toastify";
 
 const ProfileForm = () => {
     const [inputRef, setInputRef] = useState(null);
@@ -42,6 +47,14 @@ const ProfileForm = () => {
             });
         }
     }, [user]);
+
+    useEffect(() => {
+        if (isSuccess && message) {
+            toast.success(message);
+        }
+
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
 
     const handleSubmit = (e) => {
         e.preventDefault();

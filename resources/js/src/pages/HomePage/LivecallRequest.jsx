@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -6,15 +6,15 @@ import Box from "@mui/material/Box";
 const speech = new SpeechSynthesisUtterance();
 
 const LivecallRequest = ({ livecall, handleClickOpen, count }) => {
-    const [min, setMin] = React.useState(0);
+    const [min, setMin] = useState(0);
 
-    React.useEffect(() => {
+    useEffect(() => {
         let total = count * 5;
 
         setMin(total);
     }, [count]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (min > 0) {
             if ("speechSynthesis" in window) {
                 speech.text =

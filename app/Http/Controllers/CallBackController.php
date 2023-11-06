@@ -141,8 +141,8 @@ class CallBackController extends Controller
     {
         $from = $request->from;
         $to = $request->to;
-
-        return $this->excel->download(new CallbackExport($from, $to), 'live_support_call.xlsx');
+        
+        return $this->excel->download(new CallbackExport($from, $to), 'live_support_callback.xlsx');
     }
 
     public function search($query)

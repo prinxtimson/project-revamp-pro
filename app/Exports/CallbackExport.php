@@ -33,11 +33,16 @@ class CallbackExport implements FromQuery, WithMapping, ShouldAutoSize, WithHead
         $from = $this->from;
         $to = $this->to;
 
-        $this->callbacks =  CallBack::query()->when($from, function($q) use ($from) {
-            return $q->whereDate('created_at', '>=', $from);
-        })->when($to, function($q) use ($to) {
-            return $q->whereDate('created_at', '<=', $to);
-        })->with('user');
+        if(isset($from) && isset($to)){
+            $this->callbacks =  CallBack::query()->when($from, function($q) use ($from) {
+                return $q->whereDate('created_at', '>=', $from);
+            })->when($to, function($q) use ($to) {
+                return $q->whereDate('created_at', '<=', $to);
+            })->with('user');
+        }else {
+            $this->callbacks =  CallBack::query()->with('user');
+        }
+        
 
         return $this->callbacks;
     }
