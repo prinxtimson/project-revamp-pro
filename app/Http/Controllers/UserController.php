@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LeaderboardExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -16,9 +17,17 @@ use App\Models\LiveCall;
 use App\Models\Survey;
 use App\Models\Ticket;
 use Exception;
+use Maatwebsite\Excel\Excel;
 
 class UserController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -36,6 +45,27 @@ class UserController extends Controller
         $agents = User::role('agent')->with(['roles'])->paginate(20);
 
         return $agents;
+    }
+
+    public function download(Request $request)
+    {
+        $from = $request->from;
+        $to = $request->to;
+        $type = $request->type;
+        $date = Carbon::now()->getTimestamp();
+
+        if(isset($type) && $type == 'csv'){
+            $filename =  'live_support_leaderboard'.$date.'.'.$type;
+            return $this->excel->download(new LeaderboardExport($from, $to), $filename, Excel::CSV); 
+        }
+
+        if(isset($type) && $type == 'pdf'){
+            $filename =  'live_support_leaderboard'.$date.'.'.$type;
+            return $this->excel->download(new LeaderboardExport($from, $to), $filename, Excel::MPDF);
+        }
+        
+        $filename =  'live_support_leaderboard'.$date.'.xlsx';
+        return $this->excel->download(new LeaderboardExport($from, $to), $filename, Excel::XLSX);
     }
 
     /**

@@ -4,6 +4,7 @@ import livecallService from "./livecallService";
 const initialState = {
     livecalls: null,
     livecall: null,
+    summary: [],
     type: "",
     count: 0,
     isError: false,
@@ -234,6 +235,10 @@ export const livecallSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.message = "";
+            state.summary = [];
+        },
+        onUpdateLivecallSummary: (state, action) => {
+            state.summary = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -384,6 +389,11 @@ export const livecallSlice = createSlice({
     },
 });
 
-export const { onSetLivecalls, onUpdateLivecall, reset, clear } =
-    livecallSlice.actions;
+export const {
+    onSetLivecalls,
+    onUpdateLivecall,
+    reset,
+    clear,
+    onUpdateLivecallSummary,
+} = livecallSlice.actions;
 export default livecallSlice.reducer;

@@ -141,8 +141,21 @@ class CallBackController extends Controller
     {
         $from = $request->from;
         $to = $request->to;
+        $type = $request->type;
+        $date = Carbon::now()->getTimestamp();
+
+        if(isset($type) && $type == 'csv'){
+            $filename =  'live_support_callback'.$date.'.'.$type;
+            return $this->excel->download(new CallbackExport($from, $to), $filename, Excel::CSV); 
+        }
+
+        if(isset($type) && $type == 'pdf'){
+            $filename =  'live_support_callback'.$date.'.'.$type;
+            return $this->excel->download(new CallbackExport($from, $to), $filename, Excel::MPDF);
+        }
         
-        return $this->excel->download(new CallbackExport($from, $to), 'live_support_callback.xlsx');
+        $filename =  'live_support_callback'.$date.'.xlsx';
+        return $this->excel->download(new CallbackExport($from, $to), $filename,  Excel::XLSX); 
     }
 
     public function search($query)

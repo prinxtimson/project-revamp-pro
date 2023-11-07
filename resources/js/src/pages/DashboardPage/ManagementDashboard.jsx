@@ -1,49 +1,56 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Avatar } from "primereact/avatar";
-import { ProgressBar } from "primereact/progressbar";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
+import { Skeleton } from "primereact/skeleton";
 import DrawerContainer from "./DrawerContainer";
 import { getAgents, clear, reset } from "../../features/profile/profileSlice";
 import axios from "axios";
 import { getFeedbacks } from "../../features/feedback/feedbackSlice";
 import LivecallRequestChart from "../../components/LivecallRequestChart";
 import CustomerRatingChart from "../../components/CustomerRatingChart";
+import { onUpdateCallbackSummary } from "../../features/callback/callbackSlice";
+import { onUpdateLivecallSummary } from "../../features/livecall/livecallSlice";
+import { onUpdateTicketSummary } from "../../features/ticket/ticketSlice";
+import LeaderboardWidget from "../../components/LeaderboardWidget";
+import CallbackChartWidget from "../../components/CallbackChartWidget";
+import TicketChartWidget from "../../components/TicketChartWidget";
+import {
+    getSettings,
+    updateSettings,
+} from "../../features/setting/settingSlice";
 
 const ManagementDashboard = () => {
+    const [widgetDisplay, setWidgetDisplay] = useState([]);
     const [queryFilter, setQueryFilter] = useState(null);
+    const [selectedWidget, setSelectedWidget] = useState(null);
     const [allSummary, setAllSummary] = useState(null);
-    const [cbSummary, setCbSummary] = useState([]);
-    const [lcSummary, setLcSummary] = useState([]);
-    const [tkSummary, setTkSummary] = useState([]);
     const [data, setData] = useState({
         start: null,
         end: null,
         format: "xlsx",
         type: "",
     });
-    const [agents, setAgents] = useState([]);
     const dispatch = useDispatch();
 
-    const { users, isLoading, isSuccess, type, isError, message } = useSelector(
-        (state) => state.profile
-    );
-    const { feedbacks } = useSelector((state) => state.feedback);
+    const { settings, isLoading } = useSelector((state) => state.setting);
 
     useEffect(() => {
         dispatch(getAgents());
         dispatch(getFeedbacks());
+        dispatch(getSettings());
 
         return () => dispatch(clear());
     }, []);
 
     useEffect(() => {
-        if (users) {
-            setAgents(users.data);
+        let filterSetting = settings.find((item) => item.key == "widgets");
+
+        if (filterSetting) {
+            setWidgetDisplay(JSON.parse(filterSetting.value));
         }
-    }, [users]);
+    }, [settings]);
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
@@ -74,11 +81,11 @@ const ManagementDashboard = () => {
                     `/api/summary/callback?from=${payload.from}&to=${payload.to}`
                 )
                 .then((res) => {
-                    setCbSummary(res.data);
+                    dispatch(onUpdateCallbackSummary(res.data));
                 });
         } else {
             axios.get("/api/summary/callback").then((res) => {
-                setCbSummary(res.data);
+                dispatch(onUpdateCallbackSummary(res.data));
             });
         }
     };
@@ -90,11 +97,11 @@ const ManagementDashboard = () => {
                     `/api/summary/livecall?from=${payload.from}&to=${payload.to}`
                 )
                 .then((res) => {
-                    setLcSummary(res.data);
+                    dispatch(onUpdateLivecallSummary(res.data));
                 });
         } else {
             axios.get("/api/summary/livecall").then((res) => {
-                setLcSummary(res.data);
+                dispatch(onUpdateLivecallSummary(res.data));
             });
         }
     };
@@ -106,11 +113,11 @@ const ManagementDashboard = () => {
                     `/api/summary/ticket?from=${payload.from}&to=${payload.to}`
                 )
                 .then((res) => {
-                    setTkSummary(res.data);
+                    dispatch(onUpdateTicketSummary(res.data));
                 });
         } else {
             axios.get("/api/summary/ticket").then((res) => {
-                setTkSummary(res.data);
+                dispatch(onUpdateTicketSummary(res.data));
             });
         }
     };
@@ -132,27 +139,57 @@ const ManagementDashboard = () => {
             axios
                 .get(`/api/summary/ticket?category=${queryFilter}`)
                 .then((res) => {
-                    setTkSummary(res.data);
+                    dispatch(onUpdateTicketSummary(res.data));
                 });
             axios
                 .get(`/api/summary/livecall?category=${queryFilter}`)
                 .then((res) => {
-                    setLcSummary(res.data);
+                    dispatch(onUpdateLivecallSummary(res.data));
                 });
             axios
                 .get(`/api/summary/callback?category=${queryFilter}`)
                 .then((res) => {
-                    setCbSummary(res.data);
+                    dispatch(onUpdateCallbackSummary(res.data));
                 });
         }
+    };
+
+    const handleOnRemoveWidget = (widget) => {
+        let selectedWidgets = [...widgetDisplay];
+
+        if (selectedWidgets.includes(widget)) {
+            selectedWidgets.splice(selectedWidgets.indexOf(widget), 1);
+        }
+        let data = [
+            {
+                key: "widgets",
+                value: JSON.stringify(selectedWidgets),
+            },
+        ];
+        dispatch(updateSettings(data));
+    };
+
+    const handleOnAddWidget = () => {
+        let selectedWidgets = [...widgetDisplay];
+
+        if (!selectedWidgets.includes(selectedWidget)) {
+            selectedWidgets.push(selectedWidget);
+        }
+        let data = [
+            {
+                key: "widgets",
+                value: JSON.stringify(selectedWidgets),
+            },
+        ];
+        dispatch(updateSettings(data));
     };
 
     return (
         <DrawerContainer>
             <div className="tw-w-full tw-max-h-full">
-                <div className="tw-shadow-md tw-rounded-md tw-bg-white tw-p-6 tw-my-6">
+                <div className="tw-shadow-md tw-rounded-md tw-bg-white tw-p-5 tw-my-5">
                     <div className="md:tw-flex tw-items-center tw-gap-4">
-                        <div className="tw-grow tw-grid tw-grid-col md:tw-grid-cols-3 tw-gap-2">
+                        <div className="tw-grow tw-grid tw-grid-col md:tw-grid-cols-3 tw-gap-2 tw-mb-4 sm:tw-mb-0">
                             <div className="p-float-label">
                                 <Calendar
                                     value={data.start}
@@ -185,7 +222,7 @@ const ManagementDashboard = () => {
                                 <Button
                                     label="Filter"
                                     onClick={handleOnSubmit}
-                                    className=""
+                                    className="tw-flex-grow"
                                 />
                                 <Button
                                     label="Clear"
@@ -201,7 +238,7 @@ const ManagementDashboard = () => {
                                             type: "",
                                         });
                                     }}
-                                    className="p-button-outlined"
+                                    className="p-button-outlined tw-flex-grow"
                                 />
                             </div>
                         </div>
@@ -255,156 +292,106 @@ const ManagementDashboard = () => {
                     </div>
                 </div>
 
-                <div className="tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-3  tw-mb-5">
-                    <div className="tw-border tw-rounded tw-p-4 tw-bg-white tw-shadow-md tw-overflow-hidden">
-                        <div className="">
-                            <a
-                                href="/livecall/report/download"
-                                className="tw-float-right"
-                                download
-                            >
-                                <i className="pi pi-fw pi-download" />
-                            </a>
-
-                            <h2 className="tw-text-center tw-text-lg tw-font-semibold">
-                                Livecall Request Category
-                            </h2>
-                        </div>
-                        <div className="tw-h-full tw-overflow-auto">
-                            {/* {lcSummary.map((item) => (
-                                <div
-                                    className="tw-flex tw-justify-between tw-items-center tw-p-4 tw-border-b"
-                                    key={item.query_type}
-                                >
-                                    <p className="tw-my-0">{item.query_type}</p>
-                                    <p className="tw-my-0">{item.total}</p>
-                                </div>
-                            ))} */}
-                            <LivecallRequestChart livecall={lcSummary} />
-                        </div>
-                    </div>
-                    <div className="tw-border tw-rounded tw-p-4 tw-bg-white  tw-shadow-md tw-overflow-hidden">
-                        <div className="tw-text-center">
-                            <h2 className="tw-text-lg tw-font-semibold">
-                                Leaderboard
-                            </h2>
-                        </div>
-                        <div className="tw-h-full tw-overflow-auto">
-                            {agents.map((agent) => (
-                                <div
-                                    className="tw-p-2 tw-flex tw-items-center tw-gap-2 tw-border-b"
-                                    key={agent.id}
-                                >
-                                    <div className="tw-flex tw-items-center">
-                                        <Avatar
-                                            image={agent.avatar}
-                                            className="tw-mr-2"
-                                            shape="circle"
-                                        />
-                                        <span>{agent.name}</span>
-                                    </div>
-                                    <div className="tw-grow">
-                                        <ProgressBar
-                                            value={
-                                                feedbacks &&
-                                                Math.round(
-                                                    feedbacks
-                                                        .filter(
-                                                            (item) =>
-                                                                item.user_id ==
-                                                                agent.id
-                                                        )
-                                                        .map(
-                                                            (item) =>
-                                                                item.data
-                                                                    .map(
-                                                                        (val) =>
-                                                                            val.rating
-                                                                    )
-                                                                    ?.reduce(
-                                                                        (
-                                                                            total,
-                                                                            val
-                                                                        ) =>
-                                                                            total +
-                                                                            val,
-                                                                        0
-                                                                    ) / 3
-                                                        )
-                                                        .reduce(
-                                                            (total, val) =>
-                                                                total + val,
-                                                            0
-                                                        )
-                                                )
-                                            }
-                                            style={{ height: "18px" }}
-                                        ></ProgressBar>
-                                    </div>
-                                    <div className="">
-                                        {feedbacks &&
-                                            Math.round(
-                                                feedbacks
-                                                    .filter(
-                                                        (item) =>
-                                                            item.user_id ==
-                                                            agent.id
-                                                    )
-                                                    .map(
-                                                        (item) =>
-                                                            item.data
-                                                                .map(
-                                                                    (val) =>
-                                                                        val.rating
-                                                                )
-                                                                ?.reduce(
-                                                                    (
-                                                                        total,
-                                                                        val
-                                                                    ) =>
-                                                                        total +
-                                                                        val,
-                                                                    0
-                                                                ) / 3
-                                                    )
-                                                    ?.reduce(
-                                                        (total, val) =>
-                                                            total + val,
-                                                        0
-                                                    )
-                                            )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="tw-border tw-rounded tw-p-4 tw-bg-white  tw-shadow-md tw-overflow-hidden">
-                        <div className="tw-text-center">
-                            <a
-                                href="/callback/report/download"
-                                className="tw-float-right"
-                                download
-                            >
-                                <i className="pi pi-fw pi-download" />
-                            </a>
-                            <h2 className="tw-text-lg tw-font-semibold">
-                                Customer Satisfaction
-                            </h2>
-                        </div>
-                        <div className="tw-h-full tw-overflow-auto">
-                            {/* {cbSummary.map((item) => (
-                                <div
-                                    className="tw-flex tw-justify-between tw-items-center tw-p-4 tw-border-b"
-                                    key={item.query_type}
-                                >
-                                    <p className="tw-my-0">{item.query_type}</p>
-                                    <p className="tw-my-0">{item.total}</p>
-                                </div>
-                            ))} */}
-                            <CustomerRatingChart feedbacks={feedbacks} />
-                        </div>
-                    </div>
+                <div className="tw-mb-5 tw-border tw-rounded tw-bg-white tw-p-4 sm:tw-flex tw-gap-2">
+                    <Dropdown
+                        value={selectedWidget}
+                        options={WIDGETS}
+                        onChange={(e) => setSelectedWidget(e.value)}
+                        showClear
+                        optionLabel="name"
+                        optionValue="value"
+                        placeholder="Select Widget"
+                        className="tw-w-full sm:tw-w-80 tw-mb-2 sm:tw-mb-0"
+                    />
+                    <Button
+                        label="Add Widget"
+                        onClick={handleOnAddWidget}
+                        className="tw-w-full sm:tw-w-fit"
+                    />
                 </div>
+
+                {isLoading ? (
+                    <div className="tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-3  tw-mb-5">
+                        <Skeleton width="100%" height="20rem" />
+                        <Skeleton width="100%" height="20rem" />
+                        <Skeleton width="100%" height="20rem" />
+                    </div>
+                ) : (
+                    <div className="tw-grid tw-grid-cols-1 tw-gap-2 md:tw-grid-cols-3  tw-mb-5">
+                        {widgetDisplay.length > 0 ? (
+                            widgetDisplay.map((item) => {
+                                if (item == "livecall") {
+                                    return (
+                                        <LivecallRequestChart
+                                            key={item}
+                                            handleOnRemoveWidget={
+                                                handleOnRemoveWidget
+                                            }
+                                        />
+                                    );
+                                }
+                                if (item == "leaderboard") {
+                                    return (
+                                        <LeaderboardWidget
+                                            key={item}
+                                            handleOnRemoveWidget={
+                                                handleOnRemoveWidget
+                                            }
+                                        />
+                                    );
+                                }
+                                if (item == "callback") {
+                                    return (
+                                        <CallbackChartWidget
+                                            key={item}
+                                            handleOnRemoveWidget={
+                                                handleOnRemoveWidget
+                                            }
+                                        />
+                                    );
+                                }
+                                if (item == "feedback") {
+                                    return (
+                                        <CustomerRatingChart
+                                            key={item}
+                                            handleOnRemoveWidget={
+                                                handleOnRemoveWidget
+                                            }
+                                        />
+                                    );
+                                }
+                                if (item == "ticket_raised") {
+                                    return (
+                                        <TicketChartWidget
+                                            key={item}
+                                            handleOnRemoveWidget={
+                                                handleOnRemoveWidget
+                                            }
+                                        />
+                                    );
+                                }
+                            })
+                        ) : (
+                            <>
+                                <LivecallRequestChart
+                                    handleOnRemoveWidget={handleOnRemoveWidget}
+                                />
+                                <LeaderboardWidget
+                                    handleOnRemoveWidget={handleOnRemoveWidget}
+                                />
+                                <CustomerRatingChart
+                                    handleOnRemoveWidget={handleOnRemoveWidget}
+                                />
+                                <CallbackChartWidget
+                                    handleOnRemoveWidget={handleOnRemoveWidget}
+                                />
+                                <TicketChartWidget
+                                    handleOnRemoveWidget={handleOnRemoveWidget}
+                                />
+                            </>
+                        )}
+                    </div>
+                )}
             </div>
         </DrawerContainer>
     );
@@ -424,4 +411,27 @@ const QUERY_TYPE = [
     "LMS Queries",
     "Access Issue",
     "Other IT Issues",
+];
+
+const WIDGETS = [
+    {
+        name: "Livecall Widget",
+        value: "livecall",
+    },
+    {
+        name: "Leaderboard Widget",
+        value: "leaderboard",
+    },
+    {
+        name: "Callback Widget",
+        value: "callback",
+    },
+    {
+        name: "Feedback Widget",
+        value: "feedback",
+    },
+    {
+        name: "Ticket Raised Widget",
+        value: "ticket_raised",
+    },
 ];

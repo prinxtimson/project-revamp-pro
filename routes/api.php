@@ -131,3 +131,5 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin|manager']
     Route::post('agents/recommend-training', [UserController::class, 'recommend_training']);
 
 });
+
+Route::get('testing', [SummaryController::class, 'callback']);

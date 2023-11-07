@@ -1,18 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import { Menu } from "primereact/menu";
 import { Chart } from "primereact/chart";
+import { BsGear } from "react-icons/bs";
 
-const LivecallRequestChart = ({ livecall }) => {
+const LivecallRequestChart = ({ handleOnRemoveWidget }) => {
+    const menuRef = useRef();
+    const settingMenuRef = useRef();
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
 
+    const { summary } = useSelector((state) => state.livecall);
+
     useEffect(() => {
-        if (livecall) {
+        if (summary) {
             const documentStyle = getComputedStyle(document.documentElement);
 
             let data = [];
             let labels = [];
 
-            livecall.map((item) => {
+            summary.map((item) => {
                 labels.push(item.query_type);
                 data.push(item.total);
             });
@@ -24,11 +31,9 @@ const LivecallRequestChart = ({ livecall }) => {
                         label: "Livecall",
                         data,
                         backgroundColor: [
-                            documentStyle.getPropertyValue("--blue-500"),
                             documentStyle.getPropertyValue("--green-500"),
                         ],
                         hoverBackgroundColor: [
-                            documentStyle.getPropertyValue("--blue-400"),
                             documentStyle.getPropertyValue("--green-400"),
                         ],
                     },
@@ -48,16 +53,82 @@ const LivecallRequestChart = ({ livecall }) => {
             };
             setChartOptions(options);
         }
-    }, [livecall]);
+    }, [summary]);
+
+    const MENUMODEL = [
+        {
+            label: "Remove",
+            command: () => {
+                handleOnRemoveWidget("livecall");
+            },
+        },
+    ];
 
     return (
-        <Chart
-            type="bar"
-            data={chartData}
-            options={chartOptions}
-            className="tw-min-w-full "
-        />
+        <div className="tw-border tw-rounded tw-p-4 tw-bg-white tw-shadow-md tw-overflow-hidden">
+            <div className="">
+                <div className="tw-float-right tw-flex tw-items-center tw-gap-2">
+                    <>
+                        <a
+                            href="#"
+                            className="tw-float-right"
+                            onClick={(e) => settingMenuRef.current?.toggle(e)}
+                        >
+                            <BsGear />
+                        </a>
+                        <Menu model={MENUMODEL} ref={settingMenuRef} popup />
+                    </>
+
+                    <>
+                        <a
+                            href="#"
+                            className="tw-float-right"
+                            onClick={(e) => menuRef.current?.toggle(e)}
+                        >
+                            <i className="pi pi-fw pi-download" />
+                        </a>
+                        <Menu model={LIVECALLMODEL} ref={menuRef} popup />
+                    </>
+                </div>
+
+                <h2 className="tw-text-center tw-text-lg tw-font-semibold">
+                    Livecall Request Category
+                </h2>
+            </div>
+            <div className="tw-h-full tw-overflow-auto">
+                <Chart
+                    type="bar"
+                    data={chartData}
+                    options={chartOptions}
+                    className="tw-min-w-full "
+                />
+            </div>
+        </div>
     );
 };
 
 export default LivecallRequestChart;
+
+const LIVECALLMODEL = [
+    {
+        label: "Excel",
+        value: "xlsx",
+        command: () => {
+            window.open(`/livecall/report/download?type=xlsx`, "_blank");
+        },
+    },
+    {
+        label: "CSV",
+        value: "csv",
+        command: () => {
+            window.open(`/livecall/report/download?type=csv`, "_blank");
+        },
+    },
+    {
+        label: "PDF",
+        value: "pdf",
+        command: () => {
+            window.open(`/livecall/report/download?type=pdf`, "_blank");
+        },
+    },
+];

@@ -12,9 +12,7 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
-import Snackbar from "@mui/material/Snackbar";
+import { InputText } from "primereact/inputtext";
 import Link from "@mui/material/Link";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -23,6 +21,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
 import MainListItems from "./ListItems";
 import { Menu as PRMenu } from "primereact/menu";
 import { Link as RouterLink } from "react-router-dom";
@@ -34,6 +33,7 @@ import {
     onNewNotification,
 } from "../../features/notification/notificationSlice";
 import moment from "moment";
+import searchData from "../../utils/searchData";
 
 function Copyright(props) {
     return (
@@ -109,7 +109,12 @@ const settings = [
 ];
 
 const DrawerContainer = ({ children }) => {
+    const [filteredSearch, setFilteredSearch] = useState([]);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [searchShow, setSearchShow] = useState(false);
+    const [searchText, setSearchText] = useState("");
     const [open, setOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const notificationRef = useRef(null);
@@ -124,6 +129,21 @@ const DrawerContainer = ({ children }) => {
 
         return () => dispatch(clear());
     }, []);
+
+    useEffect(() => {
+        window.addEventListener("resize", updateWindowWidth);
+        return () => window.removeEventListener("resize", updateWindowWidth);
+    }, []);
+
+    useEffect(() => {
+        if (windowWidth >= 640) {
+            setSearchOpen(false);
+        }
+    }, [windowWidth]);
+
+    const updateWindowWidth = () => {
+        setWindowWidth(window.innerWidth);
+    };
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -149,6 +169,26 @@ const DrawerContainer = ({ children }) => {
         dispatch(logout());
     };
 
+    useEffect(() => {
+        if (searchText.length > 0) {
+            let _filteredSearch = searchData.filter(
+                (data) =>
+                    data.content
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()) ||
+                    data.name.toLowerCase().includes(searchText.toLowerCase())
+            );
+
+            setFilteredSearch(_filteredSearch);
+
+            setSearchShow(true);
+        } else {
+            setSearchShow(false);
+        }
+
+        return () => setFilteredSearch([]);
+    }, [searchText]);
+
     return (
         <Box
             sx={{
@@ -169,6 +209,7 @@ const DrawerContainer = ({ children }) => {
                         component="span"
                         sx={{
                             ...(open && { display: "none" }),
+                            ...(searchOpen && { display: "none" }),
                             marginX: 2,
                             alignItems: "center",
                             justifyContent: "center",
@@ -194,19 +235,68 @@ const DrawerContainer = ({ children }) => {
                         sx={{
                             marginRight: "36px",
                             ...(open && { display: "none" }),
+                            ...(searchOpen && { display: "none" }),
                         }}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        component="h1"
-                        variant="h6"
-                        color="inherit"
-                        noWrap
-                        sx={{ flexGrow: 1 }}
+
+                    <div
+                        className={`${
+                            searchOpen ? "tw-flex" : "tw-hidden"
+                        } tw-flex-grow  sm:tw-flex tw-items-center tw-justify-center tw-flex-col tw-relative`}
                     >
-                        Dashboard
-                    </Typography>
+                        <span className="p-input-icon-left tw-w-full sm:tw-w-96">
+                            <i className="pi pi-search" />
+                            <InputText
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
+                                placeholder="Search"
+                                className="tw-w-full"
+                            />
+                        </span>
+                        <div
+                            className={`tw-w-full tw-min-h-fit tw-bg-white tw-absolute tw-top-12 tw-border tw-rounded-lg tw-overflow-hidden ${
+                                searchShow ? "" : "tw-hidden"
+                            }`}
+                        >
+                            {filteredSearch.length > 0 ? (
+                                filteredSearch.map((value) => (
+                                    <RouterLink
+                                        className=""
+                                        key={value.id}
+                                        to={value.link}
+                                    >
+                                        <div className="tw-py-3 tw-px-4 tw-border-b hover:tw-bg-gray-100 ">
+                                            <p className="tw-text-lg tw-text-black tw-my-0">
+                                                {value.name}
+                                            </p>
+                                        </div>
+                                    </RouterLink>
+                                ))
+                            ) : (
+                                <div className="tw-py-3 tw-px-4 tw-border-b ">
+                                    <p className="tw-my-2">
+                                        No search result found
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div
+                        className={`${
+                            searchShow ? "" : "tw-flex-grow"
+                        } sm:tw-flex-grow`}
+                    ></div>
+                    <div className="sm:tw-hidden">
+                        <IconButton
+                            color="inherit"
+                            style={{ marginRight: 5 }}
+                            onClick={() => setSearchOpen(!searchOpen)}
+                        >
+                            <SearchIcon />
+                        </IconButton>
+                    </div>
                     <IconButton
                         color="inherit"
                         onClick={(e) => notificationRef.current?.toggle(e)}

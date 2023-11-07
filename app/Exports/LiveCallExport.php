@@ -13,8 +13,11 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHeadings, WithEvents, WithCustomStartCell, WithTitle
+class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHeadings, WithEvents, WithCustomStartCell, WithTitle, WithStyles
 {
     use Exportable;
 
@@ -58,27 +61,17 @@ class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHead
             $livecall->id,
             $livecall->query_type,
             $duration,
-            $livecall->answered_at,
-            $livecall->left_at,
+            Carbon::parse($livecall->answered_at)->toDayDateTimeString(),
+            Carbon::parse($livecall->left_at)->toDayDateTimeString(),
             $livecall->user ? $livecall->user->name : '',
-            $livecall->created_at,
+            Carbon::parse($livecall->created_at)->toFormattedDateString(),
         ];
     }
 
     public function headings(): array
     {
         return [
-        //    ["Second Project Request", 'First row'],
-        //    ['Mentor Request', 'Second row'],
-        //    ["Developer Request", ''],
-        //    ['Referencing', ''],
-        //    ["Taster Session", ''],
-        //    ['Enquiry'],
-        //    ['New Candidate Support'],
-        //    ['Software issues'],
-        //    ['LMS queries'],
-        //    ['Access issue'],
-        //    ['Other IT issues']
+     
             'ID',
             'Query Type',
             'Duration (Mins)',
@@ -110,5 +103,36 @@ class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHead
     public function title(): string
     {
         return 'Live Support Call Report';
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            // Styling a specific cell by coordinate.
+            'B' => ['alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                ]],
+            'D' => ['alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                ]],
+            'E' => ['alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                ]],
+            'F' => ['alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                ]],
+            'G' => ['alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                ]],
+            'H' => ['alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                ]],
+        ];
     }
 }

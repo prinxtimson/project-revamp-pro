@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CustomerReviewExport;
 use App\Models\LiveCall;
 use App\Models\Survey;
 use App\Models\User;
 use App\Notifications\NegativeFeedback;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Maatwebsite\Excel\Excel;
 
 class SurveyController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,6 +44,27 @@ class SurveyController extends Controller
     public function create()
     {
         //
+    }
+
+    public function download(Request $request)
+    {
+        $from = $request->from;
+        $to = $request->to;
+        $type = $request->type;
+        $date = Carbon::now()->getTimestamp();
+
+        if(isset($type) && $type == 'csv'){
+            $filename =  'live_support_customer_review_'.$date.'.'.$type;
+            return $this->excel->download(new CustomerReviewExport($from, $to), $filename, Excel::CSV); 
+        }
+
+        if(isset($type) && $type == 'pdf'){
+            $filename =  'live_support_customer_review_'.$date.'.'.$type;
+            return $this->excel->download(new CustomerReviewExport($from, $to), $filename, Excel::MPDF);
+        }
+        
+        $filename =  'live_support_customer_review_'.$date.'.xlsx';
+        return $this->excel->download(new CustomerReviewExport($from, $to), $filename, Excel::XLSX);
     }
 
     /**

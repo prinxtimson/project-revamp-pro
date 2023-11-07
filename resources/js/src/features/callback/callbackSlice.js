@@ -4,6 +4,7 @@ import callbackService from "./callbackService";
 const initialState = {
     callbacks: null,
     callback: null,
+    summary: [],
     type: "",
     isError: false,
     isSuccess: false,
@@ -210,6 +211,10 @@ export const callbackSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.message = "";
+            state.summary = [];
+        },
+        onUpdateCallbackSummary: (state, action) => {
+            state.summary = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -381,5 +386,5 @@ export const callbackSlice = createSlice({
     },
 });
 
-export const { reset, clear } = callbackSlice.actions;
+export const { reset, clear, onUpdateCallbackSummary } = callbackSlice.actions;
 export default callbackSlice.reducer;

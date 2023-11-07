@@ -5,6 +5,7 @@ import feedbackService from "./feedbackService";
 const initialState = {
     feedbacks: null,
     feedback: null,
+    summary: [],
     isError: false,
     isSuccess: false,
     isLoading: false,
@@ -143,6 +144,10 @@ export const feedbackSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.message = "";
+            state.summary = [];
+        },
+        onUpdateFeedbackSummary: (state, action) => {
+            state.summary = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -227,5 +232,5 @@ export const feedbackSlice = createSlice({
     },
 });
 
-export const { reset, clear } = feedbackSlice.actions;
+export const { reset, clear, onUpdateFeedbackSummary } = feedbackSlice.actions;
 export default feedbackSlice.reducer;

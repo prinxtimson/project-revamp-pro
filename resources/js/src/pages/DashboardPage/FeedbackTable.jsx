@@ -114,7 +114,7 @@ const FeedbackTable = () => {
     return (
         <DrawerContainer>
             <div className="tw-w-full tw-h-full">
-                <div className="tw-p-2 tw-mb-2 tw-w-80">
+                <div className="tw-p-2 tw-mb-2 tw-w-full sm:tw-w-80">
                     <Dropdown
                         value={selectedAgent}
                         options={agents}

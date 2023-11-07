@@ -9,6 +9,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
 use App\Http\Controllers\ReportTemplateController;
+use App\Http\Controllers\SurveyController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoRoomController;
 
 /*
@@ -47,7 +50,7 @@ Route::middleware(['guest'])->group(function () {
         return view('welcome');
     });
 
-    Route::get('/feedback/{channel}/{id}', function () {
+    Route::get('/review/{channel}/{id}', function () {
         return view('welcome');
     });
 
@@ -88,6 +91,9 @@ Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('livecall/report/download', [LiveCallController::class, 'download']);
     Route::get('callback/report/download', [CallBackController::class, 'download']);
+    Route::get('tickets/report/download', [TicketController::class, 'download']);
+    Route::get('customer-review/report/download', [SurveyController::class, 'download']);
+    Route::get('leaderboard/report/download', [UserController::class, 'download']);
 
     Route::post('recordingrules', [VideoRoomController::class, 'recording']);
 });

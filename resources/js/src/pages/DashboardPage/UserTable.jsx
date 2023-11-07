@@ -64,8 +64,8 @@ const UserTable = () => {
 
     const renderHeader = () => {
         return (
-            <div className="tw-flex tw-justify-between tw-items-center">
-                <span className="p-input-icon-left tw-w-80">
+            <div className="sm:tw-flex tw-gap-2 tw-justify-between tw-items-center">
+                <span className="p-input-icon-left tw-w-full sm:tw-w-80 tw-mb-2 sm:tw-mb-0">
                     <Dropdown
                         value={globalFilterValue}
                         options={data}
@@ -84,7 +84,7 @@ const UserTable = () => {
                     type="button"
                     onClick={() => setOpenDialog(true)}
                     label="Add User"
-                    className="p-button-outlined"
+                    className="p-button-outlined tw-w-full sm:tw-w-fit"
                 />
             </div>
         );

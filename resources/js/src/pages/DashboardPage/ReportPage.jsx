@@ -171,7 +171,7 @@ const ReportPage = () => {
                         <div className="tw-p-5">
                             <div className="">
                                 <h2 className=" tw-font-semibold">
-                                    Select Kep Performance Indicators
+                                    Select Key Performance Indicators
                                 </h2>
                             </div>
 

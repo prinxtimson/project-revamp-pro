@@ -89,8 +89,21 @@ class LiveCallController extends Controller
     {
         $from = $request->from;
         $to = $request->to;
+        $type = $request->type;
+        $date = Carbon::now()->getTimestamp();
 
-        return $this->excel->download(new LiveCallExport($from, $to), 'live_support_livecall.xlsx');
+        if(isset($type) && $type == 'csv'){
+            $filename =  'live_support_livecall'.$date.'.'.$type;
+            return $this->excel->download(new LiveCallExport($from, $to), $filename, Excel::CSV); 
+        }
+
+        if(isset($type) && $type == 'pdf'){
+            $filename =  'live_support_livecall'.$date.'.'.$type;
+            return $this->excel->download(new LiveCallExport($from, $to), $filename, Excel::MPDF);
+        }
+        
+        $filename =  'live_support_livecall'.$date.'.xlsx';
+        return $this->excel->download(new LiveCallExport($from, $to), $filename, Excel::XLSX);
     }
 
     /**

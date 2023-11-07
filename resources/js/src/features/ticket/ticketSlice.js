@@ -5,6 +5,7 @@ import ticketService from "./ticketService";
 const initialState = {
     tickets: null,
     ticket: null,
+    summary: [],
     isError: false,
     isSuccess: false,
     isLoading: false,
@@ -151,6 +152,10 @@ export const ticketSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.message = "";
+            state.summary = [];
+        },
+        onUpdateTicketSummary: (state, action) => {
+            state.summary = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -235,5 +240,5 @@ export const ticketSlice = createSlice({
     },
 });
 
-export const { reset, clear } = ticketSlice.actions;
+export const { reset, clear, onUpdateTicketSummary } = ticketSlice.actions;
 export default ticketSlice.reducer;

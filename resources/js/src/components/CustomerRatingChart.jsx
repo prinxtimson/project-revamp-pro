@@ -1,9 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import { Menu } from "primereact/menu";
 import { Chart } from "primereact/chart";
+import { BsGear } from "react-icons/bs";
 
-const CustomerRatingChart = ({ feedbacks }) => {
+const CustomerRatingChart = ({ handleOnRemoveWidget }) => {
+    const menuRef = useRef();
+    const settingMenuRef = useRef();
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
+
+    const { feedbacks } = useSelector((state) => state.feedback);
 
     useEffect(() => {
         if (feedbacks) {
@@ -61,14 +68,80 @@ const CustomerRatingChart = ({ feedbacks }) => {
         }
     }, [feedbacks]);
 
+    const MENUMODEL = [
+        {
+            label: "Remove",
+            command: () => {
+                handleOnRemoveWidget("feedback");
+            },
+        },
+    ];
+
     return (
-        <Chart
-            type="pie"
-            data={chartData}
-            options={chartOptions}
-            className="tw-min-w-full tw-min-h-full"
-        />
+        <div className="tw-border tw-rounded tw-p-4 tw-bg-white  tw-shadow-md tw-overflow-hidden">
+            <div className="tw-text-center">
+                <div className="tw-float-right tw-flex tw-items-center tw-gap-2">
+                    <>
+                        <a
+                            href="#"
+                            className=""
+                            onClick={(e) => settingMenuRef.current?.toggle(e)}
+                        >
+                            <BsGear />
+                        </a>
+                        <Menu model={MENUMODEL} ref={settingMenuRef} popup />
+                    </>
+
+                    <>
+                        <a
+                            href="#"
+                            className="tw-float-right"
+                            onClick={(e) => menuRef.current?.toggle(e)}
+                        >
+                            <i className="pi pi-fw pi-download" />
+                        </a>
+                        <Menu model={CSMODEL} ref={menuRef} popup />
+                    </>
+                </div>
+
+                <h2 className="tw-text-lg tw-font-semibold">
+                    Customer Satisfaction
+                </h2>
+            </div>
+            <div className="tw-h-full tw-overflow-auto">
+                <Chart
+                    type="pie"
+                    data={chartData}
+                    options={chartOptions}
+                    className="tw-min-w-full tw-min-h-full"
+                />
+            </div>
+        </div>
     );
 };
 
 export default CustomerRatingChart;
+
+const CSMODEL = [
+    {
+        label: "Excel",
+        value: "xlsx",
+        command: () => {
+            window.open(`/customer-review/report/download?type=xlsx`, "_blank");
+        },
+    },
+    {
+        label: "CSV",
+        value: "csv",
+        command: () => {
+            window.open(`/customer-review/report/download?type=csv`, "_blank");
+        },
+    },
+    {
+        label: "PDF",
+        value: "pdf",
+        command: () => {
+            window.open(`/customer-review/report/download?type=pdf`, "_blank");
+        },
+    },
+];

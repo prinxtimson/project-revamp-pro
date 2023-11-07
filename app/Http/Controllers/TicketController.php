@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TicketExport;
 use App\Mail\SubmitFeedback;
 use App\Mail\TicketRaised;
 use App\Mail\TicketStatusUpdate;
 use App\Models\Ticket;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Excel;
 
 class TicketController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -47,6 +57,27 @@ class TicketController extends Controller
             'msg' => 'Your Ticket ID number ' . $ticket->ticket_id . ' has been successfully submitted, please allow 48hrs for our team to get back to you',
             'data' => $ticket
         ]);
+    }
+
+    public function download(Request $request)
+    {
+        $from = $request->from;
+        $to = $request->to;
+        $type = $request->type;
+        $date = Carbon::now()->getTimestamp();
+
+        if(isset($type) && $type == 'csv'){
+            $filename =  'live_support_ticket'.$date.'.'.$type;
+            return $this->excel->download(new TicketExport($from, $to), $filename, Excel::CSV); 
+        }
+
+        if(isset($type) && $type == 'pdf'){
+            $filename =  'live_support_ticket'.$date.'.'.$type;
+            return $this->excel->download(new TicketExport($from, $to), $filename, Excel::MPDF);
+        }
+        
+        $filename =  'live_support_ticket'.$date.'.xlsx';
+        return $this->excel->download(new TicketExport($from, $to), $filename, Excel::XLSX);
     }
 
     /**
