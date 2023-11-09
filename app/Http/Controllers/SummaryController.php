@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\CallBack;
 use App\Models\LiveCall;
+use App\Models\Survey;
 use App\Models\Ticket;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +25,11 @@ class SummaryController extends Controller
         $tickets = Ticket::whereBetween('created_at', [$from, $to])->count();
 
         $unresolve_cb = Callback::whereBetween('created_at', [$from, $to])->whereNull('called_at')->count();
-        $unresolve_lc = LiveCall::whereBetween('created_at', [$from, $to])->whereNull('left_at')->orWhereNull('answered_at')->count();
+            $unresolve_lc = LiveCall::whereBetween('created_at', [$from, $to])
+                                    ->where(function (Builder $query) {
+                                        return $query->whereNull('left_at')
+                                        ->orWhereNull('answered_at');
+                                    })->count();
         $unresolve_tk = Ticket::whereBetween('created_at', [$from, $to])->where('status', 'open')->count();
 
         return response()->json([
@@ -38,7 +44,11 @@ class SummaryController extends Controller
         $tickets = Ticket::where('query_type', $category)->count();
 
         $unresolve_cb = Callback::where('query_type', $category)->whereNull('called_at')->count();
-        $unresolve_lc = LiveCall::where('query_type', $category)->whereNull('left_at')->orWhereNull('answered_at')->count();
+        $unresolve_lc = LiveCall::where('query_type', $category)
+                                ->where(function (Builder $query) {
+                                    return $query->whereNull('left_at')
+                                    ->orWhereNull('answered_at');
+                                })->count();
         $unresolve_tk = Ticket::where('query_type', $category)->where('status', 'open')->count();
 
         return response()->json([
@@ -141,5 +151,21 @@ class SummaryController extends Controller
         }
         
         return $livecalls;
+    }
+
+    public function feedback(Request $request)
+    {
+        $from = $request->from;
+        $to = $request->to;
+        $tickets = [];
+
+        if(isset($from) && isset($to)){
+            $tickets = Survey::whereBetween('created_at', [$from, $to])
+                ->get();
+        }else{
+            $tickets = Survey::get();
+        }
+
+        return $tickets;
     }
 }

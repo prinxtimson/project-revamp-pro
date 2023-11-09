@@ -59,6 +59,7 @@ Route::get('summary', [SummaryController::class, 'index']);
 Route::get('summary/callback', [SummaryController::class, 'callback']);
 Route::get('summary/ticket', [SummaryController::class, 'ticket']);
 Route::get('summary/livecall', [SummaryController::class, 'livecall']);
+Route::get('summary/feedback', [SummaryController::class, 'feedback']);
 
 Route::get('livecall/{id}', [LiveCallController::class, 'show']);
 
@@ -132,4 +133,4 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin|manager']
 
 });
 
-Route::get('testing', [SummaryController::class, 'callback']);
+//Route::get('testing', [ReportTemplateController::class, 'test']);

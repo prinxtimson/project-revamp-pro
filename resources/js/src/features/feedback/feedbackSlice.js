@@ -146,8 +146,8 @@ export const feedbackSlice = createSlice({
             state.message = "";
             state.summary = [];
         },
-        onUpdateFeedbackSummary: (state, action) => {
-            state.summary = action.payload;
+        onUpdateFeedbacks: (state, action) => {
+            state.feedbacks = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -232,5 +232,5 @@ export const feedbackSlice = createSlice({
     },
 });
 
-export const { reset, clear, onUpdateFeedbackSummary } = feedbackSlice.actions;
+export const { reset, clear, onUpdateFeedbacks } = feedbackSlice.actions;
 export default feedbackSlice.reducer;

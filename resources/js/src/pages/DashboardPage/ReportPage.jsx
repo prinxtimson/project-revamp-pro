@@ -111,7 +111,13 @@ const ReportPage = () => {
                                         <Calendar
                                             name="start_date"
                                             value={data.start_date}
-                                            onChange={handleOnChange}
+                                            onChange={(e) =>
+                                                setData({
+                                                    ...data,
+                                                    start_date:
+                                                        e.value.toISOString(),
+                                                })
+                                            }
                                         />
                                         <label htmlFor="start_date">
                                             Start Date
@@ -124,7 +130,13 @@ const ReportPage = () => {
                                         <Calendar
                                             name="end_date"
                                             value={data.end_date}
-                                            onChange={handleOnChange}
+                                            onChange={(e) =>
+                                                setData({
+                                                    ...data,
+                                                    end_date:
+                                                        e.value.toISOString(),
+                                                })
+                                            }
                                         />
                                         <label htmlFor="end_date">
                                             End Date

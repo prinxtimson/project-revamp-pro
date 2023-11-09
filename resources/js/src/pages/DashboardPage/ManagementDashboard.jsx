@@ -7,7 +7,10 @@ import { Skeleton } from "primereact/skeleton";
 import DrawerContainer from "./DrawerContainer";
 import { getAgents, clear, reset } from "../../features/profile/profileSlice";
 import axios from "axios";
-import { getFeedbacks } from "../../features/feedback/feedbackSlice";
+import {
+    getFeedbacks,
+    onUpdateFeedbacks,
+} from "../../features/feedback/feedbackSlice";
 import LivecallRequestChart from "../../components/LivecallRequestChart";
 import CustomerRatingChart from "../../components/CustomerRatingChart";
 import { onUpdateCallbackSummary } from "../../features/callback/callbackSlice";
@@ -58,12 +61,23 @@ const ManagementDashboard = () => {
         handleGetCbSummary(data);
         handleGetLcSummary(data);
         handleGetTkSummary(data);
+        getFeedbackByDate(data);
+    };
+
+    const getFeedbackByDate = (payload) => {
+        axios
+            .get(
+                `/api/summary/feedback?from=${payload.start}&to=${payload.end}`
+            )
+            .then((res) => {
+                dispatch(onUpdateFeedbacks(res.data));
+            });
     };
 
     const handleGetSummary = (payload) => {
         if (payload) {
             axios
-                .get(`/api/summary?from=${payload.from}&to=${payload.to}`)
+                .get(`/api/summary?from=${payload.start}&to=${payload.end}`)
                 .then((res) => {
                     setAllSummary(res.data);
                 });
@@ -78,7 +92,7 @@ const ManagementDashboard = () => {
         if (payload) {
             axios
                 .get(
-                    `/api/summary/callback?from=${payload.from}&to=${payload.to}`
+                    `/api/summary/callback?from=${payload.start}&to=${payload.end}`
                 )
                 .then((res) => {
                     dispatch(onUpdateCallbackSummary(res.data));
@@ -94,7 +108,7 @@ const ManagementDashboard = () => {
         if (payload) {
             axios
                 .get(
-                    `/api/summary/livecall?from=${payload.from}&to=${payload.to}`
+                    `/api/summary/livecall?from=${payload.start}&to=${payload.end}`
                 )
                 .then((res) => {
                     dispatch(onUpdateLivecallSummary(res.data));
@@ -110,7 +124,7 @@ const ManagementDashboard = () => {
         if (payload) {
             axios
                 .get(
-                    `/api/summary/ticket?from=${payload.from}&to=${payload.to}`
+                    `/api/summary/ticket?from=${payload.start}&to=${payload.end}`
                 )
                 .then((res) => {
                     dispatch(onUpdateTicketSummary(res.data));
@@ -196,7 +210,7 @@ const ManagementDashboard = () => {
                                     onChange={(e) =>
                                         setData({
                                             ...data,
-                                            start: e.value,
+                                            start: e.value.toISOString(),
                                         })
                                     }
                                     maxDate={new Date()}
@@ -210,7 +224,7 @@ const ManagementDashboard = () => {
                                     onChange={(e) =>
                                         setData({
                                             ...data,
-                                            end: e.value,
+                                            end: e.value.toISOString(),
                                         })
                                     }
                                     maxDate={new Date()}
@@ -231,6 +245,7 @@ const ManagementDashboard = () => {
                                         handleGetCbSummary();
                                         handleGetLcSummary();
                                         handleGetTkSummary();
+                                        dispatch(getFeedbacks());
                                         setData({
                                             start: null,
                                             end: null,
@@ -427,7 +442,7 @@ const WIDGETS = [
         value: "callback",
     },
     {
-        name: "Feedback Widget",
+        name: "Customer Satisfaction Widget",
         value: "feedback",
     },
     {

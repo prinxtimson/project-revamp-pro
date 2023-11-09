@@ -175,7 +175,11 @@ const AgentPage = () => {
                                         <h3>Agent Ranking</h3>
 
                                         <Rating
-                                            value={4.5}
+                                            value={
+                                                user.performance_indicators
+                                                    .customer_satisfaction /
+                                                (2 * 10)
+                                            }
                                             readOnly
                                             cancel={false}
                                         />

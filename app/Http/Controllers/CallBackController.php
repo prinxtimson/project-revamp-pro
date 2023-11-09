@@ -9,6 +9,7 @@ use App\Mail\SubmitFeedback;
 use App\Models\CallBack as ModelsCallBack;
 use App\WebPush\WebNotification;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -139,6 +140,7 @@ class CallBackController extends Controller
 
     public function download(Request $request)
     {
+        try {
         $from = $request->from;
         $to = $request->to;
         $type = $request->type;
@@ -156,6 +158,9 @@ class CallBackController extends Controller
         
         $filename =  'live_support_callback'.$date.'.xlsx';
         return $this->excel->download(new CallbackExport($from, $to), $filename,  Excel::XLSX); 
+        } catch (Exception $e) {
+            return response(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function search($query)
