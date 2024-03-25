@@ -101,6 +101,11 @@
     margin-bottom: 0.5rem;
 }
 
+.tw-my-3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
 .tw-my-4 {
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -116,11 +121,6 @@
     margin-bottom: 2rem;
 }
 
-.tw-my-3 {
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
-}
-
 .tw-mb-0 {
     margin-bottom: 0px;
 }
@@ -131,6 +131,10 @@
 
 .tw-mb-2 {
     margin-bottom: 0.5rem;
+}
+
+.tw-mb-3 {
+    margin-bottom: 0.75rem;
 }
 
 .tw-mb-4 {
@@ -165,6 +169,10 @@
     margin-right: 0.75rem;
 }
 
+.tw-mt-0 {
+    margin-top: 0px;
+}
+
 .tw-mt-3 {
     margin-top: 0.75rem;
 }
@@ -175,14 +183,6 @@
 
 .tw-mt-5 {
     margin-top: 1.25rem;
-}
-
-.tw-mb-3 {
-    margin-bottom: 0.75rem;
-}
-
-.tw-mt-0 {
-    margin-top: 0px;
 }
 
 .tw-block {
@@ -278,13 +278,13 @@
     width: auto;
 }
 
-.tw-w-full {
-    width: 100%;
-}
-
 .tw-w-fit {
     width: -moz-fit-content;
     width: fit-content;
+}
+
+.tw-w-full {
+    width: 100%;
 }
 
 .tw-min-w-full {
@@ -319,6 +319,10 @@
     grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
+.tw-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .tw-grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -329,10 +333,6 @@
 
 .tw-grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-.tw-grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .tw-flex-col {
@@ -359,28 +359,28 @@
     justify-content: space-between;
 }
 
+.tw-gap-1 {
+    gap: 0.25rem;
+}
+
 .tw-gap-2 {
     gap: 0.5rem;
-}
-
-.tw-gap-4 {
-    gap: 1rem;
-}
-
-.tw-gap-8 {
-    gap: 2rem;
-}
-
-.tw-gap-5 {
-    gap: 1.25rem;
 }
 
 .tw-gap-3 {
     gap: 0.75rem;
 }
 
-.tw-gap-1 {
-    gap: 0.25rem;
+.tw-gap-4 {
+    gap: 1rem;
+}
+
+.tw-gap-5 {
+    gap: 1.25rem;
+}
+
+.tw-gap-8 {
+    gap: 2rem;
 }
 
 .tw-divide-y > :not([hidden]) ~ :not([hidden]) {
@@ -630,6 +630,11 @@
     padding-bottom: 0.75rem;
 }
 
+.tw-py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
 .tw-py-5 {
     padding-top: 1.25rem;
     padding-bottom: 1.25rem;
@@ -638,11 +643,6 @@
 .tw-py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
-}
-
-.tw-py-4 {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
 }
 
 .tw-pb-2 {
@@ -675,6 +675,16 @@
     line-height: 2.25rem;
 }
 
+.tw-text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+}
+
+.tw-text-5xl {
+    font-size: 3rem;
+    line-height: 1;
+}
+
 .tw-text-6xl {
     font-size: 3.75rem;
     line-height: 1;
@@ -703,16 +713,6 @@
 .tw-text-xs {
     font-size: 0.75rem;
     line-height: 1rem;
-}
-
-.tw-text-5xl {
-    font-size: 3rem;
-    line-height: 1;
-}
-
-.tw-text-4xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
 }
 
 .tw-font-bold {
@@ -1035,16 +1035,16 @@
         width: 8rem;
     }
 
+    .md\:tw-w-52 {
+        width: 13rem;
+    }
+
     .md\:tw-w-\[34\.5rem\] {
         width: 34.5rem;
     }
 
     .md\:tw-w-\[36\.5rem\] {
         width: 36.5rem;
-    }
-
-    .md\:tw-w-52 {
-        width: 13rem;
     }
 
     .md\:tw-grid-cols-2 {
