@@ -102,7 +102,8 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 const settings = [
-    { name: "Profile", route: "../profile" },
+    { name: "Account", route: "../profile" },
+    { name: "Edit Profile", route: "../profile/edit" },
     { name: "Change Password", route: "../change-password" },
     { name: "Dashboard", route: "../" },
     { name: "Logout", route: "/logout" },
@@ -220,11 +221,11 @@ const DrawerContainer = ({ children }) => {
                     >
                         <Avatar
                             variant="square"
-                            alt="Dev Arena"
+                            alt="Tritek Consulting"
                             src="/images/logo.png"
                             sx={{ width: 128, height: 32 }}
                         >
-                            Dev Arena
+                            TC
                         </Avatar>
                     </Box>
                     <IconButton

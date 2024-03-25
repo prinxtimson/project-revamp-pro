@@ -369,7 +369,7 @@ export const callbackSlice = createSlice({
             })
             .addCase(deleteCallback.fulfilled, (state, action) => {
                 let data = state.callbacks.data.filter(
-                    (item) => item.id === action.payload.id
+                    (item) => item.id !== action.payload.id
                 );
 
                 state.isLoading = false;

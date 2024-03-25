@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
+import { PrimeReactProvider } from "primereact/api";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
-import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
-import "primereact/resources/primereact.css";
+import "primereact/resources/themes/soho-light/theme.css"; //theme
+import "primereact/resources/primereact.min.css"; //core css
+import "primeicons/primeicons.css"; //icons
 
 import { store } from "./store";
 import { getCurrentUser, logout } from "./features/auth/authSlice";
@@ -45,6 +46,7 @@ import NotificationPreference from "./pages/DashboardPage/NotificationPreference
 import NotificationPage from "./pages/DashboardPage/NotificationPage";
 import PerformanceTracking from "./pages/DashboardPage/PerformanceTracking";
 import ReportPage from "./pages/DashboardPage/ReportPage";
+import ProfilePage from "./pages/DashboardPage/ProfilePage";
 
 const timeout = 500_000;
 const promptBeforeIdle = 20_000;
@@ -97,15 +99,14 @@ const App = (props) => {
         });
     }, []);
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         setRemaining(Math.ceil(getRemainingTime() / 1000));
-    //     }, 500);
-
-    //     return () => {
-    //         clearInterval(interval);
-    //     };
-    // });
+    useEffect(() => {
+        // const interval = setInterval(() => {
+        //     setRemaining(Math.ceil(getRemainingTime() / 1000));
+        // }, 500);
+        // return () => {
+        //     clearInterval(interval);
+        // };
+    }, []);
 
     const handleStillHere = () => {
         activate();
@@ -246,6 +247,14 @@ const App = (props) => {
                                 path="profile"
                                 element={
                                     <AuthRoute>
+                                        <ProfilePage />
+                                    </AuthRoute>
+                                }
+                            />
+                            <Route
+                                path="profile/edit"
+                                element={
+                                    <AuthRoute>
                                         <ProfileForm />
                                     </AuthRoute>
                                 }
@@ -295,11 +304,11 @@ const App = (props) => {
                     <Route path="/*" element={<ErrorPage />} />
                 </Routes>
             </Router>
-            {/* <IdleDialog
+            <IdleDialog
                 open={open}
                 remaining={remaining}
                 onClose={handleStillHere}
-            /> */}
+            />
             <ToastContainer />
         </Provider>
     );
@@ -311,9 +320,9 @@ if (document.getElementById("app")) {
     const element = document.getElementById("app");
 
     ReactDOM.render(
-        <React.StrictMode>
+        <PrimeReactProvider>
             <App />
-        </React.StrictMode>,
+        </PrimeReactProvider>,
         element
     );
 }

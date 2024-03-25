@@ -53,74 +53,71 @@ const LoginForm = () => {
 
     return (
         <Container>
-            <div className="tw-grow tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center ">
-                <div className="tw-shadow-md tw-bg-white tw-rounded-md tw-p-3 md:tw-p-6 tw-w-full md:tw-w-[34.5rem] tw-w-auto">
-                    <div className="form-demo">
-                        <div className="card">
-                            <div className="tw-text-center tw-mb-5">
-                                <h2 className="tw-text-2xl tw-font-semibold  tw-mb-2">
-                                    Login
-                                </h2>
-                            </div>
-                            <form onSubmit={onSubmit} className="p-fluid">
-                                <div className="field">
-                                    <span className="p-float-label p-input-icon-right">
-                                        <i className="pi pi-envelope" />
-                                        <InputText
-                                            name="email"
-                                            value={email}
-                                            autoComplete="off"
-                                            onChange={handleOnChange}
-                                        />
-                                        <label htmlFor="email">Email *</label>
-                                    </span>
-                                </div>
-                                <div className="field">
-                                    <span className="p-float-label">
-                                        <Password
-                                            name="password"
-                                            toggleMask
-                                            value={password}
-                                            autoComplete="off"
-                                            feedback={false}
-                                            onChange={handleOnChange}
-                                        />
-
-                                        <label htmlFor="password">
-                                            Password *
-                                        </label>
-                                    </span>
-                                </div>
-                                <div className="tw-flex tw-mb-4 tw-justify-between">
-                                    <div className="field-checked tw-text-gray-900">
-                                        <Checkbox
-                                            name="remember"
-                                            value={remember}
-                                            onChange={handleOnChange}
-                                            checked={data.remember}
-                                            className="tw-mr-2"
-                                        />
-
-                                        <label htmlFor="accept">
-                                            Remember me
-                                        </label>
-                                    </div>
-                                    <Link
-                                        to="forgot-password"
-                                        className="tw-underline tw-text-sm tw-text-blue-500 hover:tw-text-blue-800 tw-float-right"
-                                    >
-                                        Forgot your password?
-                                    </Link>
-                                </div>
-                                <div className="tw-mb-5"></div>
-                                <Button
-                                    type="submit"
-                                    label="LOGIN"
-                                    disabled={isLoading}
-                                    className="custom-btn "
-                                />
-                            </form>
+            <div className="tw-p-3 md:tw-p-6 tw-w-full">
+                <div className="form-demo">
+                    <div className="card">
+                        <div className="tw-text-center tw-mb-5">
+                            <h2 className="tw-text-3xl tw-font-semibold  tw-mb-2">
+                                Hello, Welcome Back
+                            </h2>
+                            <p className="tw-my-3 tw-text-xl">
+                                Please enter your log in credentials
+                            </p>
                         </div>
+                        <form onSubmit={onSubmit} className="p-fluid">
+                            <div className="field">
+                                <span className="p-float-label p-input-icon-right">
+                                    <i className="pi pi-envelope" />
+                                    <InputText
+                                        name="email"
+                                        value={email}
+                                        autoComplete="off"
+                                        onChange={handleOnChange}
+                                    />
+                                    <label htmlFor="email">Email *</label>
+                                </span>
+                            </div>
+                            <div className="field">
+                                <span className="p-float-label">
+                                    <Password
+                                        name="password"
+                                        toggleMask
+                                        value={password}
+                                        autoComplete="off"
+                                        feedback={false}
+                                        onChange={handleOnChange}
+                                    />
+
+                                    <label htmlFor="password">Password *</label>
+                                </span>
+                            </div>
+                            <div className="tw-flex tw-mb-4 tw-justify-between">
+                                <div className="field-checked tw-text-gray-900">
+                                    <Checkbox
+                                        name="remember"
+                                        value={remember}
+                                        onChange={handleOnChange}
+                                        checked={data.remember}
+                                        className="tw-mr-2"
+                                    />
+
+                                    <label htmlFor="accept">Remember me</label>
+                                </div>
+                                <Link
+                                    to="forgot-password"
+                                    className="tw-underline tw-text-sm tw-text-blue-500 hover:tw-text-blue-800 tw-float-right"
+                                >
+                                    Forgot your password?
+                                </Link>
+                            </div>
+                            <div className="tw-mb-5"></div>
+                            <Button
+                                type="submit"
+                                label="LOGIN"
+                                disabled={isLoading}
+                                className="custom-btn "
+                            />
+                        </form>
                     </div>
                 </div>
             </div>

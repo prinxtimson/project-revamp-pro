@@ -7,11 +7,14 @@ use Maatwebsite\Excel\Excel;
 use App\Mail\Callback;
 use App\Mail\SubmitFeedback;
 use App\Models\CallBack as ModelsCallBack;
+use App\Models\User;
+use App\Notifications\NewFeedback;
 use App\WebPush\WebNotification;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class CallBackController extends Controller
 {
@@ -74,7 +77,9 @@ class CallBackController extends Controller
 
         WebNotification::sendWebNotification(['title' => 'Callback Request', 'body' => 'A new callback request had been submitted.']);
 
-        // Carbon::createFromDate($fields['date'], $fields['time'])
+        $users = User::role(['agent', 'admin'])->get();
+        Notification::send($users, new NewFeedback($response));
+         // Carbon::createFromDate($fields['date'], $fields['time'])
 
         Mail::to($fields['email'])->send(new Callback($response)); 
 

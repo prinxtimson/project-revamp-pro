@@ -1,15 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import CssBaseline from "@mui/material/CssBaseline";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
 import { classNames } from "primereact/utils";
@@ -47,6 +38,10 @@ const ChangePasswordForm = () => {
     );
 
     useEffect(() => {
+        if (isError) {
+            toast.error(message);
+        }
+
         if (isSuccess && message) {
             toast.success(message);
         }
@@ -64,102 +59,111 @@ const ChangePasswordForm = () => {
 
     return (
         <DrawerContainer>
-            <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        padding: 3,
-                    }}
-                >
-                    <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Change Password
-                    </Typography>
-                    <Stack sx={{ width: "100%" }} spacing={2}>
-                        {isError && message && (
-                            <Alert severity="error">{message}</Alert>
-                        )}
-                    </Stack>
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
-                        sx={{ mt: 1, width: "100%" }}
-                    >
-                        <div style={{ marginBottom: 30 }}>
-                            <span className="p-float-label">
-                                <Password
-                                    value={password}
-                                    name="password"
-                                    id="password"
-                                    onChange={handleOnChange}
-                                    toggleMask
-                                    feedback={false}
-                                />
-                                <label htmlFor="password">Old Password</label>
-                            </span>
-                        </div>
-                        <div style={{ marginBottom: 30 }}>
-                            <span className="p-float-label">
-                                <Password
-                                    value={new_password}
-                                    name="new_password"
-                                    id="new_password"
-                                    onChange={handleOnChange}
-                                    footer={footer}
-                                    toggleMask
-                                    className={classNames({
-                                        "p-invalid":
-                                            formData.password &&
-                                            !passwordValidation.test(
-                                                formData.password
-                                            ),
-                                    })}
-                                />
-                                <label htmlFor="password">New Password</label>
-                            </span>
-                        </div>
+            <div className="tw-grow tw-p-2 sm:tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center">
+                <div className="tw-card tw-bg-white tw-p-6 tw-shadow-md tw-rounded-md tw-w-full md:tw-w-[36.5rem] tw-py-8 tw-border">
+                    <div className="tw-text-center tw-mb-6">
+                        <h2 className="tw-text-xl tw-font-semibold tw-my-0">
+                            Change Password
+                        </h2>
+                    </div>
 
-                        <div style={{ marginBottom: 10 }}>
-                            <span className="p-float-label">
+                    <form className="p-fluid" onSubmit={handleSubmit}>
+                        <div className="field tw-mb-6">
+                            <span className="p-float-label ">
                                 <Password
-                                    value={new_password_confirmation}
-                                    name="new_password_confirmation"
-                                    id="new_password_confirmation"
-                                    onChange={handleOnChange}
+                                    name="password"
+                                    className="tw-w-full "
                                     toggleMask
-                                    className={classNames({
-                                        "p-invalid":
-                                            formData.new_password &&
-                                            !formData.new_password.match(
-                                                formData.new_password_confirmation
-                                            ),
-                                    })}
+                                    value={password}
+                                    onChange={handleOnChange}
+                                    autoComplete="off"
+                                    feedback={false}
+                                    required
                                 />
-                                <label htmlFor="password">
-                                    Confirm New Password
+                                <label htmlFor="password" className="">
+                                    Current Password *
                                 </label>
                             </span>
                         </div>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 2, mb: 2 }}
-                            disabled={isLoading}
-                        >
-                            Submit
-                        </Button>
-                    </Box>
-                </Box>
-            </Container>
+                        <div className="field tw-mb-6">
+                            <span className="p-float-label ">
+                                <Password
+                                    name="new_password"
+                                    toggleMask
+                                    value={new_password}
+                                    onChange={handleOnChange}
+                                    feedback={false}
+                                    className={
+                                        new_password &&
+                                        !passwordValidation.test(data.password)
+                                            ? "p-invalid"
+                                            : ""
+                                    }
+                                    required
+                                />
+                                <label htmlFor="new_password" className="">
+                                    New Password *
+                                </label>
+                            </span>
+                            {new_password &&
+                                !passwordValidation.test(new_password) && (
+                                    <small
+                                        id="password-help"
+                                        className="p-error block"
+                                    >
+                                        Must contain at least one of each sets
+                                        A-Z, a-z, 0-9, must be at least 10
+                                        characters and must have special
+                                        characters {"(~,@,:,?,>,<,},{ )"}
+                                    </small>
+                                )}
+                        </div>
+                        <div className="field tw-mb-6">
+                            <span className="p-float-label">
+                                <Password
+                                    name="new_password_confirmation"
+                                    toggleMask
+                                    value={new_password_confirmation}
+                                    onChange={handleOnChange}
+                                    required
+                                    feedback={false}
+                                    className={
+                                        new_password_confirmation &&
+                                        new_password !==
+                                            new_password_confirmation
+                                            ? "p-invalid"
+                                            : ""
+                                    }
+                                />
+                                <label
+                                    htmlFor="new_password_confirmation"
+                                    className=""
+                                >
+                                    Confirm Password *
+                                </label>
+                            </span>
+                            {new_password_confirmation &&
+                                new_password !== new_password_confirmation && (
+                                    <small
+                                        id="password-help"
+                                        className="p-error block"
+                                    >
+                                        Passwords do not match
+                                    </small>
+                                )}
+                        </div>
+
+                        <div className="tw-flex tw-items-center tw-justify-between">
+                            <Button
+                                type="submit"
+                                disabled={isLoading}
+                                label="Update"
+                                className="tw-w-full"
+                            />
+                        </div>
+                    </form>
+                </div>
+            </div>
         </DrawerContainer>
     );
 };

@@ -74,15 +74,15 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function me() {
-        $user = auth()->user()->load(['roles', 'profile']);
-        //$notifications = auth()->user()->notifications;
-        //$count = auth()->user()->unreadNotifications->count();
+        $user = User::find(auth()->id());
+        $notifications = auth()->user()->notifications;
+        $count = auth()->user()->unreadNotifications->count();
 
         $response = [
-            'user' => $user,
+            'user' => $user->load(['roles', 'profile']),
             'notifications' => [
-                //'data' => $notifications,
-                //'count' => $count
+                'data' => $notifications,
+                'count' => $count
             ],
         ];
         return $response;

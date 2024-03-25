@@ -16,6 +16,7 @@ class Ticket extends Model
         'phone',
         'query_type',
         'description',
+        'priority',
         'status',
         'user_id'
     ];
@@ -23,5 +24,10 @@ class Ticket extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function ticket_comments()
+    {
+        return $this->hasMany(TicketComment::class)->with('user');
     }
 }

@@ -40,13 +40,6 @@
     line-height: 1.5
   }
 
-  *,
-  :after,
-  :before {
-    box-sizing: border-box;
-    border: 0 solid #e2e8f0
-  }
-
   a {
     color: inherit;
     text-decoration: inherit
@@ -411,7 +404,7 @@
   }
   .my-custom-bg {
     background-color: #f5f7ff !important;
-}
+  }
   </style>
 </head>
 

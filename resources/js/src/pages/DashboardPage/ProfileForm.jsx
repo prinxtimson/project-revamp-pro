@@ -199,16 +199,6 @@ const ProfileForm = () => {
                         >
                             Save
                         </Button>
-                        <Button
-                            type="button"
-                            fullWidth
-                            variant="contained"
-                            color="error"
-                            sx={{ mt: 1.5, mb: 2 }}
-                            onClick={() => dispatch(deleteAccount())}
-                        >
-                            Delete Account
-                        </Button>
                     </Box>
                 </Box>
             </Container>

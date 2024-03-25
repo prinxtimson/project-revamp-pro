@@ -44,6 +44,7 @@ Route::get('feedback/{survey}', [SurveyController::class, 'show']);
 
 Route::post('tickets', [TicketController::class, 'store']);
 Route::put('tickets/{ticket}', [TicketController::class, 'update']);
+Route::put('tickets/{ticket}/comments', [TicketController::class, 'add_comment']);
 Route::get('tickets/{ticket}', [TicketController::class, 'show']);
 Route::get('tickets', [TicketController::class, 'index']);
 Route::delete('tickets/{ticket}', [TicketController::class, 'destroy']);

@@ -28,7 +28,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::orderBy('id', 'DESC')->paginate(20);
+        $tickets = Ticket::with('user')->orderBy('id', 'DESC')->get();
 
         return $tickets;
     }
@@ -90,7 +90,7 @@ class TicketController extends Controller
     {
         return  response()->json([
             'msg' => 'successful',
-            'data' => $ticket
+            'data' => $ticket->load(['user', 'ticket_comments'])
         ]);
     }
 
@@ -126,7 +126,25 @@ class TicketController extends Controller
 
         return  response()->json([
             'msg' => 'successful',
-            'data' => $ticket
+            'data' => $ticket->load(['user', 'ticket_comments'])
+        ]);
+    }
+
+    public function add_comment(Request $request, Ticket $ticket)
+    {
+        $fields = $request->validate([
+            'name' => 'string|nullable',
+            'comment' => 'string|required'
+        ]);
+        $user = auth()->user();
+        if(isset($user))
+            $fields['user_id'] = $user->id;
+
+        $ticket->ticket_comments()->create($fields);
+
+         return  response()->json([
+            'msg' => 'successful',
+            'data' => $ticket->load(['user', 'ticket_comments'])
         ]);
     }
 

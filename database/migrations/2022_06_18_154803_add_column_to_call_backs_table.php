@@ -14,7 +14,7 @@ class AddColumnToCallBacksTable extends Migration
     public function up()
     {
         Schema::table('call_backs', function (Blueprint $table) {
-            $table->string('status')->nullable();
+            $table->enum('status', ['PENDING', 'SUCCESSFUL', 'FAILED'])->default('FAILED');
             $table->string('query_type');
         });
     }

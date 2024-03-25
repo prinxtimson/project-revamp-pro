@@ -65,7 +65,7 @@ const ListItems = () => {
 
             {user?.roles[0].name != "manager" && (
                 <>
-                    <Link to="/admin/dashboard/livecall">
+                    {/* <Link to="/admin/dashboard/livecall">
                         <ListItem>
                             <ListItemIcon>
                                 <VideoCallIcon />
@@ -82,7 +82,7 @@ const ListItems = () => {
                                 <ListItemText primary="Live Call" />
                             </Badge>
                         </ListItem>
-                    </Link>
+                    </Link> */}
 
                     <Link to="/admin/dashboard/callback">
                         <ListItem>
@@ -101,17 +101,17 @@ const ListItems = () => {
                             <ListItemText primary="Ticket Raised" />
                         </ListItem>
                     </Link>
-                    <a href="https://www.sans.org/uk_en/" target="_blank">
+                    {/* <a href="https://www.sans.org/uk_en/" target="_blank">
                         <ListItem>
                             <ListItemIcon>
                                 <SecurityIcon />
                             </ListItemIcon>
                             <ListItemText primary="E-Learning" />
                         </ListItem>
-                    </a>
+                    </a> */}
                 </>
             )}
-            {user?.roles[0].name != "agent" && (
+            {user?.roles[0].name == "" && (
                 <>
                     <Link to="/admin/dashboard/feedback">
                         <ListItem>

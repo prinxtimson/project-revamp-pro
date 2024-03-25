@@ -85,59 +85,61 @@ const TwoFactorAuth = () => {
 
     return (
         <Container>
-            <div className="tw-grow tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center">
-                <div className="tw-shadow-lg tw-bg-white tw-rounded-md md:tw-p-6 tw-w-full md:tw-w-[34.5rem] tw-w-auto  tw-p-3 ">
-                    <div className="form-demo">
-                        <div className="card">
-                            <div className="tw-text-center tw-mb-5">
-                                <h2 className="tw-text-2xl tw-font-semimedium  tw-mb-2">
-                                    Two Factor Verification
-                                </h2>
-                            </div>
-                            <form onSubmit={onSubmit} className="p-fluid">
-                                <div className="field">
-                                    <span className="p-float-label ">
-                                        <InputText
-                                            name="code"
-                                            value={code}
-                                            autoComplete="off"
-                                            onChange={handleOnChange}
-                                        />
-                                        <label htmlFor="code">Code</label>
-                                    </span>
-                                </div>
-
-                                <div className="tw-my-4 tw-flex tw-items-center tw-justify-between tw-gap-2">
-                                    <Button
-                                        type="submit"
-                                        label="Verify"
-                                        disabled={loading}
-                                        className="custom-btn "
-                                    />
-                                    <Button
-                                        type="button"
-                                        label={`Resend OTP (${
-                                            remainingTime === 0
-                                                ? "00:00"
-                                                : `${Math.floor(
-                                                      (remainingTime %
-                                                          (1000 * 60 * 60)) /
-                                                          (1000 * 60)
-                                                  )}:${Math.floor(
-                                                      (remainingTime %
-                                                          (1000 * 60)) /
-                                                          1000
-                                                  )}`
-                                        })`}
-                                        disabled={Boolean(
-                                            remainingTime > 1000 || loading
-                                        )}
-                                        className="custom-btn p-button-outlined"
-                                        onClick={handleResendToken}
-                                    />
-                                </div>
-                            </form>
+            <div className="md:tw-p-6 tw-w-full tw-p-3 ">
+                <div className="form-demo">
+                    <div className="card">
+                        <div className="tw-text-center tw-mb-5">
+                            <h2 className="tw-text-3xl tw-font-semibold  tw-mb-2">
+                                Hello, Welcome Back
+                            </h2>
+                            <p className="tw-my-3 tw-text-xl">
+                                Please check your email and enter the 2FA code
+                                received
+                            </p>
                         </div>
+                        <form onSubmit={onSubmit} className="p-fluid">
+                            <div className="field">
+                                <span className="p-float-label ">
+                                    <InputText
+                                        name="code"
+                                        value={code}
+                                        autoComplete="off"
+                                        onChange={handleOnChange}
+                                    />
+                                    <label htmlFor="code">Code</label>
+                                </span>
+                            </div>
+
+                            <div className="tw-my-4 tw-flex tw-items-center tw-justify-between tw-gap-2">
+                                <Button
+                                    type="submit"
+                                    label="Verify"
+                                    disabled={loading}
+                                    className="custom-btn "
+                                />
+                                <Button
+                                    type="button"
+                                    label={`Resend OTP (${
+                                        remainingTime === 0
+                                            ? "00:00"
+                                            : `${Math.floor(
+                                                  (remainingTime %
+                                                      (1000 * 60 * 60)) /
+                                                      (1000 * 60)
+                                              )}:${Math.floor(
+                                                  (remainingTime %
+                                                      (1000 * 60)) /
+                                                      1000
+                                              )}`
+                                    })`}
+                                    disabled={Boolean(
+                                        remainingTime > 1000 || loading
+                                    )}
+                                    className="custom-btn p-button-outlined"
+                                    onClick={handleResendToken}
+                                />
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import { clearUser } from "../auth/authSlice";
 import ticketService from "./ticketService";
 
 const initialState = {
-    tickets: null,
+    tickets: [],
     ticket: null,
     summary: [],
     isError: false,
@@ -111,6 +111,24 @@ export const updateTicket = createAsyncThunk(
     }
 );
 
+export const addComment = createAsyncThunk(
+    "ticket/add-comment",
+    async (data, thunkAPI) => {
+        try {
+            return await ticketService.addComment(data);
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
 export const deleteTicket = createAsyncThunk(
     "ticket/delete",
     async (id, thunkAPI) => {
@@ -156,6 +174,9 @@ export const ticketSlice = createSlice({
         },
         onUpdateTicketSummary: (state, action) => {
             state.summary = action.payload;
+        },
+        clearTicket: (state) => {
+            state.ticket = null;
         },
     },
     extraReducers: (builder) => {
@@ -218,8 +239,28 @@ export const ticketSlice = createSlice({
                 state.isSuccess = true;
                 state.ticket = action.payload.data;
                 state.message = action.payload.msg;
+                let index = state.tickets.findIndex(
+                    (item) => item.id === action.payload.data.id
+                );
+                state.tickets.splice(index, 1, action.payload.data);
+                state.tickets = [...state.tickets];
             })
             .addCase(updateTicket.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(addComment.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(addComment.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.ticket = action.payload.data;
+                state.message = action.payload.msg;
+                state.tickets = [...state.tickets];
+            })
+            .addCase(addComment.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
@@ -231,6 +272,10 @@ export const ticketSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.message = action.payload.msg;
+                let data = state.tickets.filter(
+                    (item) => item.id !== action.payload.id
+                );
+                state.tickets = [...data];
             })
             .addCase(deleteTicket.rejected, (state, action) => {
                 state.isLoading = false;
@@ -240,5 +285,6 @@ export const ticketSlice = createSlice({
     },
 });
 
-export const { reset, clear, onUpdateTicketSummary } = ticketSlice.actions;
+export const { reset, clear, clearTicket, onUpdateTicketSummary } =
+    ticketSlice.actions;
 export default ticketSlice.reducer;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Mail\AccountLocked;
+use App\Mail\ProfileEditMail;
 use App\Models\LiveCall;
 use App\Models\Setting;
 use App\Models\Survey;
@@ -54,11 +55,11 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            $token = auth()->user()->createToken('access_token')->plainTextToken;
-            auth()->user()->generate_token();
+            $token = $user->createToken('access_token')->plainTextToken;
+            $user->generate_token();
 
             $response = [
-                'user' => auth()->user()->load(['roles', 'profile']),    
+                'user' => $user->load(['roles', 'profile']),    
                 'token' => $token
             ];
 
@@ -84,7 +85,8 @@ class AuthController extends Controller
     }
 
     public function me() {
-        $user = auth()->user()->load(['roles', 'profile']);
+        $user = User::find(auth()->id());
+        $user->load(['roles', 'profile']);
         $user->update([
             'login_at' => Carbon::now()
         ]);
@@ -194,11 +196,11 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request) {
-        $user = auth()->user();
+        $user = User::find(auth()->id());
         $user->update([
             'login_at' => null
         ]);
-        auth()->user()->tokens()->delete();
+        $user->tokens()->delete();
 
         WebNotification::removeToken($user);
 
@@ -218,7 +220,7 @@ class AuthController extends Controller
             'username' => 'string|unique:users,username'
         ]);
 
-        $user = Auth::user();
+        $user = User::find(auth()->id());
         $user->name = $fields['firstname'] .' '. $fields['lastname'];
 
         if(isset($fields['username'])){
@@ -243,6 +245,7 @@ class AuthController extends Controller
 
         $user->refresh()->load(['profile','roles']);
 
+        Mail::to($user)->send(new ProfileEditMail($user));
         $response = [
             'user' => $user,
         ];
@@ -252,7 +255,7 @@ class AuthController extends Controller
 
     public function changePass(Request $request)
     {
-        $user = auth()->user();
+        $user = User::find(auth()->id());
 
         $fields = $request->validate([
             'password' => 'required|string ',
@@ -429,8 +432,7 @@ class AuthController extends Controller
 
     public function delete()
     {
-        //
-        $user = Auth::user();
+        $user = User::find(auth()->id());
 
         $deleted = $user->forceDelete();
 

@@ -32,6 +32,12 @@ const updateTicket = async (data) => {
     return res.data;
 };
 
+const addComment = async (data) => {
+    const res = await axios.put(`${API_URL}/${data.ticket_id}/comments`, data);
+
+    return res.data;
+};
+
 const deleteTicket = async (id) => {
     const res = await axios.delete(`${API_URL}/${id}`);
 
@@ -44,6 +50,7 @@ const ticketService = {
     submitTicket,
     getTicketsByPage,
     updateTicket,
+    addComment,
     deleteTicket,
 };
 

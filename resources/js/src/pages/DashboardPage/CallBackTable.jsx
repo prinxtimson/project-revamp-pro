@@ -1,22 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Column } from "primereact/column";
-import CssBaseline from "@mui/material/CssBaseline";
-import Container from "@mui/material/Container";
-import { red, yellow } from "@mui/material/colors";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import CancelIcon from "@mui/icons-material/Cancel";
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
+import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import Moment from "react-moment";
 import {
@@ -30,15 +20,29 @@ import {
 } from "../../features/callback/callbackSlice";
 import DrawerContainer from "./DrawerContainer";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const axios = window.axios;
 
 const CallBackTable = () => {
     const [searchCallbacks, setSearchCallbacks] = useState([]);
     const [query, setQuery] = useState("");
+    const [statuses] = useState([
+        { status: "PENDING" },
+        { status: "SUCCESSFUL" },
+        { status: "FAILED" },
+    ]);
+    const [priorities] = useState(["low", "medium", "high"]);
     const [data, setData] = useState({
+        format: "xlsx",
         from: "",
         to: "",
+    });
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        status: { value: null, matchMode: FilterMatchMode.EQUALS },
+        priority: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
 
     const dispatch = useDispatch();
@@ -119,223 +123,244 @@ const CallBackTable = () => {
 
     const actionBodyTemplate = (row) => {
         return (
-            <div className="tw-flex">
-                <Tooltip title="Successful">
-                    <span>
-                        <IconButton
-                            disabled={Boolean(row.called_at)}
-                            onClick={() => handleCheck(row.id)}
-                        >
-                            <CheckIcon
-                                color={row.called_at ? "disabled" : "success"}
-                            />
-                        </IconButton>
-                    </span>
-                </Tooltip>
-                <Tooltip title="Failed">
-                    <span>
-                        <IconButton
-                            disabled={Boolean(row.called_at)}
-                            onClick={() => handleCancel(row.id)}
-                        >
-                            <CancelIcon
-                                color={row.called_at ? "disabled" : ""}
-                                sx={{
-                                    color: row.called_at ? "" : yellow[700],
-                                }}
-                            />
-                        </IconButton>
-                    </span>
-                </Tooltip>
-                <Tooltip title="Delete">
-                    <IconButton onClick={() => handleDelete(row.id)}>
-                        <DeleteIcon
-                            sx={{
-                                color: red[500],
-                            }}
-                        />
-                    </IconButton>
-                </Tooltip>
+            <div className="tw-flex tw-gap-2">
+                <Button
+                    text
+                    icon="pi pi-check"
+                    severity="success"
+                    rounded
+                    onClick={() => handleCheck(row.id)}
+                    disabled={Boolean(row.called_at)}
+                />
+                <Button
+                    text
+                    icon="pi pi-times"
+                    severity="warning"
+                    rounded
+                    onClick={() => handleCancel(row.id)}
+                    disabled={Boolean(row.called_at)}
+                />
+                <Button
+                    text
+                    icon="pi pi-trash"
+                    severity="danger"
+                    rounded
+                    onClick={() => handleDelete(row.id)}
+                />
             </div>
         );
     };
 
     const statusBodyTemplate = (row) => {
-        if (!row.status ? null : row.status === "FAILED") {
-            return <Tag value={row.status} severity="error"></Tag>;
-        } else if (!row.status ? null : row.status === "SUCCESSFUL") {
+        if (row.status == "FAILED") {
+            return <Tag value={row.status} severity="danger"></Tag>;
+        } else if (row.status == "SUCCESSFUL") {
             return <Tag value={row.status} severity="success"></Tag>;
         } else {
-            return <span></span>;
+            return <Tag value="PENDING" severity="warning"></Tag>;
         }
+    };
+
+    const priorityRowFilterTemplate = (options) => {
+        return (
+            <Dropdown
+                value={options.value}
+                options={priorities}
+                onChange={(e) => options.filterApplyCallback(e.value)}
+                placeholder="Select one"
+                showClear
+                style={{ minWidth: "6rem" }}
+            />
+        );
+    };
+
+    const statusRowFilterTemplate = (options) => {
+        return (
+            <Dropdown
+                value={options.value}
+                options={statuses}
+                optionLabel="status"
+                optionValue="status"
+                onChange={(e) => options.filterApplyCallback(e.value)}
+                itemTemplate={statusBodyTemplate}
+                placeholder="Select One"
+                className="p-column-filter"
+                showClear
+                style={{ minWidth: "12rem" }}
+            />
+        );
     };
 
     const dateBodyTemplate = (rowData) => {
         return (
             <div>
-                <Moment format="ll">{rowData.date}</Moment>
+                <Moment format="ll">{rowData.created_at}</Moment>
+            </div>
+        );
+    };
+
+    const callbackDateBodyTemplate = (rowData) => {
+        return (
+            <div>
+                {`${moment(rowData.date).format("d/M/Y")}-${rowData.time}`}
             </div>
         );
     };
 
     return (
         <DrawerContainer>
-            <Container component="main" maxWidth="lg">
-                <CssBaseline />
+            <div className="tw-m-5 md:tw-my-8 md:tw-mx-6">
+                {user && user?.roles[0].name != "agent" && (
+                    <div className="tw-mb-8 tw-p-4 md:tw-p-8 tw-shadow tw-rounded tw-bg-white tw-w-full">
+                        <div className="tw-mb-4 ">
+                            <h3 className="tw-my-0 tw-font-semibold">
+                                Download Callback
+                            </h3>
+                        </div>
+                        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-4 tw-gap-2 tw-items-center">
+                            <div className="">
+                                <Calendar
+                                    name="from"
+                                    value={data.from}
+                                    placeholder="From"
+                                    className="tw-w-full"
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            from: e.value,
+                                        })
+                                    }
+                                    maxDate={data.to}
+                                    showButtonBar
+                                    showIcon
+                                />
+                            </div>
+                            <div className="">
+                                <Calendar
+                                    name="to"
+                                    value={data.to}
+                                    placeholder="To"
+                                    className="tw-w-full"
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            to: e.value,
+                                        })
+                                    }
+                                    minDate={data.from}
+                                    showButtonBar
+                                    showIcon
+                                />
+                            </div>
+                            <div className="">
+                                <Dropdown
+                                    options={FORMATS}
+                                    value={data.format}
+                                    onChange={(e) =>
+                                        setData({
+                                            ...data,
+                                            format: e.value,
+                                        })
+                                    }
+                                    placeholder="Select Format"
+                                    optionLabel="label"
+                                    className="tw-w-full"
+                                />
+                            </div>
+                            <div className="">
+                                <Button
+                                    label="Generate"
+                                    onClick={handleOnDownload}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
 
-                <Box
-                    sx={{
-                        marginTop: 4,
-                        display: "flex",
-                        flexDirection: "column",
-                        backgroundColor: "white",
-                        borderRadius: 2,
-                        padding: 3,
-                    }}
-                >
-                    {user && user?.roles[0].name != "agent" && (
-                        <Card
-                            sx={{
-                                my: 2,
-                                padding: 3,
-                                width: "100%",
-                            }}
-                            variant="outlined"
-                        >
-                            <Typography
-                                component="p"
-                                variant="h6"
-                                sx={{
-                                    marginY: 2,
-                                }}
-                            >
-                                Download Report
-                            </Typography>
-                            <Grid
-                                container
-                                spacing={3}
-                                justifyContent="center"
-                                alignItems="center"
-                            >
-                                <Grid item xs={12} sm={5}>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        margin="dense"
-                                        id="start"
-                                        label="Start Date"
-                                        type="date"
-                                        size="small"
-                                        value={data.from}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        onChange={(e) =>
-                                            setData({
-                                                ...data,
-                                                from: e.target.value,
-                                            })
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={5}>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        margin="dense"
-                                        id="end"
-                                        label="End Date"
-                                        type="date"
-                                        value={data.to}
-                                        size="small"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        onChange={(e) =>
-                                            setData({
-                                                ...data,
-                                                to: e.target.value,
-                                            })
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={2}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="small"
-                                        onClick={handleOnDownload}
-                                        disabled={!data.from || !data.to}
-                                    >
-                                        Download
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Card>
-                    )}
+                <div className="tw-w-full tw-rounded tw-shadow">
                     <DataTable
                         value={searchCallbacks}
                         paginator
                         rows={20}
                         totalRecords={callbacks?.total || 0}
                         onPage={({ page }) => handleChangePage(page)}
-                        //rowsPerPageOptions={[25]}
                         tableStyle={{ minWidth: "50rem" }}
                         loading={isLoading}
                         dataKey="id"
                         header={header}
                         emptyMessage="No data found"
                         breakpoint="0px"
+                        stripedRows
+                        filters={filters}
+                        globalFilterFields={["name", "status"]}
+                        filterDisplay="row"
                     >
-                        <Column
-                            field="id"
-                            header="ID"
-                            style={{ minWidth: "5%" }}
-                        ></Column>
+                        <Column field="id" header="ID"></Column>
                         <Column
                             field="name"
-                            header="Full name"
-                            style={{ minWidth: "20%" }}
-                            sortable
+                            header="Requester"
+                            filter
+                            filterPlaceholder="Search by name"
+                            showFilterMenu={false}
+                            style={{ minWidth: "15rem" }}
                         ></Column>
+
+                        <Column field="phone" header="Phone number"></Column>
+
                         <Column
-                            field="email"
-                            header="Email"
-                            style={{ minWidth: "15%" }}
-                        ></Column>
-                        <Column
-                            field="phone"
-                            header="Phone number"
-                            style={{ minWidth: "10%" }}
-                        ></Column>
-                        <Column
-                            field="date"
-                            header="Date"
-                            style={{ minWidth: "15%" }}
-                            body={dateBodyTemplate}
-                        ></Column>
-                        <Column
-                            field="time"
-                            header="Time"
-                            style={{ minWidth: "5%" }}
+                            field="priority"
+                            header="Priority"
+                            filter
+                            filterElement={priorityRowFilterTemplate}
+                            showFilterMenu={false}
+                            showClearButton={false}
                         ></Column>
                         <Column
                             field="status"
                             header="Status"
-                            style={{ minWidth: "5%" }}
-                            sortable
+                            filter
+                            align="center"
                             body={statusBodyTemplate}
+                            filterElement={statusRowFilterTemplate}
+                            showFilterMenu={false}
+                            showClearButton={false}
                         ></Column>
-
                         <Column
-                            style={{ minWidth: "20%" }}
+                            field="date"
+                            header="Date requested"
+                            body={dateBodyTemplate}
+                            style={{ minWidth: "8rem" }}
+                        ></Column>
+                        <Column
+                            field="time"
+                            header="Callback date/time"
+                            body={callbackDateBodyTemplate}
+                        ></Column>
+                        <Column
+                            header="Actions"
+                            align="center"
                             body={actionBodyTemplate}
                         ></Column>
                     </DataTable>
-                </Box>
-            </Container>
+                </div>
+            </div>
         </DrawerContainer>
     );
 };
 
 export default CallBackTable;
+
+const FORMATS = [
+    {
+        label: "Excel",
+        value: "xlsx",
+    },
+    {
+        label: "CSV",
+        value: "csv",
+    },
+    {
+        label: "PDF",
+        value: "pdf",
+    },
+];
