@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useParams } from "react-router-dom";
-import Container from "../../components/Container";
 import CallbackDialog from "../../components/CallbackDialog";
 import { leaveLivecall } from "../../features/livecall/livecallSlice";
 
 import Welcome from "./Welcome";
+import MainContainer from "../../components/MainContainer";
 
 const Home = () => {
     const [open, setOpen] = useState(false);
@@ -38,7 +38,7 @@ const Home = () => {
     }, [livecall]);
 
     return (
-        <Container>
+        <MainContainer>
             <CallbackDialog
                 open={open}
                 id={id}
@@ -47,7 +47,7 @@ const Home = () => {
             />
             <ConfirmDialog />
             <Welcome handleCallbackOpen={handleClickOpen} />;
-        </Container>
+        </MainContainer>
     );
 };
 

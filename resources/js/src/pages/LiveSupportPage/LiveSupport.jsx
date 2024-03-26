@@ -9,7 +9,6 @@ import Grid from "@mui/material/Grid";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import Container from "../../components/Container";
 import Rating from "@mui/material/Rating";
 import {
     requestLivecall,
@@ -21,6 +20,7 @@ import {
     getCallbacks,
 } from "../../features/callback/callbackSlice";
 import CallbackDialog from "../../components/CallbackDialog";
+import MainContainer from "../../components/MainContainer";
 
 const axios = window.axios;
 
@@ -181,7 +181,7 @@ const LiveSupport = () => {
     };
 
     return (
-        <Container>
+        <MainContainer>
             <Box
                 sx={{
                     marginTop: 5,
@@ -618,7 +618,7 @@ const LiveSupport = () => {
                     )}
                 </Box>
             </Box>
-        </Container>
+        </MainContainer>
     );
 };
 

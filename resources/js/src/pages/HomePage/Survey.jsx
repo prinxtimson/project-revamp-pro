@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "../../components/Container";
+import MainContainer from "../../components/MainContainer";
 
 const axios = window.axios;
 
@@ -109,7 +110,7 @@ const Survey = ({ livecall }) => {
     }, [channel]);
 
     return (
-        <Container>
+        <MainContainer>
             <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-2 tw-h-full">
                 <div className="tw-shadow-md tw-rounded-md tw-border tw-p-2 md:tw-p-5">
                     <div className="tw-my-2 ">
@@ -232,7 +233,7 @@ const Survey = ({ livecall }) => {
                     </Box>
                 </div>
             </div>
-        </Container>
+        </MainContainer>
     );
 };
 
