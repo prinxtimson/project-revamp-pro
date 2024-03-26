@@ -70,7 +70,7 @@ Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name(
 
 Route::get('two-factor-auth/resend', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend')->middleware("auth");
 
-Route::middleware(['auth', '2fa'])->group(function () {
+Route::middleware(['auth:sanctum', '2fa'])->group(function () {
 
     Route::get('admin/dashboard', function () {
         return view('welcome');
@@ -78,7 +78,7 @@ Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('admin/dashboard/{name?}', function () {
         return view('welcome');
-    })->where('name', '.*')->name('dashboard');
+    })->where('name', '.*')->name('dashboard.*');
 
     Route::get('admin/dashboard/agent/{id}', function () {
         return view('welcome');
@@ -98,18 +98,18 @@ Route::middleware(['auth', '2fa'])->group(function () {
     Route::post('recordingrules', [VideoRoomController::class, 'recording']);
 });
 
-Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:admin|super-admin'])->group(function () {
 
     Route::get('authenticate', function () {
         return true;
     });
 });
 
-Route::middleware(['auth', 'role:super-admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
 
     Route::get('admin/dashboard/account', function () {
         return view('welcome');
-    })->name('dashboard');
+    })->name('dashboard.accout');
 });
 
 Route::get('conferencing/{URLRoomName?}', function () {
