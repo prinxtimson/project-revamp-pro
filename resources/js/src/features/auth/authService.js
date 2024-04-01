@@ -78,6 +78,12 @@ const resendOTP = async () => {
     return res.data;
 };
 
+const archiveAccount = async () => {
+    const res = await axios.delete(`${API_URL}/archive`);
+
+    return res.data;
+};
+
 const deleteAccount = async () => {
     const res = await axios.delete(`${API_URL}/delete`);
 
@@ -98,6 +104,7 @@ const authService = {
     verifyOTP,
     resendOTP,
     deleteAccount,
+    archiveAccount,
 };
 
 export default authService;

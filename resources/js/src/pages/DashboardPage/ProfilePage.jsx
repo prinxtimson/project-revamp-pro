@@ -2,11 +2,19 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import DrawerContainer from "./DrawerContainer";
 import { toast } from "react-toastify";
-import { logout } from "../../features/auth/authSlice";
+import {
+    logout,
+    deleteAccount,
+    archiveAccount,
+    reset,
+} from "../../features/auth/authSlice";
 
 const ProfilePage = () => {
+    const [visible, setVisible] = useState(false);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -14,8 +22,92 @@ const ProfilePage = () => {
         (state) => state.auth
     );
 
+    useEffect(() => {
+        if (isSuccess && type == "auth/delete-account/fulfilled") {
+            toast.success("Account permanently deleted successful");
+        }
+
+        if (isSuccess && type == "auth/archive-account/fulfilled") {
+            toast.success("Account temporarily deleted successful");
+        }
+
+        if (isError) {
+            toast.error(message);
+        }
+
+        dispatch(reset());
+    }, [isLoading, isSuccess, type, isError, message]);
+
     return (
         <DrawerContainer>
+            <ConfirmDialog
+                visible={visible}
+                header="Confirmation"
+                message="confirm temporary or permanent delete"
+                reject={() => {
+                    if (
+                        window.confirm(
+                            "You are about to delete your account, the account can not be recover?"
+                        )
+                    ) {
+                        dispatch(deleteAccount());
+                    }
+                }}
+                accept={() => dispatch(archiveAccount())}
+                onHide={() => setVisible(false)}
+                content={({
+                    headerRef,
+                    contentRef,
+                    footerRef,
+                    hide,
+                    message,
+                }) => (
+                    <div className="tw-flex tw-flex-col  tw-items-center tw-p-4 tw-surface-overlay tw-rounded tw-bg-white">
+                        <div className="tw-w-full tw-flex tw-items-center tw-justify-between tw-mt-2 tw-mb-4">
+                            <span
+                                className="tw-font-bold tw-text-2xl tw-block tw-my-0"
+                                ref={headerRef}
+                            >
+                                {message.header}
+                            </span>
+                            <Button
+                                icon="pi pi-times"
+                                text
+                                rounded
+                                onClick={(event) => hide(event)}
+                            />
+                        </div>
+
+                        <p className="tw-my-0" ref={contentRef}>
+                            {message.message}
+                        </p>
+                        <div
+                            className="tw-w-full tw-flex tw-items-center tw-gap-2 tw-mt-4"
+                            ref={footerRef}
+                        >
+                            <Button
+                                label="Temporary"
+                                outlined
+                                severity="warning"
+                                onClick={(event) => {
+                                    hide(event);
+                                    accept();
+                                }}
+                                className="tw-w-full"
+                            ></Button>
+                            <Button
+                                label="Permanent"
+                                severity="danger"
+                                onClick={(event) => {
+                                    hide(event);
+                                    reject();
+                                }}
+                                className="tw-w-full"
+                            ></Button>
+                        </div>
+                    </div>
+                )}
+            />
             <div className="tw-grow tw-p-2 sm:tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center">
                 <div className="tw-card tw-bg-white tw-p-6 tw-shadow-md tw-rounded-md tw-w-full md:tw-w-[36.5rem] tw-py-8 tw-border">
                     <div className="tw-text-center tw-mb-6">
@@ -96,20 +188,34 @@ const ProfilePage = () => {
                         ) : (
                             <div className=""></div>
                         )}
-                        <div className="tw-flex tw-justify-between">
+                        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-4 tw-justify-between tw-gap-3">
                             <Button
-                                text
-                                label="Activitics"
-                                onClick={() => navigate("")}
-                            />
-                            <Button
-                                label="Edit"
-                                onClick={() => navigate("edit")}
+                                outlined
+                                label="Activities"
+                                onClick={() =>
+                                    navigate("/admin/dashboard/activities")
+                                }
+                                className="tw-w-full"
                             />
                             <Button
                                 outlined
+                                severity="success"
+                                label="Edit"
+                                onClick={() => navigate("edit")}
+                                className="tw-w-full"
+                            />
+                            <Button
+                                outlined
+                                severity="warning"
                                 label="Logout"
                                 onClick={() => dispatch(logout())}
+                                className="tw-w-full"
+                            />
+                            <Button
+                                severity="danger"
+                                label="Delete"
+                                onClick={() => setVisible(true)}
+                                className="tw-w-full"
                             />
                         </div>
                     </div>

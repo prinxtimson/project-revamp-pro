@@ -1,11 +1,9 @@
 @component('mail::message')
-# Introduction
+# Profile Updated
 
-The body of your message.
+Hello {{$user['name']}},
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+Your profile update was successful.
 
 Thanks,<br>
 {{ config('app.name') }}

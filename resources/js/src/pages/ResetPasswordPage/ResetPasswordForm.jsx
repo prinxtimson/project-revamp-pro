@@ -23,7 +23,7 @@ const ResetPsswordForm = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { isLoading, isSuccess, isError, message } = useSelector(
+    const { isLoading, isSuccess, isError, message, type } = useSelector(
         (state) => state.auth
     );
 
@@ -32,11 +32,11 @@ const ResetPsswordForm = () => {
     }, []);
 
     useEffect(() => {
-        if (isError) {
+        if (isError && type == "auth/reset-password/rejected") {
             toast.error(message);
         }
 
-        if (isSuccess) {
+        if (isSuccess && type == "auth/reset-password/fulfilled") {
             toast.success(message);
             setData({
                 token: "",
@@ -86,7 +86,7 @@ const ResetPsswordForm = () => {
                                     <label htmlFor="email">Email</label>
                                 </span>
                             </div>
-                            <div className="field">
+                            {/* <div className="field">
                                 <span className="p-float-label">
                                     <Dropdown
                                         inputId="security_question"
@@ -105,8 +105,8 @@ const ResetPsswordForm = () => {
                                         Select Security Question
                                     </label>
                                 </span>
-                            </div>
-                            <div className="field">
+                            </div> */}
+                            {/* <div className="field">
                                 <span className="p-float-label">
                                     <InputText
                                         id="security_answer"
@@ -124,7 +124,7 @@ const ResetPsswordForm = () => {
                                         Security Answer
                                     </label>
                                 </span>
-                            </div>
+                            </div> */}
                             <div className="field">
                                 <span className="p-float-label ">
                                     <Password

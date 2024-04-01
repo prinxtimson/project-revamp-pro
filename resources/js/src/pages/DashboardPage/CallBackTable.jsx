@@ -28,9 +28,8 @@ const CallBackTable = () => {
     const [searchCallbacks, setSearchCallbacks] = useState([]);
     const [query, setQuery] = useState("");
     const [statuses] = useState([
-        { status: "PENDING" },
-        { status: "SUCCESSFUL" },
-        { status: "FAILED" },
+        { status: "SUCCESSFUL", label: "Successful" },
+        { status: "FAILED", label: "Unsuccessful" },
     ]);
     const [priorities] = useState(["low", "medium", "high"]);
     const [data, setData] = useState({
@@ -153,11 +152,11 @@ const CallBackTable = () => {
 
     const statusBodyTemplate = (row) => {
         if (row.status == "FAILED") {
-            return <Tag value={row.status} severity="danger"></Tag>;
+            return <Tag value="Unsuccessful" severity="danger"></Tag>;
         } else if (row.status == "SUCCESSFUL") {
-            return <Tag value={row.status} severity="success"></Tag>;
+            return <Tag value="Successful" severity="success"></Tag>;
         } else {
-            return <Tag value="PENDING" severity="warning"></Tag>;
+            return <div />;
         }
     };
 
@@ -169,7 +168,7 @@ const CallBackTable = () => {
                 onChange={(e) => options.filterApplyCallback(e.value)}
                 placeholder="Select one"
                 showClear
-                style={{ minWidth: "6rem" }}
+                //style={{ minWidth: "6rem" }}
             />
         );
     };
@@ -179,14 +178,14 @@ const CallBackTable = () => {
             <Dropdown
                 value={options.value}
                 options={statuses}
-                optionLabel="status"
+                optionLabel="label"
                 optionValue="status"
                 onChange={(e) => options.filterApplyCallback(e.value)}
                 itemTemplate={statusBodyTemplate}
                 placeholder="Select One"
                 className="p-column-filter"
                 showClear
-                style={{ minWidth: "12rem" }}
+                //style={{ minWidth: "6rem" }}
             />
         );
     };
@@ -284,7 +283,7 @@ const CallBackTable = () => {
                         rows={20}
                         totalRecords={callbacks?.total || 0}
                         onPage={({ page }) => handleChangePage(page)}
-                        tableStyle={{ minWidth: "50rem" }}
+                        tableStyle={{ minWidth: "40rem" }}
                         loading={isLoading}
                         dataKey="id"
                         header={header}
@@ -302,7 +301,7 @@ const CallBackTable = () => {
                             filter
                             filterPlaceholder="Search by name"
                             showFilterMenu={false}
-                            style={{ minWidth: "15rem" }}
+                            style={{ minWidth: "10rem" }}
                         ></Column>
 
                         <Column field="phone" header="Phone number"></Column>

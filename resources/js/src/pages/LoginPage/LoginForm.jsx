@@ -40,11 +40,15 @@ const LoginForm = () => {
     };
 
     useEffect(() => {
-        if (isError) {
+        if (isError && type == "auth/login/rejected") {
             toast.error(message);
         }
 
-        if (isSuccess) {
+        if (isSuccess && type == "auth/logout/fulfilled") {
+            toast.success("Logout successful");
+        }
+
+        if (isSuccess && type == "auth/login/fulfilled") {
             navigate("/admin/two-factor-auth");
         }
 

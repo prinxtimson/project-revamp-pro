@@ -39,10 +39,6 @@
     grid-column: span 2 / span 2;
 }
 
-.tw-col-span-3 {
-    grid-column: span 3 / span 3;
-}
-
 .tw-col-span-4 {
     grid-column: span 4 / span 4;
 }
@@ -157,6 +153,14 @@
     margin-left: 0px;
 }
 
+.tw-ml-2 {
+    margin-left: 0.5rem;
+}
+
+.tw-ml-3 {
+    margin-left: 0.75rem;
+}
+
 .tw-ml-4 {
     margin-left: 1rem;
 }
@@ -171,6 +175,10 @@
 
 .tw-mt-0 {
     margin-top: 0px;
+}
+
+.tw-mt-2 {
+    margin-top: 0.5rem;
 }
 
 .tw-mt-3 {
@@ -207,6 +215,10 @@
 
 .tw-h-20 {
     height: 5rem;
+}
+
+.tw-h-3\/5 {
+    height: 60%;
 }
 
 .tw-h-52 {
@@ -268,6 +280,10 @@
 
 .tw-w-52 {
     width: 13rem;
+}
+
+.tw-w-60 {
+    width: 15rem;
 }
 
 .tw-w-\[32rem\] {
@@ -428,6 +444,10 @@
 
 .tw-border {
     border-width: 1px;
+}
+
+.tw-border-0 {
+    border-width: 0px;
 }
 
 .tw-border-2 {
@@ -610,6 +630,11 @@
     padding-right: 0.5rem;
 }
 
+.tw-px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
 .tw-px-4 {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -659,6 +684,10 @@
 
 .tw-pl-72 {
     padding-left: 18rem;
+}
+
+.tw-text-left {
+    text-align: left;
 }
 
 .tw-text-center {

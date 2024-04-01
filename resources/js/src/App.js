@@ -47,6 +47,9 @@ import NotificationPage from "./pages/DashboardPage/NotificationPage";
 import PerformanceTracking from "./pages/DashboardPage/PerformanceTracking";
 import ReportPage from "./pages/DashboardPage/ReportPage";
 import ProfilePage from "./pages/DashboardPage/ProfilePage";
+import ActivityViewPage from "./pages/DashboardPage/ActivityViewPage";
+import UploadProfileImage from "./pages/DashboardPage/UploadProfileImage";
+import LivechatPage from "./pages/DashboardPage/LivechatPage";
 
 const timeout = 500_000;
 const promptBeforeIdle = 20_000;
@@ -80,14 +83,14 @@ const App = (props) => {
         }
     };
 
-    const { getRemainingTime, activate } = useIdleTimer({
-        onIdle,
-        onActive,
-        onPrompt,
-        timeout,
-        promptBeforeIdle,
-        throttle: 500,
-    });
+    // const { getRemainingTime, activate } = useIdleTimer({
+    //     onIdle,
+    //     onActive,
+    //     onPrompt,
+    //     timeout,
+    //     promptBeforeIdle,
+    //     throttle: 500,
+    // });
 
     useEffect(() => {
         window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
@@ -99,17 +102,17 @@ const App = (props) => {
         });
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setRemaining(Math.ceil(getRemainingTime() / 1000));
-        }, 500);
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setRemaining(Math.ceil(getRemainingTime() / 1000));
+    //     }, 500);
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // }, []);
 
     const handleStillHere = () => {
-        activate();
+        // activate();
     };
 
     useEffect(() => {
@@ -252,10 +255,26 @@ const App = (props) => {
                                 }
                             />
                             <Route
+                                path="activities"
+                                element={
+                                    <AuthRoute>
+                                        <ActivityViewPage />
+                                    </AuthRoute>
+                                }
+                            />
+                            <Route
                                 path="profile/edit"
                                 element={
                                     <AuthRoute>
                                         <ProfileForm />
+                                    </AuthRoute>
+                                }
+                            />
+                            <Route
+                                path="profile/edit/upload"
+                                element={
+                                    <AuthRoute>
+                                        <UploadProfileImage />
                                     </AuthRoute>
                                 }
                             />
@@ -272,6 +291,14 @@ const App = (props) => {
                                 element={
                                     <AuthRoute>
                                         <CallBackTable />
+                                    </AuthRoute>
+                                }
+                            />
+                            <Route
+                                path="livechat"
+                                element={
+                                    <AuthRoute>
+                                        <LivechatPage />
                                     </AuthRoute>
                                 }
                             />

@@ -8,7 +8,7 @@ use App\Mail\Callback;
 use App\Mail\SubmitFeedback;
 use App\Models\CallBack as ModelsCallBack;
 use App\Models\User;
-use App\Notifications\NewFeedback;
+use App\Notifications\NewCallback;
 use App\WebPush\WebNotification;
 use Carbon\Carbon;
 use Exception;
@@ -78,7 +78,7 @@ class CallBackController extends Controller
         WebNotification::sendWebNotification(['title' => 'Callback Request', 'body' => 'A new callback request had been submitted.']);
 
         $users = User::role(['agent', 'admin'])->get();
-        Notification::send($users, new NewFeedback($response));
+        Notification::send($users, new NewCallback($response));
          // Carbon::createFromDate($fields['date'], $fields['time'])
 
         Mail::to($fields['email'])->send(new Callback($response)); 

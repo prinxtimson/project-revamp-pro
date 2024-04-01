@@ -30,9 +30,9 @@ const TicketsTable = () => {
     const [total, setTotal] = useState(0);
     const [comment, setComment] = useState("");
     const [statuses] = useState([
-        { name: "OPEN", value: "open" },
-        { name: "PENDING", value: "pending" },
-        { name: "CLOSE", value: "close" },
+        { name: "Open", value: "open" },
+        { name: "In Progress", value: "pending" },
+        { name: "Resolved", value: "close" },
     ]);
     const [priorities] = useState(["low", "medium", "high"]);
     const [subjects] = useState([
@@ -122,13 +122,13 @@ const TicketsTable = () => {
                     onClick={() => handleCheck(row)}
                     disabled={Boolean(row.status == "close")}
                 />
-                <Button
+                {/* <Button
                     text
                     icon="pi pi-trash"
                     severity="danger"
                     rounded
                     onClick={() => handleDelete(row)}
-                />
+                /> */}
             </div>
         );
     };
@@ -136,7 +136,7 @@ const TicketsTable = () => {
     const getSeverity = (value) => {
         switch (value) {
             case "open":
-                return "info";
+                return "danger";
 
             case "pending":
                 return "warning";
@@ -154,7 +154,17 @@ const TicketsTable = () => {
             <Tag severity={getSeverity(rowData.status || rowData.value)}>
                 <div className="tw-flex tw-items-center tw-gap-2">
                     <span className="tw-text-xs">
-                        {rowData.status?.toUpperCase() || rowData.name}
+                        {rowData.status ? (
+                            <span>
+                                {rowData.status == "open"
+                                    ? rowData.status?.toUpperCase()
+                                    : rowData.status == "pending"
+                                    ? "In Progress"
+                                    : "Resolved"}
+                            </span>
+                        ) : (
+                            rowData.name
+                        )}
                     </span>
                 </div>
             </Tag>
@@ -418,7 +428,7 @@ const TicketsTable = () => {
                                                 let val = option.value;
                                                 return (
                                                     <Tag
-                                                        value={val.toUpperCase()}
+                                                        value={option.name.toUpperCase()}
                                                         severity={getSeverity(
                                                             val
                                                         )}

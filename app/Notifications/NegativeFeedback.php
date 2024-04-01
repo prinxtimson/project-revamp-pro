@@ -12,7 +12,7 @@ class NegativeFeedback extends Notification
 {
     use Queueable;
 
-    private $feedback;
+    private $payload;
     /**
      * Create a new notification instance.
      *
@@ -20,7 +20,7 @@ class NegativeFeedback extends Notification
      */
     public function __construct($feedback)
     {
-        $this->feedback = $feedback;
+        $this->payload = $feedback;
     }
 
     /**
@@ -51,7 +51,7 @@ class NegativeFeedback extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'feedback' => $this->feedback,
+            'payload' => $this->payload,
         ];
     }
 
@@ -64,7 +64,7 @@ class NegativeFeedback extends Notification
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'feedback' => $this->feedback,
+            'payload' => $this->payload,
         ]);
     }
 
@@ -77,7 +77,7 @@ class NegativeFeedback extends Notification
     public function toArray($notifiable)
     {
         return [
-            'feedback' => $this->feedback
+            'payload' => $this->payload
         ];
     }
 }

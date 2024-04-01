@@ -11,6 +11,7 @@ import Badge from "@mui/material/Badge";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import PhoneCallbackIcon from "@mui/icons-material/PhoneCallback";
+import MessageRoundedIcon from "@mui/icons-material/MessageRounded";
 import ErrorIcon from "@mui/icons-material/Error";
 import SecurityIcon from "@mui/icons-material/Security";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -65,7 +66,7 @@ const ListItems = () => {
 
             {user?.roles[0].name != "manager" && (
                 <>
-                    {/* <Link to="/admin/dashboard/livecall">
+                    <Link to="/admin/dashboard/livecall">
                         <ListItem>
                             <ListItemIcon>
                                 <VideoCallIcon />
@@ -82,7 +83,16 @@ const ListItems = () => {
                                 <ListItemText primary="Live Call" />
                             </Badge>
                         </ListItem>
-                    </Link> */}
+                    </Link>
+
+                    <Link to="/admin/dashboard/livechat">
+                        <ListItem>
+                            <ListItemIcon>
+                                <MessageRoundedIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Livechat" />
+                        </ListItem>
+                    </Link>
 
                     <Link to="/admin/dashboard/callback">
                         <ListItem>
@@ -98,20 +108,20 @@ const ListItems = () => {
                             <ListItemIcon>
                                 <ErrorIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Ticket Raised" />
+                            <ListItemText primary="Raised Ticket" />
                         </ListItem>
                     </Link>
-                    {/* <a href="https://www.sans.org/uk_en/" target="_blank">
+                    <a href="#" target="_blank">
                         <ListItem>
                             <ListItemIcon>
                                 <SecurityIcon />
                             </ListItemIcon>
                             <ListItemText primary="E-Learning" />
                         </ListItem>
-                    </a> */}
+                    </a>
                 </>
             )}
-            {user?.roles[0].name == "" && (
+            {user?.roles[0].name != "agent" && (
                 <>
                     <Link to="/admin/dashboard/feedback">
                         <ListItem>

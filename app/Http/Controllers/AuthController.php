@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Mail\AccountLocked;
 use App\Mail\ProfileEditMail;
+use App\Mail\UserArchive;
+use App\Mail\UserDelete;
 use App\Models\LiveCall;
 use App\Models\Setting;
 use App\Models\Survey;
@@ -436,13 +438,24 @@ class AuthController extends Controller
 
     }
 
+    public function archive()
+    {
+        $user = User::find(auth()->id());
+
+        $deleted = $user->delete();
+
+        Mail::to($user)->send(new UserArchive($user));
+
+        return $deleted;
+    }
+
     public function delete()
     {
         $user = User::find(auth()->id());
 
         $deleted = $user->forceDelete();
 
-        //Mail::to($user)->send(new UserDelete($user->profile));
+        Mail::to($user)->send(new UserDelete($user));
 
         return $deleted;
     }

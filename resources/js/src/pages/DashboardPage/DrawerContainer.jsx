@@ -23,6 +23,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import MainListItems from "./ListItems";
+import { toast } from "react-toastify";
 import { Menu as PRMenu } from "primereact/menu";
 import { Link as RouterLink } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
@@ -99,8 +100,6 @@ const Drawer = styled(MuiDrawer, {
     },
 }));
 
-const mdTheme = createTheme();
-
 const settings = [
     { name: "Account", route: "../profile" },
     { name: "Edit Profile", route: "../profile/edit" },
@@ -122,7 +121,7 @@ const DrawerContainer = ({ children }) => {
 
     const dispatch = useDispatch();
 
-    const { user } = useSelector((state) => state.auth);
+    const { user, type, isSuccess } = useSelector((state) => state.auth);
     const { notifications, count } = useSelector((state) => state.notification);
 
     useEffect(() => {
@@ -169,6 +168,12 @@ const DrawerContainer = ({ children }) => {
         e.preventDefault();
         dispatch(logout());
     };
+
+    useEffect(() => {
+        if (isSuccess && type == "auth/logout/fulfilled") {
+            toast.success("Logout successful");
+        }
+    }, [isSuccess, type]);
 
     useEffect(() => {
         if (searchText.length > 0) {
@@ -219,14 +224,16 @@ const DrawerContainer = ({ children }) => {
                             padding: 1,
                         }}
                     >
-                        <Avatar
-                            variant="square"
-                            alt="Tritek Consulting"
-                            src="/images/logo.png"
-                            sx={{ width: 128, height: 32 }}
-                        >
-                            TC
-                        </Avatar>
+                        <RouterLink to="/admin/dashboard">
+                            <Avatar
+                                variant="square"
+                                alt="Tritek Consulting"
+                                src="/images/logo.png"
+                                sx={{ width: 128, height: 32 }}
+                            >
+                                TC
+                            </Avatar>
+                        </RouterLink>
                     </Box>
                     <IconButton
                         edge="start"
@@ -310,30 +317,20 @@ const DrawerContainer = ({ children }) => {
                         <PRMenu
                             baseZIndex={5000}
                             model={[
-                                {
-                                    label: "Notification history",
-                                    template: (item) => (
-                                        <div className="tw-px-4 tw-py-2 tw-bg-gray-200 ">
-                                            <div className="tw-float-right">
-                                                <RouterLink
-                                                    to="/admin/dashboard/notification-history"
-                                                    className="tw-text-blue-500 "
-                                                >
-                                                    {item.label}
-                                                </RouterLink>
-                                            </div>
-                                            <div className="tw-clear-both"></div>
-                                        </div>
-                                    ),
-                                },
                                 notifications && notifications.length > 0
                                     ? notifications.slice(0, 9).map((val) =>
                                           val.type ==
                                           "App\\Notifications\\NegativeFeedback"
                                               ? {
-                                                    label: val.data.read_at,
+                                                    label: val,
                                                     template: (
-                                                        item,
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
                                                         options
                                                     ) => (
                                                         <div className="tw-py-2 tw-px-4">
@@ -347,13 +344,15 @@ const DrawerContainer = ({ children }) => {
                                                                 </p>
                                                                 <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
                                                                 <small>
-                                                                    {item.label
+                                                                    {read_at
                                                                         ? "Read"
                                                                         : "New"}
                                                                 </small>
                                                             </div>
                                                             <small>
-                                                                {moment().fromNow()}
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
                                                             </small>
                                                         </div>
                                                     ),
@@ -361,9 +360,15 @@ const DrawerContainer = ({ children }) => {
                                               : val.type ==
                                                 "App\\Notifications\\BookingComplete"
                                               ? {
-                                                    label: val.data.read_at,
+                                                    label: val,
                                                     template: (
-                                                        item,
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
                                                         options
                                                     ) => (
                                                         <div className="tw-py-2 tw-px-4">
@@ -375,13 +380,49 @@ const DrawerContainer = ({ children }) => {
                                                                 </p>
                                                                 <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
                                                                 <small>
-                                                                    {item.label
+                                                                    {read_at
                                                                         ? "Read"
                                                                         : "New"}
                                                                 </small>
                                                             </div>
                                                             <small>
-                                                                {moment().fromNow()}
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : val.type ==
+                                                "App\\Notifications\\NewCallback"
+                                              ? {
+                                                    label: val,
+                                                    template: (
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    {`${data.payload.name} has requested a call back, scheduled for ${data.payload.date}, ${data.payload.time}`}
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {read_at
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
                                                             </small>
                                                         </div>
                                                     ),
@@ -389,9 +430,15 @@ const DrawerContainer = ({ children }) => {
                                               : val.type ==
                                                 "App\\Notifications\\BookingRescheduled"
                                               ? {
-                                                    label: val.data.read_at,
+                                                    label: val,
                                                     template: (
-                                                        item,
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
                                                         options
                                                     ) => (
                                                         <div className="tw-py-2 tw-px-4">
@@ -403,13 +450,15 @@ const DrawerContainer = ({ children }) => {
                                                                 </p>
                                                                 <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
                                                                 <small>
-                                                                    {item.label
+                                                                    {read_at
                                                                         ? "Read"
                                                                         : "New"}
                                                                 </small>
                                                             </div>
                                                             <small>
-                                                                {moment().fromNow()}
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
                                                             </small>
                                                         </div>
                                                     ),
@@ -417,9 +466,15 @@ const DrawerContainer = ({ children }) => {
                                               : val.type ==
                                                 "App\\Notifications\\CheckIn"
                                               ? {
-                                                    label: val.data.read_at,
+                                                    label: val,
                                                     template: (
-                                                        item,
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
                                                         options
                                                     ) => (
                                                         <div className="tw-py-2 tw-px-4">
@@ -431,13 +486,15 @@ const DrawerContainer = ({ children }) => {
                                                                 </p>
                                                                 <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
                                                                 <small>
-                                                                    {item.label
+                                                                    {read_at
                                                                         ? "Read"
                                                                         : "New"}
                                                                 </small>
                                                             </div>
                                                             <small>
-                                                                {moment().fromNow()}
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
                                                             </small>
                                                         </div>
                                                     ),
@@ -445,9 +502,15 @@ const DrawerContainer = ({ children }) => {
                                               : val.type ==
                                                 "App\\Notifications\\CheckOut"
                                               ? {
-                                                    label: val.data.read_at,
+                                                    label: val,
                                                     template: (
-                                                        item,
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
                                                         options
                                                     ) => (
                                                         <div className="tw-py-2 tw-px-4">
@@ -459,13 +522,15 @@ const DrawerContainer = ({ children }) => {
                                                                 </p>
                                                                 <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
                                                                 <small>
-                                                                    {item.label
+                                                                    {read_at
                                                                         ? "Read"
                                                                         : "New"}
                                                                 </small>
                                                             </div>
                                                             <small>
-                                                                {moment().fromNow()}
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
                                                             </small>
                                                         </div>
                                                     ),
@@ -474,7 +539,7 @@ const DrawerContainer = ({ children }) => {
                                       )
                                     : [
                                           {
-                                              label: "No notiffication yet...",
+                                              label: "No notification yet...",
                                               template: (item, options) => (
                                                   <div className="tw-py-2 tw-px-4">
                                                       <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
@@ -487,6 +552,22 @@ const DrawerContainer = ({ children }) => {
                                               ),
                                           },
                                       ],
+                                {
+                                    label: "View all",
+                                    template: (item) => (
+                                        <div className="tw-px-4 tw-py-2 tw-bg-gray-200 ">
+                                            <div className="tw-text-center">
+                                                <RouterLink
+                                                    to="/admin/dashboard/notification-history"
+                                                    className="tw-text-blue-500 "
+                                                >
+                                                    {item.label}
+                                                </RouterLink>
+                                            </div>
+                                            <div className="tw-clear-both"></div>
+                                        </div>
+                                    ),
+                                },
                             ].flat()}
                             popup
                             ref={notificationRef}
@@ -565,14 +646,16 @@ const DrawerContainer = ({ children }) => {
                             justifyContent: "center",
                         }}
                     >
-                        <Avatar
-                            variant="square"
-                            alt="Dev Arena"
-                            src="/images/logo.png"
-                            sx={{ width: 128, height: 32 }}
-                        >
-                            Dev Arena
-                        </Avatar>
+                        <RouterLink to="/admin/dashboard">
+                            <Avatar
+                                variant="square"
+                                alt="Dev Arena"
+                                src="/images/logo.png"
+                                sx={{ width: 128, height: 32 }}
+                            >
+                                Tritek Live Support
+                            </Avatar>
+                        </RouterLink>
                     </Box>
                     <Toolbar
                         sx={{
@@ -607,13 +690,14 @@ const DrawerContainer = ({ children }) => {
                 <Toolbar />
 
                 <Container
-                    maxWidth="lg"
                     sx={{
                         mt: 2,
                         mb: 2,
                         flexGrow: 1,
                         display: "flex",
                         flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                     }}
                 >
                     {children}

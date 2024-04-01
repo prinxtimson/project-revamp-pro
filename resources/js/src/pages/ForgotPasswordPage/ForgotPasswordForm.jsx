@@ -14,16 +14,16 @@ const ForgotPasswordForm = () => {
 
     const dispatch = useDispatch();
 
-    const { isLoading, isSuccess, isError, message } = useSelector(
+    const { isLoading, isSuccess, isError, type, message } = useSelector(
         (state) => state.auth
     );
 
     useEffect(() => {
-        if (isError) {
+        if (isError && type == "auth/forgot-password/rejected") {
             toast.error(message);
         }
 
-        if (isSuccess) {
+        if (isSuccess && type == "auth/forgot-password/fulfilled") {
             toast.success(message);
             setData({
                 email: "",

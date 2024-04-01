@@ -19,7 +19,7 @@ const NotificationPage = () => {
 
     return (
         <DrawerContainer>
-            <div className="tw-grow tw-p-4 tw-flex tw-flex-col tw-items-center">
+            <div className="tw-grow tw-p-4 tw-flex tw-flex-col tw-items-">
                 <div className="tw-mt-4 tw-w-full">
                     {notifications && notifications.length > 0 ? (
                         notifications.map((item) => (
@@ -29,14 +29,13 @@ const NotificationPage = () => {
                                 }`}
                                 key={item.id}
                             >
-                                <div className="tw-text-lg tw-font-semibold ">
-                                    {item.type.split("\\")[2]}
-                                </div>
-
-                                <div className="tw-text-lg tw-col-span-3">
+                                <div className="tw-text-lg tw-col-span-4">
                                     {item.type ==
                                     "App\\Notifications\\ReportExported"
                                         ? "Report had been sent"
+                                        : item.type ==
+                                          "App\\Notifications\\NewCallback"
+                                        ? `${item.data.payload.name} has requested a call back, scheduled for ${item.data.payload.date}, ${item.data.payload.time}`
                                         : ""}
                                 </div>
 
@@ -46,10 +45,10 @@ const NotificationPage = () => {
                             </div>
                         ))
                     ) : (
-                        <div className="tw-border tw-p-2 tw-mb-1 tw-grid tw-grid-cols-5 tw-items-center">
+                        <div className="tw-border tw-p-2 tw-mb-1 tw-grid tw-grid-cols-5 tw-items-">
                             <div className="tw-text-lg tw-font-semibold "></div>
 
-                            <div className="tw-text-lg tw-col-span-3">
+                            <div className="tw-text-lg tw-col-span-4">
                                 You have no notification yet ...
                             </div>
 

@@ -9,6 +9,7 @@ import ticket from "./features/ticket/ticketSlice";
 import setting from "./features/setting/settingSlice";
 import performance from "./features/performance/performanceSlice";
 import report from "./features/report/reportSlice";
+import activity from "./features/activity/activitySlice";
 
 export const store = configureStore({
     reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
         setting,
         performance,
         report,
+        activity,
     },
 });

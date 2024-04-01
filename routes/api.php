@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
 use App\Http\Controllers\LiveCallController;
@@ -64,9 +65,14 @@ Route::get('summary/feedback', [SummaryController::class, 'feedback']);
 
 Route::get('livecall/{id}', [LiveCallController::class, 'show']);
 
+Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'activities'], function () {
+    Route::get('/all', [ActivityController::class, 'index'])->name('activities.index');
+    Route::get('/', [ActivityController::class, 'myActivities'])->name('activities.my');
+});
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/me', [AuthController::class, 'me']);
-
+    Route::delete('/archive', [AuthController::class, 'archive']);
     Route::delete('/delete', [AuthController::class, 'delete']);
     Route::put('/update', [AuthController::class, 'update']);
 

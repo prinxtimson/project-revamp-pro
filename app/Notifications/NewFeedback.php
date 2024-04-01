@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -11,14 +12,16 @@ class NewFeedback extends Notification
 {
     use Queueable;
 
+    private $payload;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($payload)
     {
-        //
+        $this->payload = $payload;
     }
 
     /**
@@ -29,7 +32,7 @@ class NewFeedback extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['broadcast', 'database'];
     }
 
     /**
@@ -55,7 +58,21 @@ class NewFeedback extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'payload' => $this->payload,
         ];
+    }
+
+    public function toDatabase($notifiable)
+    {
+        return [
+            'payload' => $this->payload,
+        ];
+    }
+
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
+            'payload' => $this->payload,
+        ]);
     }
 }

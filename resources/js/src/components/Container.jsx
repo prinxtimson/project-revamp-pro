@@ -30,7 +30,7 @@ const MainContainer = ({ children }) => {
                 style={{ backgroundColor: "#f5f7ff" }}
             >
                 <div className="tw-hidden tw-w-1/2 md:tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-5">
-                    <a href="/">
+                    <a href="/admin">
                         <img
                             className="tw-w-40 md:tw-w-52"
                             src="/images/logo.png"
@@ -51,7 +51,7 @@ const MainContainer = ({ children }) => {
                 <div className="tw-w-full md:tw-w-1/2 tw-p-4 tw-flex tw-flex-col tw-bg-white">
                     <div className="tw-grow tw-flex tw-flex-col tw-items-center tw-justify-center">
                         <div className="tw-flex tw-w-full md:tw-hidden tw-flex-col tw-items-center tw-justify-center tw-gap-5">
-                            <a href="/">
+                            <a href="/admin">
                                 <img
                                     className="tw-w-40 md:tw-w-52"
                                     src="/images/logo.png"

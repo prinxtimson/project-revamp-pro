@@ -11,14 +11,16 @@ class ProfileEditMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private $payload;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user)
     {
-        //
+        $this->payload = $user;
     }
 
     /**
@@ -28,6 +30,6 @@ class ProfileEditMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.profile_edit');
+        return $this->markdown('emails.profile_edit', ['user' => $this->payload]);
     }
 }
