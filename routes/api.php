@@ -42,7 +42,7 @@ Route::get('livecall/send_survey/{livecall}', [LiveCallController::class, 'sendS
 Route::get('room/{id}', [VideoRoomController::class, 'show']);
 Route::post('room/token', [VideoRoomController::class, 'get_access_token']);
 Route::post('feedback', [SurveyController::class, 'store']);
-Route::get('feedback/{survey}', [SurveyController::class, 'show']);
+Route::get('feedback/show/{survey}', [SurveyController::class, 'show']);
 
 Route::post('tickets', [TicketController::class, 'store']);
 Route::put('tickets/{ticket}', [TicketController::class, 'update']);

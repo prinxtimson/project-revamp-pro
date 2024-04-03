@@ -38,13 +38,31 @@ class SurveyController extends Controller
 
     public function filterSurvey(Request $request)
     {
-        $user = $request->user;
+        $user = $request->user_id;
         $from = $request->from;
-        $to = $request->to;
-        $category = $request->category;
+        $to =  $request->to;
+        $category = $request->has('category') ? strtolower($request->category) : null;
 
-        $surveys = Survey::get();
-
+        $surveys = Survey::where(function ($q) use ($user){
+            if($user != "undefined"){
+                return $q->where('user_id', $user);
+            }else {
+                return $q;
+            }
+        })->where(function ($q) use ($category){
+            if($category != "undefined"){
+                return $q->where('support_type', $category);
+            }else {
+                return $q;
+            }
+        })->where(function ($q) use ($from, $to){
+            if($from != "undefined" && $to != "undefined"){
+                return $q->whereBetween('created_at', [$from, $to]);
+            }else {
+                return $q;
+            }
+        })->get();
+       
         return response()->json($surveys);
     }
 

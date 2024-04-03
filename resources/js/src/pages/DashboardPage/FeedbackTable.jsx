@@ -24,14 +24,8 @@ import {
 const FeedbackTable = () => {
     const [chatData, setChatData] = useState(null);
     const [agents, setAgents] = useState([]);
-    const [selectedAgent, setSelectedAgent] = useState(null);
     const [feedbackRatings, setFeedbackRatings] = useState([]);
-    const [data, setData] = useState({
-        user: null,
-        from: null,
-        to: null,
-        category: null,
-    });
+    const [data, setData] = useState({});
 
     const { feedbacks, isLoading, isSuccess, type, isError, message } =
         useSelector((state) => state.feedback);
@@ -203,14 +197,14 @@ const FeedbackTable = () => {
                 <div className="tw-mb-5 tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 md:tw-grid-cols-5 tw-gap-2 sm:tw-gap-4">
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
                         <h3 className="tw-mt-0 tw-mb-2">Not at all likely</h3>
-                        <p className="tw-my-0">
+                        <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {" "}
                             {feedbackRatings?.filter((item) => item < 3).length}
                         </p>
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
                         <h3 className="tw-mt-0 tw-mb-2">Somewhat likely</h3>
-                        <p className="tw-my-0">
+                        <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {" "}
                             {
                                 feedbackRatings?.filter(
@@ -221,7 +215,7 @@ const FeedbackTable = () => {
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
                         <h3 className="tw-mt-0 tw-mb-2">Neutral</h3>
-                        <p className="tw-my-0">
+                        <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {
                                 feedbackRatings?.filter((item) => item === 5)
                                     .length
@@ -230,7 +224,7 @@ const FeedbackTable = () => {
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
                         <h3 className="tw-mt-0 tw-mb-2">Somewhat likely</h3>
-                        <p className="tw-my-0">
+                        <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {
                                 feedbackRatings?.filter(
                                     (item) => item > 5 && item < 9
@@ -240,7 +234,7 @@ const FeedbackTable = () => {
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
                         <h3 className="tw-mt-0 tw-mb-2">Very likely</h3>
-                        <p className="tw-my-0">
+                        <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {
                                 feedbackRatings?.filter((item) => item >= 9)
                                     .length
@@ -266,7 +260,7 @@ const FeedbackTable = () => {
                             <Knob
                                 value={(
                                     feedbackRatings.reduce((a, b) => a + b, 0) /
-                                    feedbackRatings.length
+                                        feedbackRatings.length || 0
                                 ).toFixed(1)}
                                 readOnly
                                 size={200}
@@ -310,4 +304,4 @@ const basicOptions = {
     },
 };
 
-const CATEGORIES = ["Feedback", "Callback", "Livecall", "Livechat"];
+const CATEGORIES = ["Callback", "Livecall", "Livechat"];
