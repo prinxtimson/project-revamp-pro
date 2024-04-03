@@ -93,6 +93,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Ticket::class);
     }
 
+    public function chat_messages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
     public function report_templates () 
     {
         return $this->hasMany(ReportTemplate::class);

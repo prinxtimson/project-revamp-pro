@@ -31,6 +31,24 @@ export const getFeedbacks = createAsyncThunk(
     }
 );
 
+export const filterFeedback = createAsyncThunk(
+    "feedback/filter",
+    async (args, thunkAPI) => {
+        try {
+            return await feedbackService.filterFeedback(args);
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
 export const getFeedbacksByAgent = createAsyncThunk(
     "feedback/get-by-agent",
     async (id, thunkAPI) => {
@@ -160,6 +178,18 @@ export const feedbackSlice = createSlice({
                 state.feedbacks = action.payload;
             })
             .addCase(getFeedbacks.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(filterFeedback.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(filterFeedback.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.feedbacks = action.payload;
+            })
+            .addCase(filterFeedback.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

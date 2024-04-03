@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LiveCallController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PerformanceTrackingController;
@@ -92,6 +93,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('callback/{id}', [CallBackController::class, 'destroy']);
 
     Route::get('feedback', [SurveyController::class, 'index']);
+    Route::get('feedback/filter', [SurveyController::class, 'filterSurvey']);
     Route::get('feedback/agent/{id}', [SurveyController::class, 'getSurveyByUserId']);
     Route::delete('feedback/{survey}', [SurveyController::class, 'destroy']);
 
@@ -138,6 +140,16 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin|manager']
 
     Route::post('agents/recommend-training', [UserController::class, 'recommend_training']);
 
+});
+
+Route::group(['prefix' => 'chats'], function () {
+    Route::get('', [ChatController::class, 'index'])->name('chats');
+    Route::get('/get/{chat}', [ChatController::class, 'get_chat'])->name('chats.get');
+    Route::post('new', [ChatController::class, 'start_chat'])->name('chats.new');
+    Route::post('/messages/{chat}', [ChatController::class, 'save'])->name('chats.messages.save');
+    Route::get('/messages/search/{chat}', [ChatController::class, 'searchChats'])->name('chats.messages.search');
+    Route::get('/messages/read/{chat}', [ChatController::class, 'markRead'])->name('chats.messages.read');
+    Route::delete('/messages/delete/{message}', [ChatController::class, 'deleteMessage'])->name('chats.messages.delete');
 });
 
 //Route::get('testing', [ReportTemplateController::class, 'test']);

@@ -14,6 +14,14 @@ const getFeedbacksByAgent = async (id) => {
     return res.data;
 };
 
+const filterFeedback = async ({ user, from, to, category }) => {
+    const res = await axios.get(
+        `${API_URL}/filter?user=${user}&from=${from}&to=${to}&category=${category}`
+    );
+
+    return res.data;
+};
+
 const getFeedback = async (id) => {
     const res = await axios.get(API_URL + "/" + id);
 
@@ -41,6 +49,7 @@ const deleteFeedback = async (id) => {
 const feedbackService = {
     getFeedbacks,
     getFeedback,
+    filterFeedback,
     sendFeedback,
     getFeedbacksByAgent,
     updateFeedback,

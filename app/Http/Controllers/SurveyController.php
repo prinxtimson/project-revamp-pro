@@ -36,6 +36,18 @@ class SurveyController extends Controller
         return Survey::where('user_id', $id)->get();
     }
 
+    public function filterSurvey(Request $request)
+    {
+        $user = $request->user;
+        $from = $request->from;
+        $to = $request->to;
+        $category = $request->category;
+
+        $surveys = Survey::get();
+
+        return response()->json($surveys);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
