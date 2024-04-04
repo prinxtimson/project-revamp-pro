@@ -84,6 +84,10 @@ Route::middleware(['auth', '2fa'])->group(function () {
         return view('welcome');
     })->name('dashboard.agent.single');
 
+    Route::get('admin/dashboard/e-learning/view/{id}', function () {
+        return view('welcome');
+    })->name('dashboard.e-learning.single');
+
     Route::get('admin/dashboard/profile/edit', function () {
         return view('welcome');
     })->name('dashboard.profile.edit');

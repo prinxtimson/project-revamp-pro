@@ -11,6 +11,7 @@ import performance from "./features/performance/performanceSlice";
 import report from "./features/report/reportSlice";
 import activity from "./features/activity/activitySlice";
 import chat from "./features/chat/chatSlice";
+import tutorial from "./features/tutorial/tutorialSlice";
 
 export const store = configureStore({
     reducer: {
@@ -26,5 +27,6 @@ export const store = configureStore({
         report,
         activity,
         chat,
+        tutorial,
     },
 });

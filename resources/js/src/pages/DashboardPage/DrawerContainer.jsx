@@ -428,6 +428,40 @@ const DrawerContainer = ({ children }) => {
                                                     ),
                                                 }
                                               : val.type ==
+                                                "App\\Notifications\\NewCourse"
+                                              ? {
+                                                    label: val,
+                                                    template: (
+                                                        {
+                                                            label: {
+                                                                read_at,
+                                                                data,
+                                                                created_at,
+                                                            },
+                                                        },
+                                                        options
+                                                    ) => (
+                                                        <div className="tw-py-2 tw-px-4">
+                                                            <div className="tw-flex tw-mb-0 tw-items-center tw-gap-2">
+                                                                <p className="tw-my-0 tw-grow">
+                                                                    {` A new course ${data.payload.title} is available`}
+                                                                </p>
+                                                                <div className="tw-rounded-full tw-border-2 tw-border-black"></div>
+                                                                <small>
+                                                                    {read_at
+                                                                        ? "Read"
+                                                                        : "New"}
+                                                                </small>
+                                                            </div>
+                                                            <small>
+                                                                {moment(
+                                                                    created_at
+                                                                ).fromNow()}
+                                                            </small>
+                                                        </div>
+                                                    ),
+                                                }
+                                              : val.type ==
                                                 "App\\Notifications\\BookingRescheduled"
                                               ? {
                                                     label: val,

@@ -50,6 +50,8 @@ import ProfilePage from "./pages/DashboardPage/ProfilePage";
 import ActivityViewPage from "./pages/DashboardPage/ActivityViewPage";
 import UploadProfileImage from "./pages/DashboardPage/UploadProfileImage";
 import LivechatPage from "./pages/DashboardPage/LivechatPage";
+import ELearningPage from "./pages/DashboardPage/ELearningPage";
+import SingleTutorialPage from "./pages/DashboardPage/SingleTutorialPage";
 
 const timeout = 500_000;
 const promptBeforeIdle = 20_000;
@@ -299,6 +301,22 @@ const App = (props) => {
                                 element={
                                     <AuthRoute>
                                         <LivechatPage />
+                                    </AuthRoute>
+                                }
+                            />
+                            <Route
+                                path="e-learning"
+                                element={
+                                    <AuthRoute>
+                                        <ELearningPage />
+                                    </AuthRoute>
+                                }
+                            />
+                            <Route
+                                path="e-learning/view/:id"
+                                element={
+                                    <AuthRoute>
+                                        <SingleTutorialPage />
                                     </AuthRoute>
                                 }
                             />

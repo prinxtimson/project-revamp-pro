@@ -36,6 +36,9 @@ const NotificationPage = () => {
                                         : item.type ==
                                           "App\\Notifications\\NewCallback"
                                         ? `${item.data.payload.name} has requested a call back, scheduled for ${item.data.payload.date}, ${item.data.payload.time}`
+                                        : item.type ==
+                                          "App\\Notifications\\NewCourse"
+                                        ? `A new course ${data.payload.title} is available`
                                         : ""}
                                 </div>
 

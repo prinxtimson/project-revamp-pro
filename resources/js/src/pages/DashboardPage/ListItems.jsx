@@ -111,14 +111,14 @@ const ListItems = () => {
                             <ListItemText primary="Raised Ticket" />
                         </ListItem>
                     </Link>
-                    <a href="#" target="_blank">
+                    <Link to="/admin/dashboard/e-learning">
                         <ListItem>
                             <ListItemIcon>
                                 <SecurityIcon />
                             </ListItemIcon>
                             <ListItemText primary="E-Learning" />
                         </ListItem>
-                    </a>
+                    </Link>
                 </>
             )}
             {user?.roles[0].name != "agent" && (

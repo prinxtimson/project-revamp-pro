@@ -63,6 +63,10 @@
     margin: 0.75rem;
 }
 
+.tw-m-4 {
+    margin: 1rem;
+}
+
 .tw-m-5 {
     margin: 1.25rem;
 }
@@ -365,6 +369,10 @@
 
 .tw-items-center {
     align-items: center;
+}
+
+.tw-justify-end {
+    justify-content: flex-end;
 }
 
 .tw-justify-center {
@@ -975,6 +983,10 @@
         padding: 1rem;
     }
 
+    .sm\:tw-p-6 {
+        padding: 1.5rem;
+    }
+
     .sm\:tw-pb-6 {
         padding-bottom: 1.5rem;
     }
@@ -994,6 +1006,10 @@
 
     .md\:tw-col-span-2 {
         grid-column: span 2 / span 2;
+    }
+
+    .md\:tw-m-8 {
+        margin: 2rem;
     }
 
     .md\:tw-mx-6 {

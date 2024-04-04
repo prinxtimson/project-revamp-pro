@@ -13,6 +13,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoRoomController;
 use Illuminate\Http\Request;
@@ -109,6 +110,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('notifications', [NotificationController::class, 'index']);
     Route::get('notifications/mark', [NotificationController::class, 'markNotification']);
+
+    Route::get('tutorials', [TutorialController::class, 'index']);
+    Route::get('tutorials/view/{id}', [TutorialController::class, 'show']);
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin|manager']], function () {
@@ -139,6 +143,8 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin|manager']
     Route::delete('performance-tracking/{performance_tracking}', [PerformanceTrackingController::class, 'destroy']);
 
     Route::post('agents/recommend-training', [UserController::class, 'recommend_training']);
+
+    Route::post('tutorials', [TutorialController::class, 'store']);
 
 });
 
