@@ -106,22 +106,16 @@ class SurveyController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'ratings' => 'required',
+            'data' => 'required',
             'support_type' => 'required|string',
             'support_id' => 'required|integer',
             'comment' => 'string|nullable',
-            'user_id' => 'required|integer' 
+            'user_id' => 'nullable|integer' 
         ]);
 
-        $survey = Survey::create([
-            'data' => $fields['ratings'],
-            'comment' => $fields['comment'],
-            'support_type' => $fields['support_type'],
-            'support_id' => $fields['support_id'],
-            'user_id' => $fields['user_id']
-        ]);
+        $survey = Survey::create($fields);
 
-        $total_ratings = (array_reduce($fields['ratings'], function($a, $b) {
+        $total_ratings = (array_reduce($fields['data'], function($a, $b) {
             return $a+$b['rating'];
         }, 0)/3);
 

@@ -42,37 +42,39 @@ const SingleTutorialPage = () => {
 
     return (
         <DrawerContainer>
-            <AddFeedbackDialog
-                visible={visible}
-                handleOnHide={() => setVisible(false)}
-                lesson={lesson}
-            />
-            <div className="tw-grow tw-p-3 sm:tw-p-6">
-                {lesson && (
-                    <div className="">
-                        <div className="tw-mb-4">
-                            <ReactPlayer
-                                url={lesson.video_url}
-                                controls={true}
-                            />
-                        </div>
+            {lesson && (
+                <>
+                    <AddFeedbackDialog
+                        visible={visible}
+                        handleOnHide={() => setVisible(false)}
+                        lesson={lesson}
+                    />
+                    <div className="tw-grow tw-p-3 sm:tw-p-6">
                         <div className="">
-                            <h2 className="tw-mb-3 tw-mt-0 tw-text-2xl">
-                                {lesson.title}
-                            </h2>
-                            <p className="tw-my-2 tw-text-lg">
-                                {lesson.description}
-                            </p>
-                        </div>
-                        <div className="tw-flex tw-justify-end">
-                            <Button
-                                label="Feedback"
-                                onClick={() => setVisible(true)}
-                            />
+                            <div className="tw-mb-4">
+                                <ReactPlayer
+                                    url={lesson.video_url}
+                                    controls={true}
+                                />
+                            </div>
+                            <div className="">
+                                <h2 className="tw-mb-3 tw-mt-0 tw-text-2xl">
+                                    {lesson.title}
+                                </h2>
+                                <p className="tw-my-2 tw-text-lg">
+                                    {lesson.description}
+                                </p>
+                            </div>
+                            <div className="tw-flex tw-justify-end">
+                                <Button
+                                    label="Feedback"
+                                    onClick={() => setVisible(true)}
+                                />
+                            </div>
                         </div>
                     </div>
-                )}
-            </div>
+                </>
+            )}
         </DrawerContainer>
     );
 };

@@ -63,7 +63,7 @@ const ELearningPage = () => {
                     </div>
                 )}
 
-                <div className="tw-gorw tw-overflow-auto tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
+                <div className="tw-grow tw-overflow-auto tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
                     {lessons.map((lesson) => (
                         <div
                             className="tw-rounded tw-shadow tw-bg-white tw-flex tw-flex-col tw-gap-3"
@@ -73,6 +73,8 @@ const ELearningPage = () => {
                                 <img
                                     alt={lesson.title}
                                     src={lesson.preview_image}
+                                    height={350}
+                                    width={"100%"}
                                 />
                             </div>
                             <div className="tw-p-4">
@@ -102,7 +104,7 @@ const ELearningPage = () => {
                     ))}
                 </div>
 
-                <div className="tw-wx-auto tw-p-3">
+                <div className="tw-flex tw-justify-center tw-p-3">
                     <Button
                         label="Recommended courses"
                         onClick={() => setVisible2(true)}

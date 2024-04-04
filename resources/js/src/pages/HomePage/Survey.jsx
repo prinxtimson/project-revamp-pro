@@ -45,7 +45,7 @@ const Survey = ({ livecall }) => {
         setSurvey({ ...survey, loading: true });
 
         let surveyData = {
-            ratings: survey.ratings,
+            data: survey.ratings,
             support_type: channel,
             support_id: support.id,
             user_id: support.user_id || support.agent_id,

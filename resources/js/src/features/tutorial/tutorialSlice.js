@@ -9,6 +9,7 @@ const initialState = {
     isSuccess: false,
     isLoading: false,
     message: "",
+    type: "",
 };
 
 // get tickets
@@ -56,7 +57,7 @@ export const createTutorial = createAsyncThunk(
     "tutorial/new",
     async (data, thunkAPI) => {
         try {
-            await tutorialService.createTutorial(data);
+            return await tutorialService.createTutorial(data);
         } catch (err) {
             const msg =
                 (err.response &&
@@ -150,7 +151,7 @@ export const ticketSlice = createSlice({
             })
             .addCase(getTutorialtById.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.lesson = action.payload.data;
+                state.lesson = action.payload;
             })
             .addCase(getTutorialtById.rejected, (state, action) => {
                 state.isLoading = false;
@@ -164,6 +165,7 @@ export const ticketSlice = createSlice({
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.lesson = action.payload;
+                state.lessons = [action.payload, ...state.lessons];
                 state.message = "Lesson added successful";
             })
             .addCase(createTutorial.rejected, (state, action) => {

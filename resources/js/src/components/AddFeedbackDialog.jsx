@@ -22,7 +22,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
             comment: data.comment,
             support_type: "E-learning",
             support_id: lesson.id,
-            ratings: [
+            data: [
                 {
                     question:
                         "How likely are you to recommend this course to other colleagues?",
@@ -289,6 +289,9 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                         </div>
 
                         <div className="field">
+                            <label htmlFor="comment">
+                                Please give your feedback in the box below
+                            </label>
                             <InputTextarea
                                 name="comment"
                                 value={data.comment}
@@ -300,9 +303,6 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                 }
                                 rows={4}
                             />
-                            <label htmlFor="comment">
-                                Please give your feedback in the box below
-                            </label>
                         </div>
 
                         <div className="tw-mb-5">
