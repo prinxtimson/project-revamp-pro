@@ -93,7 +93,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating1"
                                         className="tw-ml-2"
                                     >
-                                        Not at all likely
+                                        Highly Unlikely
                                     </label>
                                 </div>
                                 <div className="tw-flex tw-items-center">
@@ -113,7 +113,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating2"
                                         className="tw-ml-2"
                                     >
-                                        Somewhat likely
+                                        Unlikely
                                     </label>
                                 </div>
                                 <div className="tw-flex tw-items-center">
@@ -153,7 +153,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating4"
                                         className="tw-ml-2"
                                     >
-                                        Somewhat likely
+                                        Very Likely
                                     </label>
                                 </div>
                                 <div className="tw-flex tw-items-center">
@@ -173,7 +173,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating4"
                                         className="tw-ml-2"
                                     >
-                                        Very likely
+                                        Highly Likely
                                     </label>
                                 </div>
                             </span>
@@ -202,7 +202,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating1"
                                         className="tw-ml-2"
                                     >
-                                        Not at all likely
+                                        Highly Unlikely
                                     </label>
                                 </div>
                                 <div className="tw-flex tw-items-center">
@@ -222,7 +222,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating2"
                                         className="tw-ml-2"
                                     >
-                                        Somewhat likely
+                                        Unlikely
                                     </label>
                                 </div>
                                 <div className="tw-flex tw-items-center">
@@ -262,7 +262,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating4"
                                         className="tw-ml-2"
                                     >
-                                        Somewhat likely
+                                        Very Likely
                                     </label>
                                 </div>
                                 <div className="tw-flex tw-items-center">
@@ -282,7 +282,7 @@ const AddFeedbackDialog = ({ visible, handleOnHide, lesson }) => {
                                         htmlFor="rating4"
                                         className="tw-ml-2"
                                     >
-                                        Very likely
+                                        Highly Likely
                                     </label>
                                 </div>
                             </span>

@@ -196,14 +196,14 @@ const FeedbackTable = () => {
 
                 <div className="tw-mb-5 tw-grid tw-grid-cols-1 sm:tw-grid-cols-2 md:tw-grid-cols-5 tw-gap-2 sm:tw-gap-4">
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
-                        <h3 className="tw-mt-0 tw-mb-2">Not at all likely</h3>
+                        <h3 className="tw-mt-0 tw-mb-2">Highly Unlikely</h3>
                         <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {" "}
                             {feedbackRatings?.filter((item) => item < 3).length}
                         </p>
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
-                        <h3 className="tw-mt-0 tw-mb-2">Somewhat likely</h3>
+                        <h3 className="tw-mt-0 tw-mb-2">Unlikely</h3>
                         <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {" "}
                             {
@@ -223,7 +223,7 @@ const FeedbackTable = () => {
                         </p>
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
-                        <h3 className="tw-mt-0 tw-mb-2">Somewhat likely</h3>
+                        <h3 className="tw-mt-0 tw-mb-2">Very Likely</h3>
                         <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {
                                 feedbackRatings?.filter(
@@ -233,7 +233,7 @@ const FeedbackTable = () => {
                         </p>
                     </div>
                     <div className="tw-rounded tw-shadow tw-p-3 tw-text-center tw-bg-white">
-                        <h3 className="tw-mt-0 tw-mb-2">Very likely</h3>
+                        <h3 className="tw-mt-0 tw-mb-2">Highly Likely</h3>
                         <p className="tw-my-0 tw-font-semibold tw-text-xl">
                             {
                                 feedbackRatings?.filter((item) => item >= 9)

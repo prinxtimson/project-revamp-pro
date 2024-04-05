@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewMessage;
+use App\Exports\ChatTranscript;
+use Maatwebsite\Excel\Excel;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\User;
@@ -13,6 +15,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
+    private $excel;
+
+    public function __construct(Excel $excel)
+    {
+        $this->excel = $excel;
+    }
+
     public function index()
     {
         $chats = Chat::get();
@@ -31,7 +40,8 @@ class ChatController extends Controller
         ]);
 
         $chat = Chat::create($fields);
-        return response()->json($chat);
+
+        return response()->json($chat->refresh()->load('messages'));
     }
 
     public function save(Request $request, Chat $chat)
@@ -120,6 +130,25 @@ class ChatController extends Controller
             $message->chat()->update(['last_message' => '']);
 
         return response()->json($message);
+    }
+
+    public function endChat(Chat $chat)
+    {
+        $chat->update([
+            'status' => 'ended'
+        ]);
+
+        return response()->json($chat->load('messages'));
+    }
+
+    public function download_chat(Chat $chat)
+    {
+        $messages = $chat->messages;
+        $messages->toArray();
+
+        $date = Carbon::now()->getTimestamp();
+        $filename = 'chat_transcript_'.$date.'.xlsx';
+        return $this->excel->download(new ChatTranscript($messages), $filename,  Excel::XLSX); 
     }
 
     // public function deleteChat(Chat $chat)

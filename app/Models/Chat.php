@@ -24,6 +24,6 @@ class Chat extends Model
 
     public function messages()
     {
-        return $this->hasMany(ChatMessage::class)->load('user');
+        return $this->hasMany(ChatMessage::class)->with('user');
     }
 }

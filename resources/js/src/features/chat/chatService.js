@@ -12,8 +12,13 @@ const getChat = async (id) => {
     return res.data;
 };
 
-const startChat = async () => {
-    const res = await axios.get(`${API_URL}/new`);
+const endChat = async (id) => {
+    const res = await axios.get(`${API_URL}/end/${id}`);
+    return res.data;
+};
+
+const startChat = async (data) => {
+    const res = await axios.post(`${API_URL}/new`, data);
     return res.data;
 };
 
@@ -24,8 +29,8 @@ const searchMessages = async (data) => {
     return res.data;
 };
 
-const sendMessage = async (data) => {
-    const res = await axios.post(`${API_URL}/messages/${data.chat_id}`, data);
+const sendMessage = async ({ formData, chat_id }) => {
+    const res = await axios.post(`${API_URL}/messages/${chat_id}`, formData);
     return res.data;
 };
 
@@ -46,6 +51,7 @@ const chatService = {
     readMessage,
     deleteMessage,
     getChat,
+    endChat,
     searchMessages,
 };
 

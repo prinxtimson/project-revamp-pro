@@ -60,6 +60,19 @@ export const startChat = createAsyncThunk(
     }
 );
 
+export const endChat = createAsyncThunk("chat/end", async (args, thunkAPI) => {
+    try {
+        return await chatService.endChat(args);
+    } catch (err) {
+        const msg =
+            (err.response && err.response.data && err.response.data.message) ||
+            err.message ||
+            err.toString();
+
+        return thunkAPI.rejectWithValue(msg);
+    }
+});
+
 export const searchMessages = createAsyncThunk(
     "chat/search-messages",
     async (args, thunkAPI) => {
@@ -213,10 +226,31 @@ export const chatSlice = createSlice({
             .addCase(startChat.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                state.chats = [...state.chats, action.payload];
+                state.chat = action.payload;
                 state.type = action.type;
             })
             .addCase(startChat.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.type = action.type;
+                state.message = action.payload;
+            })
+            .addCase(endChat.pending, (state, action) => {
+                state.isLoading = true;
+                state.type = action.type;
+            })
+            .addCase(endChat.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.chat = null;
+                let index = state.chats.findIndex(
+                    (item) => item.id === action.payload.id
+                );
+                state.chats.splice(index, 1, action.payload);
+                state.chats = [...state.chats];
+                state.type = action.type;
+            })
+            .addCase(endChat.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.type = action.type;

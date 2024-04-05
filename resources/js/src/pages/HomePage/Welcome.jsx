@@ -21,6 +21,7 @@ import RequestLivecallDialog from "../../components/RequestLivecallDialog";
 import ResponseDialog from "../../components/ResponseDialog";
 import OfflineDialog from "../../components/OfflineDialog";
 import { leaveLivecall } from "../../features/livecall/livecallSlice";
+import ChatDialog from "../../components/ChatDialog";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -69,6 +70,7 @@ const Welcome = ({ handleCallbackOpen }) => {
     const [currentRatings, setCurrentRatings] = useState({});
     const [open, setOpen] = useState(false);
     const [openLivecall, setOpenLivecall] = useState(false);
+    const [openChat, setOpenChat] = useState(false);
     const [openRes, setOpenRes] = useState(false);
     const [openOffline, setOpenOffline] = useState(false);
     const [resMessage, setResMessage] = useState("");
@@ -224,8 +226,12 @@ const Welcome = ({ handleCallbackOpen }) => {
                 open={openOffline}
                 handleClose={handleOfflineClose}
             />
+            <ChatDialog
+                visible={openChat}
+                handleOnHide={() => setOpenChat(false)}
+            />
             <div className="tw-p-2 md:tw-p-4 tw-h-full">
-                <div className="md:tw-grid md:tw-grid-cols-3 tw-gap-4 tw-h-full tw-items-center">
+                <div className="md:tw-grid md:tw-grid-cols-3 tw-gap-4 tw-h-full ">
                     <div className="md:tw-col-span-2 tw-p-2">
                         <div className="tw-mb-8 tw-p-4 tw-shadow-md tw-bg-amber-100 tw-rounded-md">
                             <h1 className="tw-text-3xl md:tw-text-6xl tw-font-bold tw-text-indigo-950">
@@ -245,43 +251,44 @@ const Welcome = ({ handleCallbackOpen }) => {
                             </div>
                         </div>
                         <div className="tw-my-4 tw-block md:tw-hidden">
-                            <div className="tw-bg-teal-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 ">
+                            <div className="tw-bg-teal-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 tw-flex tw-flex-col tw-items-center">
                                 <div className="tw-mb-2">
                                     <img
                                         src="/images/callback.png"
                                         alt="Book a call back"
                                         width={130}
-                                        className="tw-m-auto"
+                                        className="tw-mx-auto"
                                     />
                                 </div>
-                                <div className="tw-pb-5 tw-flex">
+                                <div className="tw-pb-5">
                                     <button
-                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
-                                        onClick={handleChatWithLiveAgent}
+                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-w-48"
+                                        // onClick={handleChatWithLiveAgent}
+                                        onClick={() => setOpenChat(true)}
                                     >
                                         Chat with Agent
                                     </button>
                                 </div>
                             </div>
-                            <div className="tw-bg-cyan-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4">
+                            <div className="tw-bg-cyan-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 tw-flex tw-flex-col tw-items-center">
                                 <div className="tw-mb-2">
                                     <img
                                         src="/images/livecall.png"
                                         alt="Live Call"
                                         width={200}
-                                        className="tw-m-auto"
+                                        className="tw-mx-auto"
                                     />
                                 </div>
-                                <div className="tw-pb-5 tw-flex">
+                                <div className="tw-pb-5">
                                     <button
-                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-w-48"
                                         onClick={handleOpenLivecall}
                                     >
                                         Join Live Call
                                     </button>
                                 </div>
                             </div>
-                            <div className="tw-bg-sky-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4">
+                            <div className="tw-bg-sky-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 tw-flex tw-flex-col tw-items-center">
                                 <div className="tw-mb-2">
                                     <img
                                         src="/images/chatagent.png"
@@ -290,9 +297,9 @@ const Welcome = ({ handleCallbackOpen }) => {
                                         className="tw-m-auto"
                                     />
                                 </div>
-                                <div className="tw-pb-5 tw-flex">
+                                <div className="tw-pb-5">
                                     <button
-                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                        className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-w-48"
                                         onClick={handleCallbackOpen}
                                     >
                                         Book a Call Back
@@ -311,7 +318,7 @@ const Welcome = ({ handleCallbackOpen }) => {
                             </div>
                             <div className="tw-pb-5 ">
                                 <button
-                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-cente tw-w-48"
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg  tw-w-48"
                                     onClick={handleClickOpen}
                                 >
                                     Raise a Ticket
@@ -559,54 +566,53 @@ const Welcome = ({ handleCallbackOpen }) => {
                         </div>
                     </div>
                     <div className="tw-p-2 tw-hidden md:tw-block">
-                        <div className="tw-bg-teal-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 ">
+                        <div className="tw-bg-teal-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 tw-flex tw-flex-col tw-items-center">
                             <div className="tw-mb-2">
                                 <img
                                     src="/images/callback.png"
                                     alt="Book a call back"
                                     width={130}
-                                    className="tw-m-auto"
+                                    className="tw-mx-auto"
                                 />
                             </div>
-                            <div className="tw-pb-5 tw-flex">
+                            <div className="tw-pb-5">
                                 <button
-                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
-                                    onClick={handleChatWithLiveAgent}
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-w-48"
+                                    //onClick={handleChatWithLiveAgent}
+                                    onClick={() => setOpenChat(true)}
                                 >
                                     Chat with an Agent
                                 </button>
                             </div>
                         </div>
-                        <div className="tw-bg-cyan-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4">
+                        <div className="tw-bg-cyan-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 tw-flex tw-flex-col tw-items-center">
                             <div className="tw-mb-2">
                                 <img
                                     src="/images/livecall.png"
                                     alt="Live Call"
                                     width={200}
-                                    className="tw-m-auto"
                                 />
                             </div>
-                            <div className="tw-pb-5 tw-flex">
+                            <div className="tw-pb-5">
                                 <button
-                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-w-48"
                                     onClick={handleOpenLivecall}
                                 >
                                     Join Live Call
                                 </button>
                             </div>
                         </div>
-                        <div className="tw-bg-sky-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4">
+                        <div className="tw-bg-sky-50 tw-shadow-lg tw-rounded-lg tw-w-full tw-mb-4 tw-flex tw-flex-col tw-items-center">
                             <div className="tw-mb-2">
                                 <img
                                     src="/images/chatagent.png"
                                     alt="chat with an agent"
                                     width={130}
-                                    className="tw-m-auto"
                                 />
                             </div>
-                            <div className="tw-pb-5 tw-flex">
+                            <div className="tw-pb-5">
                                 <button
-                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-m-auto tw-self-center tw-w-48"
+                                    className="tw-p-4 tw-font-semibold tw-text-sm tw-bg-indigo-500 hover:tw-bg-indigo-700 tw-text-white tw-rounded-md tw-shadow-lg tw-w-48"
                                     onClick={handleCallbackOpen}
                                 >
                                     Book a Call Back

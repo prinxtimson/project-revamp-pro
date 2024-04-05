@@ -151,6 +151,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin|super-admin|manager']
 Route::group(['prefix' => 'chats'], function () {
     Route::get('', [ChatController::class, 'index'])->name('chats');
     Route::get('/get/{chat}', [ChatController::class, 'get_chat'])->name('chats.get');
+    Route::get('/end/{chat}', [ChatController::class, 'endChat'])->name('chats.end');
     Route::post('new', [ChatController::class, 'start_chat'])->name('chats.new');
     Route::post('/messages/{chat}', [ChatController::class, 'save'])->name('chats.messages.save');
     Route::get('/messages/search/{chat}', [ChatController::class, 'searchChats'])->name('chats.messages.search');

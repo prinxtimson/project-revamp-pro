@@ -7,6 +7,7 @@ use App\Broadcasting\LivecallChannel;
 use App\Http\Controllers\TwoFactorAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LiveCallController;
 use App\Http\Controllers\ReportTemplateController;
 use App\Http\Controllers\SurveyController;
@@ -104,6 +105,7 @@ Route::middleware(['auth', '2fa'])->group(function () {
     Route::get('livecall/report/download', [LiveCallController::class, 'download']);
     Route::get('callback/report/download', [CallBackController::class, 'download']);
     Route::get('tickets/report/download', [TicketController::class, 'download']);
+    Route::get('chats/transcript/{chat}/download', [ChatController::class, 'download_chat']);
     Route::get('customer-review/report/download', [SurveyController::class, 'download']);
     Route::get('leaderboard/report/download', [UserController::class, 'download']);
 
