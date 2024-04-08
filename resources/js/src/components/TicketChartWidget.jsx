@@ -28,7 +28,7 @@ const TicketChartWidget = ({ handleOnRemoveWidget }) => {
                 labels,
                 datasets: [
                     {
-                        label: "Ticket Raised",
+                        label: "Raised Ticket",
                         data,
                         backgroundColor: [
                             documentStyle.getPropertyValue("--orange-500"),

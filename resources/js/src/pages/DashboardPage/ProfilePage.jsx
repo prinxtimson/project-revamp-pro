@@ -188,7 +188,7 @@ const ProfilePage = () => {
                         ) : (
                             <div className=""></div>
                         )}
-                        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-4 tw-justify-between tw-gap-3">
+                        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-5 tw-justify-between tw-gap-3">
                             <Button
                                 outlined
                                 label="Activities"
@@ -202,6 +202,15 @@ const ProfilePage = () => {
                                 severity="success"
                                 label="Edit"
                                 onClick={() => navigate("edit")}
+                                className="tw-w-full"
+                            />
+                            <Button
+                                outlined
+                                severity="success"
+                                label="Change Password"
+                                onClick={() =>
+                                    navigate("/dashboard/change-password")
+                                }
                                 className="tw-w-full"
                             />
                             <Button

@@ -44,7 +44,7 @@ const MainContainer = ({ children }) => {
                 </Avatar>
             </Box>
             <div
-                className="tw-grow tw-flex tw-flex-col"
+                className="tw-grow tw-flex tw-flex-col tw-justify-center tw-items-center"
                 style={{ backgroundColor: "#f5f7ff" }}
             >
                 {children}

@@ -139,13 +139,15 @@ const CallBackTable = () => {
                     onClick={() => handleCancel(row.id)}
                     disabled={Boolean(row.called_at)}
                 />
-                <Button
-                    text
-                    icon="pi pi-trash"
-                    severity="danger"
-                    rounded
-                    onClick={() => handleDelete(row.id)}
-                />
+                {user && user?.roles[0].name == "super-admin" && (
+                    <Button
+                        text
+                        icon="pi pi-trash"
+                        severity="danger"
+                        rounded
+                        onClick={() => handleDelete(row.id)}
+                    />
+                )}
             </div>
         );
     };

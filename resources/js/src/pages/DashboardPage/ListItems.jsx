@@ -90,7 +90,7 @@ const ListItems = () => {
                             <ListItemIcon>
                                 <MessageRoundedIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Livechat" />
+                            <ListItemText primary="Live Chat" />
                         </ListItem>
                     </Link>
 

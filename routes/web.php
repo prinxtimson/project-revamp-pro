@@ -71,6 +71,10 @@ Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name(
 
 Route::get('two-factor-auth/resend', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend')->middleware("auth");
 
+Route::get('admin/logout', function () {
+    return view('welcome');
+})->name('logout');
+
 Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('admin/dashboard', function () {

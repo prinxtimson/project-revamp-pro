@@ -241,6 +241,10 @@
     height: 20rem;
 }
 
+.tw-h-\[25rem\] {
+    height: 25rem;
+}
+
 .tw-h-full {
     height: 100%;
 }
@@ -296,6 +300,10 @@
 
 .tw-w-\[32rem\] {
     width: 32rem;
+}
+
+.tw-w-\[35rem\] {
+    width: 35rem;
 }
 
 .tw-w-auto {
@@ -1016,6 +1024,10 @@
 
     .sm\:tw-grid-cols-4 {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .sm\:tw-grid-cols-5 {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     .sm\:tw-gap-4 {

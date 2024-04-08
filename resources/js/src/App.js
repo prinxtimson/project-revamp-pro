@@ -52,6 +52,7 @@ import UploadProfileImage from "./pages/DashboardPage/UploadProfileImage";
 import LivechatPage from "./pages/DashboardPage/LivechatPage";
 import ELearningPage from "./pages/DashboardPage/ELearningPage";
 import SingleTutorialPage from "./pages/DashboardPage/SingleTutorialPage";
+import LogoutPage from "./pages/LogoutPage";
 
 const timeout = 500_000;
 const promptBeforeIdle = 20_000;
@@ -178,6 +179,14 @@ const App = (props) => {
                             element={
                                 <GuestRoute>
                                     <LoginPage />
+                                </GuestRoute>
+                            }
+                        />
+                        <Route
+                            path="logout"
+                            element={
+                                <GuestRoute>
+                                    <LogoutPage />
                                 </GuestRoute>
                             }
                         />

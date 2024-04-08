@@ -121,6 +121,7 @@ const TicketsTable = () => {
                     rounded
                     onClick={() => handleCheck(row)}
                     disabled={Boolean(row.status == "close")}
+                    tooltip="Resolved ticket"
                 />
                 {/* <Button
                     text

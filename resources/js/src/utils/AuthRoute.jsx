@@ -8,7 +8,9 @@ const AuthRoute = ({ children }) => {
     );
 
     if (!isLoading && !isAuthenticated) {
-        return <Navigate to="/admin" state={{ path: location.pathname }} />;
+        return (
+            <Navigate to="/admin/logout" state={{ path: location.pathname }} />
+        );
     }
 
     if (!isLoading && isAuthenticated && !user) {

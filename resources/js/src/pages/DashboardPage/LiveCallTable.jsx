@@ -36,6 +36,7 @@ const LiveCallTable = () => {
     const [formData, setFormData] = useState({
         from: "",
         to: "",
+        type: "",
     });
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -274,7 +275,7 @@ const LiveCallTable = () => {
                             </h3>
                         </div>
 
-                        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-3 tw-gap-2 tw-items-center">
+                        <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-4 tw-gap-2 tw-items-center">
                             <div className="">
                                 <Calendar
                                     name="from"
@@ -309,26 +310,30 @@ const LiveCallTable = () => {
                                     showIcon
                                 />
                             </div>
-                            {/* <div className="">
+                            <div className="">
                                 <Dropdown
                                     options={FORMATS}
-                                    value={data.format}
+                                    value={data.type}
                                     onChange={(e) =>
                                         setData({
                                             ...data,
-                                            format: e.value,
+                                            type: e.value,
                                         })
                                     }
                                     placeholder="Select Format"
                                     optionLabel="label"
                                     className="tw-w-full"
                                 />
-                            </div> */}
+                            </div>
                             <div className="">
                                 <Button
                                     label="Download"
                                     onClick={handleOnDownload}
-                                    disabled={!formData.from || !formData.to}
+                                    disabled={
+                                        !formData.from ||
+                                        !formData.to ||
+                                        !formData.type
+                                    }
                                 />
                             </div>
                         </div>
