@@ -278,7 +278,7 @@ const ManagementDashboard = () => {
                             {allSummary?.total_livecalls}
                         </h2>
                         <p className="tw-text-lg tw-font-medium ">
-                            Number of Livecall
+                            Number of Live Call
                         </p>
                     </div>
                     <div className="tw-border tw-rounded tw-py-2 tw-px-4 tw-bg-white">
@@ -430,7 +430,7 @@ const QUERY_TYPE = [
 
 const WIDGETS = [
     {
-        name: "Livecall Widget",
+        name: "Live Call Widget",
         value: "livecall",
     },
     {
@@ -446,7 +446,7 @@ const WIDGETS = [
         value: "feedback",
     },
     {
-        name: "Ticket Raised Widget",
+        name: "Raised Ticket Widget",
         value: "ticket_raised",
     },
 ];

@@ -11,6 +11,7 @@ import { updateUser, reset } from "../../features/auth/authSlice";
 
 const UploadProfileImage = () => {
     const inputRef = useRef(null);
+    const [fileInputRef, setFileInputRef] = useState(null);
     const [file, setFile] = useState(null);
 
     const dispatch = useDispatch();
@@ -89,6 +90,15 @@ const UploadProfileImage = () => {
         setFile(e.files[0]);
     };
 
+    const handleFileSelect2 = (e) => {
+        setFile(e.target.files[0]);
+        inputRef.current.setFiles([e.target.files[0]]);
+    };
+
+    useEffect(() => {
+        console.log(file);
+    }, [file]);
+
     useEffect(() => {
         if (isSuccess && message) {
             toast.success(message);
@@ -108,13 +118,20 @@ const UploadProfileImage = () => {
             formData.append("avatar", file);
         }
         formData.append("_method", "put");
-
         dispatch(updateUser(formData));
     };
 
     return (
         <DrawerContainer>
             <div className="tw-grow tw-m-5 md:tw-my-8 md:tw-mx-6 tw-flex tw-items-center">
+                <input
+                    name="avatar"
+                    hidden
+                    onChange={(e) => handleFileSelect2(e)}
+                    type="file"
+                    accept="image/*"
+                    ref={(ref) => setFileInputRef(ref)}
+                />
                 <div className=" tw-grid tw-grid-cols-1 sm:tw-grid-cols-3 tw-gap-4 tw-">
                     <div className="tw-p-4 tw-flex tw-flex-col tw-justify-center">
                         <p className="tw-my-2">
@@ -138,6 +155,11 @@ const UploadProfileImage = () => {
                         />
 
                         <div className="tw-mt-2 tw-flex tw-items-center tw-justify-center tw-gap-4">
+                            <Button
+                                label="Select File"
+                                onClick={() => fileInputRef.click()}
+                                loading={isLoading}
+                            />
                             <Button
                                 label="Upload"
                                 onClick={handleSubmit}

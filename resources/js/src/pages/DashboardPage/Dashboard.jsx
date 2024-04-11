@@ -54,7 +54,7 @@ const Dashboard = () => {
             .then((res) => {
                 const { total_answered, total_left } = res.data;
                 setLivecalls({
-                    labels: ["Answered Livecalls", "Left Livecalls"],
+                    labels: ["Answered Live Calls", "Left Live Calls"],
                     datasets: [
                         {
                             data: [total_answered, total_left],

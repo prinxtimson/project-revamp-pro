@@ -109,7 +109,7 @@ const ProfilePage = () => {
                 )}
             />
             <div className="tw-grow tw-p-2 sm:tw-p-4 tw-flex tw-flex-col tw-items-center tw-justify-center">
-                <div className="tw-card tw-bg-white tw-p-6 tw-shadow-md tw-rounded-md tw-w-full md:tw-w-[36.5rem] tw-py-8 tw-border">
+                <div className="tw-card tw-bg-white tw-p-6 tw-shadow-md tw-rounded-md tw-w-full md:tw-w-[40.5rem] tw-py-8 tw-border">
                     <div className="tw-text-center tw-mb-6">
                         <h2 className="tw-text-xl tw-font-semibold tw-my-0">
                             Profile summary
@@ -209,7 +209,7 @@ const ProfilePage = () => {
                                 severity="success"
                                 label="Change Password"
                                 onClick={() =>
-                                    navigate("/dashboard/change-password")
+                                    navigate("/admin/dashboard/change-password")
                                 }
                                 className="tw-w-full"
                             />

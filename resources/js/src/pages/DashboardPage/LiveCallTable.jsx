@@ -242,7 +242,7 @@ const LiveCallTable = () => {
                     <div className="tw-grid tw-grid-cols-1 sm:tw-grid-cols-3 tw-gap-3">
                         <div className="tw-bg-white tw-p-2 tw-rounded tw-shadow">
                             <p className="tw-my-2 tw-text-center">
-                                Total Livecalls
+                                Total Live Calls
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
                                 {livecallSummary.total_livecalls}
@@ -250,7 +250,7 @@ const LiveCallTable = () => {
                         </div>
                         <div className="tw-bg-white tw-p-2 tw-rounded tw-shadow">
                             <p className="tw-my-2 tw-text-center">
-                                Answered Livecalls
+                                Answered Live Calls
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
                                 {livecallSummary.total_answered}
@@ -258,7 +258,7 @@ const LiveCallTable = () => {
                         </div>
                         <div className="tw-bg-white tw-p-2 tw-rounded tw-shadow">
                             <p className="tw-my-2 tw-text-center">
-                                Abandoned Livecalls
+                                Abandoned Live Calls
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
                                 {livecallSummary.total_left}

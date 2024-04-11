@@ -92,7 +92,7 @@ const TicketChartWidget = ({ handleOnRemoveWidget }) => {
                 </div>
 
                 <h2 className="tw-text-center tw-text-lg tw-font-semibold">
-                    Ticket Raised Category
+                    Raised Ticket Category
                 </h2>
             </div>
             <div className="tw-h-full tw-overflow-auto">

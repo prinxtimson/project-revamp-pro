@@ -150,7 +150,7 @@ const LivecallCard = () => {
                                     }}
                                 >
                                     <MenuItem onClick={handleOnLivecalls}>
-                                        All Livecalls
+                                        All Live Calls
                                     </MenuItem>
                                     {queryTypes.map((val, index) => (
                                         <MenuItem

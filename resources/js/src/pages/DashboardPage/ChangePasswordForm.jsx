@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Button from "@mui/material/Button";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
-import { classNames } from "primereact/utils";
 import { changePass, reset } from "../../features/auth/authSlice";
 import DrawerContainer from "./DrawerContainer";
 import { toast } from "react-toastify";
+import { Button } from "primereact/button";
 
 const ChangePasswordForm = () => {
     const passwordValidation = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;

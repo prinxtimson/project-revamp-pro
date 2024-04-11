@@ -28,7 +28,7 @@ const LivecallRequestChart = ({ handleOnRemoveWidget }) => {
                 labels,
                 datasets: [
                     {
-                        label: "Livecall",
+                        label: "Live Call",
                         data,
                         backgroundColor: [
                             documentStyle.getPropertyValue("--green-500"),
@@ -92,7 +92,7 @@ const LivecallRequestChart = ({ handleOnRemoveWidget }) => {
                 </div>
 
                 <h2 className="tw-text-center tw-text-lg tw-font-semibold">
-                    Livecall Request Category
+                    Live Call Request Category
                 </h2>
             </div>
             <div className="tw-h-full tw-overflow-auto">
