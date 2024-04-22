@@ -291,7 +291,7 @@ const ManagementDashboard = () => {
                             className="tw-w-full sm:tw-w-80 tw-mb-2 sm:tw-mb-0"
                         />
                         <Button
-                            label="Download"
+                            label="Export"
                             onClick={(e) => menuRef.current?.toggle(e)}
                             className="tw-w-full sm:tw-w-fit"
                         />
