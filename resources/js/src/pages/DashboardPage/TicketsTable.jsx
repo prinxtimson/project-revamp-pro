@@ -23,6 +23,7 @@ import {
 
 import DrawerContainer from "./DrawerContainer";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const TicketsTable = () => {
     const [data, setData] = useState([]);
@@ -237,7 +238,7 @@ const TicketsTable = () => {
                                 Raised Tickets
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
-                                {tickets.length}
+                                {tickets?.length}
                             </h2>
                         </div>
                         <div className="tw-bg-white tw-p-2 tw-rounded tw-shadow">
@@ -246,7 +247,7 @@ const TicketsTable = () => {
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
                                 {
-                                    tickets.filter(
+                                    tickets?.filter(
                                         (item) => item.status == "close"
                                     ).length
                                 }
@@ -258,7 +259,7 @@ const TicketsTable = () => {
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
                                 {
-                                    tickets.filter(
+                                    tickets?.filter(
                                         (item) => item.status == "pending"
                                     ).length
                                 }
@@ -270,7 +271,7 @@ const TicketsTable = () => {
                             </p>
                             <h2 className="tw-my-0 tw-text-2xl tw-text-center tw-font-semibold">
                                 {
-                                    tickets.filter(
+                                    tickets?.filter(
                                         (item) => item.status == "open"
                                     ).length
                                 }
@@ -296,7 +297,7 @@ const TicketsTable = () => {
                             // onPage={({ page }) =>
                             //     dispatch(getTicketsByPage(page + 1))
                             // }
-                            tableStyle={{ minWidth: "50rem" }}
+                            //tableStyle={{ minWidth: "50rem" }}
                             loading={isLoading}
                             globalFilterFields={[
                                 "name",
@@ -325,7 +326,7 @@ const TicketsTable = () => {
                             <Column
                                 field="name"
                                 header="Requester"
-                                style={{ minWidth: "13rem" }}
+                                style={{ minWidth: "10rem" }}
                                 filter
                                 filterPlaceholder="Search by name"
                                 showFilterMenu={false}
@@ -404,40 +405,6 @@ const TicketsTable = () => {
                                 <div className="tw-clear-both" />
 
                                 <div className="tw-m-2 tw-flex tw-flex-col tw-gap-4">
-                                    <div className="">
-                                        <Dropdown
-                                            value={ticket.status}
-                                            optionLabel="name"
-                                            optionValue="value"
-                                            options={statuses}
-                                            onChange={(e) => {
-                                                // setSelectedTicket({
-                                                //     ...selectedTicket,
-                                                //     status: e.value,
-                                                // });
-
-                                                dispatch(
-                                                    updateTicket({
-                                                        ...ticket,
-                                                        status: e.value,
-                                                    })
-                                                );
-                                            }}
-                                            className="tw-w-1/2"
-                                            placeholder="Select a Status"
-                                            itemTemplate={(option) => {
-                                                let val = option.value;
-                                                return (
-                                                    <Tag
-                                                        value={option.name.toUpperCase()}
-                                                        severity={getSeverity(
-                                                            val
-                                                        )}
-                                                    ></Tag>
-                                                );
-                                            }}
-                                        />
-                                    </div>
                                     <div>
                                         <Dropdown
                                             value={ticket.priority}
@@ -496,68 +463,119 @@ const TicketsTable = () => {
                                             {ticket.description}
                                         </p>
                                     </div>
+                                    <div className="tw-grow">
+                                        <div className="tw-ml-4 tw-mb-4">
+                                            <h3 className="tw-my-2 tw-text-semibold">
+                                                Comments
+                                            </h3>
+                                            <div className="tw-flex tw-flex-col tw-gap-4">
+                                                {ticket.ticket_comments.map(
+                                                    (val) => (
+                                                        <div
+                                                            className="tw-flex tw-gap-2 tw-border"
+                                                            key={val.id}
+                                                        >
+                                                            <div className="">
+                                                                <Avatar
+                                                                    shape="circle"
+                                                                    imageAlt={
+                                                                        val.user
+                                                                            ?.name
+                                                                    }
+                                                                    image={
+                                                                        val.user
+                                                                            ?.avatar
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <div className="tw-grow tw-flex tw-flex-col tw-gap-1">
+                                                                <div className="tw-flex tw-gap-3">
+                                                                    <h4 className="tw-my-0 tw-font-semibold">
+                                                                        {
+                                                                            val
+                                                                                .user
+                                                                                ?.name
+                                                                        }
+                                                                    </h4>
+                                                                    <small>
+                                                                        {moment(
+                                                                            val.created_at
+                                                                        ).fromNow()}
+                                                                    </small>
+                                                                </div>
 
-                                    <div className="tw-ml-4">
-                                        <h3 className="tw-my-2 tw-text-semibold">
-                                            Comments
-                                        </h3>
-                                        <div className="tw-flex tw-flex-col tw-gap-4">
-                                            {ticket.ticket_comments.map(
-                                                (val) => (
-                                                    <div
-                                                        className="tw-flex tw-gap-2 tw-border"
-                                                        key={val.id}
-                                                    >
-                                                        <div className="">
-                                                            <Avatar
-                                                                shape="circle"
-                                                                imageAlt={
-                                                                    val.user
-                                                                        ?.name
-                                                                }
-                                                                image={
-                                                                    val.user
-                                                                        ?.avatar
-                                                                }
-                                                            />
+                                                                <p className="tw-my-0">
+                                                                    {
+                                                                        val.comment
+                                                                    }
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                        <div className="tw-grow tw-flex tw-flex-col tw-gap-1">
-                                                            <h4 className="tw-my-0 tw-font-semibold">
-                                                                {val.user?.name}
-                                                            </h4>
-                                                            <p className="tw-my-0">
-                                                                {val.comment}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            )}
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="tw-ml-4">
+                                            <div className="tw-flex tw-gap-2">
+                                                <div className="tw-grow">
+                                                    <InputTextarea
+                                                        value={comment}
+                                                        onChange={(e) =>
+                                                            setComment(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        placeholder="Enter your text here...."
+                                                        className="tw-w-full"
+                                                    />
+                                                </div>
+                                                <div className="tw-flex tw-gap-2 tw-items-center">
+                                                    <Button
+                                                        label="Send"
+                                                        severity="success"
+                                                        className="tw-w-fit"
+                                                        onClick={
+                                                            handleAddComment
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="">
+                                        <Dropdown
+                                            value={ticket.status}
+                                            optionLabel="name"
+                                            optionValue="value"
+                                            options={statuses}
+                                            onChange={(e) => {
+                                                // setSelectedTicket({
+                                                //     ...selectedTicket,
+                                                //     status: e.value,
+                                                // });
 
-                                    <div className="tw-ml-4">
-                                        <div className="tw-flex tw-gap-2">
-                                            <div className="tw-grow">
-                                                <InputTextarea
-                                                    value={comment}
-                                                    onChange={(e) =>
-                                                        setComment(
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    placeholder="Enter your text here...."
-                                                    className="tw-w-full"
-                                                />
-                                            </div>
-                                            <div className="tw-flex tw-gap-2 tw-items-center">
-                                                <Button
-                                                    label="Send"
-                                                    severity="success"
-                                                    className="tw-w-fit"
-                                                    onClick={handleAddComment}
-                                                />
-                                            </div>
-                                        </div>
+                                                dispatch(
+                                                    updateTicket({
+                                                        ...ticket,
+                                                        status: e.value,
+                                                    })
+                                                );
+                                            }}
+                                            className="tw-w tw-items-self-end"
+                                            placeholder="Select a Status"
+                                            itemTemplate={(option) => {
+                                                let val = option.value;
+                                                return (
+                                                    <Tag
+                                                        value={option.name.toUpperCase()}
+                                                        severity={getSeverity(
+                                                            val
+                                                        )}
+                                                    ></Tag>
+                                                );
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>

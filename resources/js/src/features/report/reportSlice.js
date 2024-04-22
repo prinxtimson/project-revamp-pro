@@ -68,6 +68,24 @@ export const shareReport = createAsyncThunk(
     }
 );
 
+export const shareAllReport = createAsyncThunk(
+    "report/share-all",
+    async (data, thunkAPI) => {
+        try {
+            return await reportService.shareAllReport(data);
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
 export const reportSlice = createSlice({
     name: "report",
     initialState,
@@ -113,6 +131,19 @@ export const reportSlice = createSlice({
                 state.message = "Report generated successful!";
             })
             .addCase(generateReport.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(shareAllReport.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(shareAllReport.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.message = action.payload.message;
+            })
+            .addCase(shareAllReport.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

@@ -26,7 +26,7 @@ class TicketExport implements FromCollection, WithMapping, ShouldAutoSize, WithH
     private $to;
     private $tickets;
 
-    public function __construct($from, $to)
+    public function __construct($from = null, $to = null)
     {
         $this->from = $from;
         $this->to = $to;

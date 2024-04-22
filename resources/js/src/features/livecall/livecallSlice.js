@@ -139,6 +139,24 @@ export const answerLivecall = createAsyncThunk(
     }
 );
 
+export const updateLivecall = createAsyncThunk(
+    "livecall/update",
+    async (data, thunkAPI) => {
+        try {
+            return await livecallService.updateLivecall(data);
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
 export const endLivecall = createAsyncThunk(
     "livecall/end",
     async (id, thunkAPI) => {
@@ -322,6 +340,25 @@ export const livecallSlice = createSlice({
                 state.livecall = action.payload;
             })
             .addCase(leaveLivecall.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            .addCase(updateLivecall.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateLivecall.fulfilled, (state, action) => {
+                let index = state.livecalls.data.findIndex(
+                    (item) => item.id === action.payload.id
+                );
+                state.livecalls.data.splice(index, 1, action.payload);
+
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.type = action.type;
+                state.livecalls = { ...state.livecalls };
+            })
+            .addCase(updateLivecall.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

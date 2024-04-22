@@ -25,7 +25,7 @@ class LiveCallExport implements FromQuery, WithMapping, ShouldAutoSize, WithHead
     private $to;
     private $livecalls;
 
-    public function __construct($from, $to)
+    public function __construct($from = null, $to = null)
     {
         $this->from = $from;
         $this->to = $to;

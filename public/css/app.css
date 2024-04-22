@@ -1010,6 +1010,10 @@
         width: fit-content;
     }
 
+    .sm\:tw-w-\[35rem\] {
+        width: 35rem;
+    }
+
     .sm\:tw-flex-grow {
         flex-grow: 1;
     }

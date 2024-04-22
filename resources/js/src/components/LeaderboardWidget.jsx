@@ -15,7 +15,9 @@ const LeaderboardWidget = ({ handleOnRemoveWidget }) => {
 
     useEffect(() => {
         if (users) {
-            setAgents(users.data);
+            setAgents(
+                users.data.filter((item) => item.roles[0].name == "agent")
+            );
         }
     }, [users]);
 

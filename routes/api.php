@@ -106,6 +106,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('report/save', [ReportTemplateController::class, 'save']);
     Route::post('report/share', [ReportTemplateController::class, 'share']);
+    Route::post('report/share/all', [ReportTemplateController::class, 'share_report']);
     Route::post('report/generate', [ReportTemplateController::class, 'generate']);
 
     Route::get('notifications', [NotificationController::class, 'index']);

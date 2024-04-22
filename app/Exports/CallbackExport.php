@@ -25,7 +25,7 @@ class CallbackExport implements FromCollection, WithMapping, ShouldAutoSize, Wit
     private $to;
     private $callbacks;
 
-    public function __construct($from, $to)
+    public function __construct($from = null, $to = null)
     {
         $this->from = $from;
         $this->to = $to;

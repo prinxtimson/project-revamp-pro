@@ -135,5 +135,6 @@ Route::get('conferencing/{URLRoomName?}', function () {
 });
 
 Route::get('report/download/{filename}', [ReportTemplateController::class, 'download']);
+Route::get('report/download', [ReportTemplateController::class, 'download_report']);
 
 Auth::routes();

@@ -50,6 +50,12 @@ const endLivecall = async (id) => {
     return res.data;
 };
 
+const updateLivecall = async (data) => {
+    const res = await axios.put(`${API_URL}/${data.id}`, data);
+
+    return res.data;
+};
+
 const getWaitingListPosition = async (id) => {
     const res = await axios.get(`${API_URL}/waiting/position/${id}`);
 
@@ -71,6 +77,7 @@ const livecallService = {
     leaveLivecall,
     answerLivecall,
     endLivecall,
+    updateLivecall,
     getWaitingListPosition,
     deleteLivecall,
 };

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AllReportExport;
 use App\Exports\ReportExport;
 use App\Mail\ReportShare;
 use App\Models\LiveCall;
@@ -257,7 +258,7 @@ class ReportTemplateController extends Controller
 
     public function save(Request $request)
     {
-        $user = auth()->user();
+        $user = User::find(auth()->id());
         $fields = $request->validate([
             'name' => 'required|string',
             'category' => 'required|string',
@@ -287,6 +288,71 @@ class ReportTemplateController extends Controller
             ]);
     
             Mail::to($fields['email'])->send(new ReportShare($fields['filename']));
+
+            return response()->json(['message' => 'Report had been share']);
+        } catch (Exception $e) {
+            return response(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function download_report(Request $request)
+    {
+        try{
+            
+            $category = json_decode($request->category);
+            $format = $request->format;
+            $date = Carbon::now()->getTimestamp();
+
+            switch($format)
+            {
+                case 'csv':
+                    $filename =  'live_support_'.$date.'.csv';
+                    return $this->excel->download(new AllReportExport($category), $filename, Excel::CSV);
+                    break;
+                case 'pdf':
+                    $filename =  'live_support_'.$date.'.pdf';
+                    return $this->excel->download(new AllReportExport($category), $filename, Excel::MPDF);
+                    break;
+                default:
+                    $filename =  'live_support_'.$date.'.xlsx';
+                    return $this->excel->download(new AllReportExport($category), $filename, Excel::XLSX);
+                    break;
+            }
+        } catch (Exception $e) {
+            return response(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function share_report(Request $request)
+    {
+        try{
+            $fields = $request->validate([
+                'category' => 'required|array',
+                'format' => 'required|string',
+                'user_id' => 'required|integer'
+            ]);
+            $user = User::find($fields['user_id']);
+            
+            $date = Carbon::now()->getTimestamp();
+            $filename = '';
+
+            switch($fields['format'])
+            {
+                case 'csv':
+                    $filename =  'live_support_'.$date.'.csv';
+                    $this->excel->store(new AllReportExport($fields['category']), $filename, null,  Excel::CSV);
+                    break;
+                case 'pdf':
+                    $filename =  'live_support_'.$date.'.pdf';
+                    $this->excel->store(new AllReportExport($fields['category']), $filename, null, Excel::MPDF);
+                    break;
+                default:
+                    $filename =  'live_support_'.$date.'.xlsx';
+                    $this->excel->store(new AllReportExport($fields['category']), $filename, null, Excel::XLSX);
+                    break;
+            }
+
+            Mail::to($user)->send(new ReportShare($filename));
 
             return response()->json(['message' => 'Report had been share']);
         } catch (Exception $e) {

@@ -178,7 +178,7 @@ class LiveCallController extends Controller
     {
         $livecall = ModelsLiveCall::find($id);
 
-        $livecall->update($request->all());
+        $livecall->update($request->except('id'));
         
         LivecallUpdate::dispatch($livecall);
 

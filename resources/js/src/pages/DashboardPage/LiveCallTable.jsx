@@ -18,6 +18,7 @@ import {
     getLivecallsByPage,
     reset,
     clear,
+    updateLivecall,
 } from "../../features/livecall/livecallSlice";
 import Moment from "react-moment";
 import DrawerContainer from "./DrawerContainer";
@@ -76,6 +77,14 @@ const LiveCallTable = () => {
 
     const handleConnect = (id) => {
         dispatch(answerLivecall(id));
+    };
+
+    const handleEscalade = (id) => {
+        let formData = {
+            is_focused: 1,
+            id,
+        };
+        dispatch(updateLivecall(formData));
     };
 
     const handleOnDownload = () => {
@@ -204,10 +213,11 @@ const LiveCallTable = () => {
     );
 
     const actionBodyTemplate = (row) => (
-        <div className="tw-flex tw-gap-4">
+        <div className="tw-flex tw-gap-2">
             <Button
                 label="Connect"
                 severity="success"
+                size="small"
                 onClick={() => handleConnect(row.id)}
                 disabled={
                     Boolean(row.answered_at) ||
@@ -215,10 +225,19 @@ const LiveCallTable = () => {
                     Boolean(isLoading && type === "livecall/answer/pending")
                 }
             />
-
+            <Button
+                label="Escalade"
+                severity="warning"
+                size="small"
+                onClick={() => handleEscalade(row.id)}
+                disabled={Boolean(
+                    isLoading && type === "livecall/answer/pending"
+                )}
+            />
             <Button
                 severity="danger"
                 label="Delete"
+                size="small"
                 onClick={() => handleDelete(row.id)}
                 disabled={Boolean(
                     isLoading && type === "livecall/answer/pending"
@@ -348,7 +367,11 @@ const LiveCallTable = () => {
                         totalRecords={total}
                         onPage={handleChangePage}
                         tableStyle={{ minWidth: "50rem" }}
-                        loading={isLoading}
+                        loading={
+                            isLoading &&
+                            (type == "livecall/get-all/pending" ||
+                                type == "livecall/get-by-page/pending")
+                        }
                         dataKey="id"
                         header={header}
                         emptyMessage="No data found"

@@ -20,9 +20,16 @@ const shareReport = async (data) => {
     return res.data;
 };
 
+const shareAllReport = async (data) => {
+    const res = await axios.post(`${API_URL}/share/all`, data);
+
+    return res.data;
+};
+
 const reportService = {
     saveReport,
     generateReport,
+    shareAllReport,
     shareReport,
 };
 
