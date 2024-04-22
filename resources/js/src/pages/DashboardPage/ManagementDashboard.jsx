@@ -222,11 +222,6 @@ const ManagementDashboard = () => {
             label: "Excel",
             value: "xlsx",
             command: () => {
-                // let category = "";
-
-                // selectedReports?.map(
-                //     (val) => (category = category + `$category[]=${val}`)
-                // );
                 window.open(
                     `/report/download?format=xlsx&category=${JSON.stringify(
                         selectedReports
@@ -239,23 +234,24 @@ const ManagementDashboard = () => {
             label: "CSV",
             value: "csv",
             command: () => {
-                let category = "";
-
-                selectedReports?.map(
-                    (val) => (category = category + `$category[]=${val}`)
+                window.open(
+                    `/report/download?format=csv&category=${JSON.stringify(
+                        selectedReports
+                    )}`,
+                    "_blank"
                 );
-                window.open(`/report/download?format=csv${category}`, "_blank");
             },
         },
         {
             label: "PDF",
             value: "pdf",
             command: () => {
-                let category = "";
-                selectedReports?.map(
-                    (val) => (category = category + `$category[]=${val}`)
+                window.open(
+                    `/report/download?format=pdf&category=${JSON.stringify(
+                        selectedReports
+                    )}`,
+                    "_blank"
                 );
-                window.open(`/report/download?format=pdf${category}`, "_blank");
             },
         },
     ];
@@ -267,7 +263,7 @@ const ManagementDashboard = () => {
                 handleOnHide={() => setVisible(false)}
             />
             <div className="tw-w-full tw-max-h-full">
-                <div className="tw-mb-5 tw-border tw-rounded tw-bg-white tw-p-4 sm:tw-flex tw-justify-between">
+                <div className="tw-mb-5 tw-border tw-rounded tw-bg-white tw-p-4 sm:tw-flex tw-justify-around">
                     <div className="tw-flex tw-gap-3">
                         <Dropdown
                             value={selectedWidget}
@@ -303,9 +299,10 @@ const ManagementDashboard = () => {
                     </div>
                     <div className="">
                         <Button
-                            label="Share"
+                            icon="pi pi-share-alt"
+                            rounded
+                            text
                             onClick={(e) => setVisible(true)}
-                            className="tw-w-full sm:tw-w-fit"
                         />
                     </div>
                 </div>

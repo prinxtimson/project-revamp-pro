@@ -75,7 +75,7 @@ const ShareReportDialog = ({ visible, handleOnHide }) => {
                             {reportTypes.map((report) => {
                                 return (
                                     <div
-                                        key={report.key}
+                                        key={report.value}
                                         className="tw-flex tw-items-center"
                                     >
                                         <Checkbox
