@@ -79,7 +79,7 @@ const LiveCallTable = () => {
         dispatch(answerLivecall(id));
     };
 
-    const handleEscalade = (id) => {
+    const handleEscalate = (id) => {
         let formData = {
             is_focused: 1,
             id,
@@ -226,10 +226,10 @@ const LiveCallTable = () => {
                 }
             />
             <Button
-                label="Escalade"
+                label="Escalate"
                 severity="warning"
                 size="small"
-                onClick={() => handleEscalade(row.id)}
+                onClick={() => handleEscalate(row.id)}
                 disabled={Boolean(
                     isLoading && type === "livecall/answer/pending"
                 )}
