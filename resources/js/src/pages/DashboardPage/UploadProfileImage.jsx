@@ -103,6 +103,7 @@ const UploadProfileImage = () => {
         if (isSuccess && message) {
             toast.success(message);
             setFile(null);
+            inputRef.current.setFiles([]);
         }
 
         if (isError) {
