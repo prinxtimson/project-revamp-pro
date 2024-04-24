@@ -77,6 +77,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/archive', [AuthController::class, 'archive']);
     Route::delete('/delete', [AuthController::class, 'delete']);
     Route::put('/update', [AuthController::class, 'update']);
+    Route::put('/upload', [AuthController::class, 'upload_avatar']);
 
     Route::get('/agents', [UserController::class, 'agents']);
 

@@ -86,7 +86,7 @@ const ManagementDashboard = () => {
     const getFeedbackByDate = (payload) => {
         axios
             .get(
-                `/api/summary/feedback?from=${payload.start}&to=${payload.end}`
+                `/api/summary/feedback?from=${payload.start.toISOString()}&to=${payload.end.toISOString()}`
             )
             .then((res) => {
                 dispatch(onUpdateFeedbacks(res.data));
@@ -96,7 +96,9 @@ const ManagementDashboard = () => {
     const handleGetSummary = (payload) => {
         if (payload) {
             axios
-                .get(`/api/summary?from=${payload.start}&to=${payload.end}`)
+                .get(
+                    `/api/summary?from=${payload.start.toISOString()}&to=${payload.end.toISOString()}`
+                )
                 .then((res) => {
                     setAllSummary(res.data);
                 });
@@ -111,7 +113,7 @@ const ManagementDashboard = () => {
         if (payload) {
             axios
                 .get(
-                    `/api/summary/callback?from=${payload.start}&to=${payload.end}`
+                    `/api/summary/callback?from=${payload.start.toISOString()}&to=${payload.end.toISOString()}`
                 )
                 .then((res) => {
                     dispatch(onUpdateCallbackSummary(res.data));
@@ -127,7 +129,7 @@ const ManagementDashboard = () => {
         if (payload) {
             axios
                 .get(
-                    `/api/summary/livecall?from=${payload.start}&to=${payload.end}`
+                    `/api/summary/livecall?from=${payload.start.toISOString()}&to=${payload.end.toISOString()}`
                 )
                 .then((res) => {
                     dispatch(onUpdateLivecallSummary(res.data));
@@ -143,7 +145,7 @@ const ManagementDashboard = () => {
         if (payload) {
             axios
                 .get(
-                    `/api/summary/ticket?from=${payload.start}&to=${payload.end}`
+                    `/api/summary/ticket?from=${payload.start.toISOString()}&to=${payload.end.toISOString()}`
                 )
                 .then((res) => {
                     dispatch(onUpdateTicketSummary(res.data));
@@ -316,7 +318,7 @@ const ManagementDashboard = () => {
                                     onChange={(e) =>
                                         setData({
                                             ...data,
-                                            start: e.value.toISOString(),
+                                            start: e.value,
                                         })
                                     }
                                     maxDate={new Date()}
@@ -330,7 +332,7 @@ const ManagementDashboard = () => {
                                     onChange={(e) =>
                                         setData({
                                             ...data,
-                                            end: e.value.toISOString(),
+                                            end: e.value,
                                         })
                                     }
                                     maxDate={new Date()}

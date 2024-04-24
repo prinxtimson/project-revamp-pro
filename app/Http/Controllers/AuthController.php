@@ -255,6 +255,38 @@ class AuthController extends Controller
         return $response;
     }
 
+    public function upload_avatar(Request $request)
+    {
+        $user = User::find(auth()->id());
+
+        if ($request->hasFile('avatar')) {
+            $user->clearMediaCollection('avatars');
+
+            $user->addMediaFromRequest('avatar')->toMediaCollection('avatars');
+    
+            $mediaUrl = $user->getFirstMediaUrl('avatars');
+    
+            $user->update([
+                'avatar' => $mediaUrl,
+            ]);
+        }else{
+           return response([
+                
+                "message" => "image file is required!"
+            ], 401);
+        }
+
+        $user->refresh()->load(['profile','roles']);
+
+        Mail::to($user)->send(new ProfileEditMail($user));
+        $response = [
+            'user' => $user,
+        ];
+
+        return $response;
+
+    }
+
     public function changePass(Request $request)
     {
         $user = User::find(auth()->id());

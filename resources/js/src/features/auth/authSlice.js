@@ -61,6 +61,24 @@ export const updateUser = createAsyncThunk(
     }
 );
 
+export const uploadAvatar = createAsyncThunk(
+    "auth/upload",
+    async (data, thunkAPI) => {
+        try {
+            return await authService.uploadAvatar(data);
+        } catch (err) {
+            const msg =
+                (err.response &&
+                    err.response.data &&
+                    err.response.data.message) ||
+                err.message ||
+                err.toString();
+
+            return thunkAPI.rejectWithValue(msg);
+        }
+    }
+);
+
 export const forgotPass = createAsyncThunk(
     "auth/forgot-password",
     async (email, thunkAPI) => {
@@ -296,6 +314,22 @@ export const authSlice = createSlice({
                 state.user = action.payload.user;
             })
             .addCase(updateUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.type = action.type;
+                state.message = action.payload;
+            })
+            .addCase(uploadAvatar.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(uploadAvatar.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.type = action.type;
+                state.message = "Profile image uploaded successful";
+                state.user = action.payload.user;
+            })
+            .addCase(uploadAvatar.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.type = action.type;

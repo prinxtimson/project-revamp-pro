@@ -7,7 +7,7 @@ import { Tag } from "primereact/tag";
 import { toast } from "react-toastify";
 
 import DrawerContainer from "./DrawerContainer";
-import { updateUser, reset } from "../../features/auth/authSlice";
+import { reset, uploadAvatar } from "../../features/auth/authSlice";
 
 const UploadProfileImage = () => {
     const inputRef = useRef(null);
@@ -118,7 +118,7 @@ const UploadProfileImage = () => {
             formData.append("avatar", file);
         }
         formData.append("_method", "put");
-        dispatch(updateUser(formData));
+        dispatch(uploadAvatar(formData));
     };
 
     return (

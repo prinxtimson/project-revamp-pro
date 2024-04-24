@@ -61,6 +61,12 @@ const updateUser = async (data) => {
     return res.data;
 };
 
+const uploadAvatar = async (data) => {
+    const res = await axios.post(API_URL + "/upload", data);
+
+    return res.data;
+};
+
 const resendVerification = async () => {
     const res = await axios.post(`${API_URL}/email/verification-notification`);
     return res.data;
@@ -95,6 +101,7 @@ const authService = {
     logout,
     login,
     updateUser,
+    uploadAvatar,
     forgotPass,
     resetPass,
     changePass,

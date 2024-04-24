@@ -54,7 +54,13 @@ const ReportPage = () => {
     }, [isError, isSuccess, message, dispatch]);
 
     const handleGenerateReport = () => {
-        dispatch(generateReport(data));
+        dispatch(
+            generateReport({
+                ...data,
+                start_date: data.start_date?.toISOString(),
+                end_date: data.end_date?.toISOString(),
+            })
+        );
     };
 
     const handleSaveReport = () => {
@@ -114,8 +120,7 @@ const ReportPage = () => {
                                             onChange={(e) =>
                                                 setData({
                                                     ...data,
-                                                    start_date:
-                                                        e.value.toISOString(),
+                                                    start_date: e.value,
                                                 })
                                             }
                                         />
@@ -133,8 +138,7 @@ const ReportPage = () => {
                                             onChange={(e) =>
                                                 setData({
                                                     ...data,
-                                                    end_date:
-                                                        e.value.toISOString(),
+                                                    end_date: e.value,
                                                 })
                                             }
                                         />

@@ -104,6 +104,7 @@ const ShareReportDialog = ({ visible, handleOnHide }) => {
                     <label htmlFor="title">Share with:</label>
                     <Dropdown
                         name="user_id"
+                        value={data.user_id}
                         options={users?.data}
                         optionLabel="name"
                         optionValue="id"
