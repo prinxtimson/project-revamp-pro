@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 
 const GuestRoute = ({ children }) => {
     const location = useLocation();
-    const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
+    const { user } = useSelector((state) => state.auth);
 
-    const redirectPath = location.state?.path || "/admin/dashboard";
+    const redirectPath = location.state?.path || "/dashboard";
 
-    if (!isLoading && isAuthenticated) {
+    if (user) {
         return <Navigate to={redirectPath} />;
     }
 

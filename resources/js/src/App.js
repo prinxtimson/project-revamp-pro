@@ -17,7 +17,7 @@ import {
     onUpdateLivecall,
 } from "./features/livecall/livecallSlice";
 
-import { useIdleTimer } from "react-idle-timer";
+import { onMessageListener } from "./firebase";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -54,46 +54,31 @@ import ELearningPage from "./pages/DashboardPage/ELearningPage";
 import SingleTutorialPage from "./pages/DashboardPage/SingleTutorialPage";
 import LogoutPage from "./pages/LogoutPage";
 
-const timeout = 500_000;
-const promptBeforeIdle = 20_000;
-
-const App = (props) => {
-    const [remaining, setRemaining] = useState(timeout);
+const App = () => {
     const [open, setOpen] = useState(false);
-    const [auth, setAuth] = useState(store.getState().auth);
+    const [user, setUser] = useState(store.getState().auth.user);
 
     useEffect(() => {
         store.dispatch(getCurrentUser());
     }, []);
 
-    const onIdle = () => {
-        if (auth.user) {
-            store.dispatch(logout());
-            setOpen(false);
-        }
-    };
+    useEffect(() => {
+        if (user) {
+            window.Echo.private(`App.Models.User.${user?.id}`).listen(
+                "",
+                (e) => {}
+            );
 
-    const onActive = () => {
-        if (auth.user) {
-            store.dispatch(getCurrentUser());
-            setOpen(false);
+            onMessageListener().then((payload) => {
+                const title = payload.notification.title;
+                const options = {
+                    body: payload.notification.body,
+                    icon: "/images/logo.png",
+                };
+                new Notification(title, options);
+            });
         }
-    };
-
-    const onPrompt = () => {
-        if (auth.user) {
-            setOpen(true);
-        }
-    };
-
-    // const { getRemainingTime, activate } = useIdleTimer({
-    //     onIdle,
-    //     onActive,
-    //     onPrompt,
-    //     timeout,
-    //     promptBeforeIdle,
-    //     throttle: 500,
-    // });
+    }, [user]);
 
     useEffect(() => {
         window.Echo.channel("livecall").listen("LivecallUpdate", (e) => {
@@ -105,39 +90,14 @@ const App = (props) => {
         });
     }, []);
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         setRemaining(Math.ceil(getRemainingTime() / 1000));
-    //     }, 500);
-    //     return () => {
-    //         clearInterval(interval);
-    //     };
-    // }, []);
-
-    const handleStillHere = () => {
-        // activate();
-    };
-
-    useEffect(() => {
-        if (auth.isAuthenticated) {
-            const token = localStorage.getItem("device_token");
-            if (token) {
-                axios
-                    .post("/save-token", { token })
-                    .then((res) => {})
-                    .catch((err) => console.log(err));
-            }
-        }
-    }, [auth]);
-
-    store.subscribe(() => setAuth(store.getState().auth));
+    store.subscribe(() => {
+        setUser(store.getState().auth.user);
+    });
 
     return (
         <Provider store={store}>
             <Router>
                 <Routes>
-                    <Route exact path="/" element={<HomePage />} />
-                    <Route exact path="/callback/:id" element={<HomePage />} />
                     <Route
                         exact
                         path="/feedback/:channel/:id"
@@ -145,7 +105,16 @@ const App = (props) => {
                     />
                     <Route
                         exact
-                        path="admin/two-factor-auth"
+                        path="/"
+                        element={
+                            <GuestRoute>
+                                <LoginPage />
+                            </GuestRoute>
+                        }
+                    />
+                    <Route
+                        exact
+                        path="two-factor-auth"
                         element={<TwoFactorAuthPage />}
                     />
 
@@ -156,7 +125,7 @@ const App = (props) => {
                     />
                     <Route
                         exact
-                        path="admin/forgot-password"
+                        path="forgot-password"
                         element={
                             <GuestRoute>
                                 <ForgotPasswordPage />
@@ -165,204 +134,182 @@ const App = (props) => {
                     />
                     <Route
                         exact
-                        path="admin/password/reset/:token"
+                        path="password/reset/:token"
                         element={
                             <GuestRoute>
                                 <ResetPasswordPage />
                             </GuestRoute>
                         }
                     />
-                    <Route path="admin">
+
+                    <Route path="dashboard">
                         <Route
-                            exact
                             path=""
                             element={
-                                <GuestRoute>
-                                    <LoginPage />
-                                </GuestRoute>
+                                <AuthRoute>
+                                    <MainDashboard />
+                                </AuthRoute>
                             }
                         />
-                        <Route
-                            path="logout"
-                            element={
-                                <GuestRoute>
-                                    <LogoutPage />
-                                </GuestRoute>
-                            }
-                        />
-                        <Route path="dashboard">
+                        <Route path="agent">
                             <Route
                                 path=""
                                 element={
                                     <AuthRoute>
-                                        <MainDashboard />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route path="agent">
-                                <Route
-                                    path=""
-                                    element={
-                                        <AuthRoute>
-                                            <AgentsTable />
-                                        </AuthRoute>
-                                    }
-                                />
-                                <Route
-                                    path=":id"
-                                    element={
-                                        <AuthRoute>
-                                            <AgentPage />
-                                        </AuthRoute>
-                                    }
-                                />
-                            </Route>
-                            <Route
-                                path="performance-tracking"
-                                element={
-                                    <AuthRoute>
-                                        <PerformanceTracking />
+                                        <AgentsTable />
                                     </AuthRoute>
                                 }
                             />
                             <Route
-                                path="notification-preference"
+                                path=":id"
                                 element={
                                     <AuthRoute>
-                                        <NotificationPreference />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="notification-history"
-                                element={
-                                    <AuthRoute>
-                                        <NotificationPage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="account"
-                                element={
-                                    <AuthRoute>
-                                        <UserTable />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="report"
-                                element={
-                                    <AuthRoute>
-                                        <ReportPage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="profile"
-                                element={
-                                    <AuthRoute>
-                                        <ProfilePage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="activities"
-                                element={
-                                    <AuthRoute>
-                                        <ActivityViewPage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="profile/edit"
-                                element={
-                                    <AuthRoute>
-                                        <ProfileForm />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="profile/edit/upload"
-                                element={
-                                    <AuthRoute>
-                                        <UploadProfileImage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="livecall"
-                                element={
-                                    <AuthRoute>
-                                        <LiveCallTable />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="callback"
-                                element={
-                                    <AuthRoute>
-                                        <CallBackTable />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="livechat"
-                                element={
-                                    <AuthRoute>
-                                        <LivechatPage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="e-learning"
-                                element={
-                                    <AuthRoute>
-                                        <ELearningPage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="e-learning/view/:id"
-                                element={
-                                    <AuthRoute>
-                                        <SingleTutorialPage />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="feedback"
-                                element={
-                                    <AuthRoute>
-                                        <FeedbackTable />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="ticket"
-                                element={
-                                    <AuthRoute>
-                                        <TicketsTable />
-                                    </AuthRoute>
-                                }
-                            />
-                            <Route
-                                path="change-password"
-                                element={
-                                    <AuthRoute>
-                                        <ChangePasswordForm />
+                                        <AgentPage />
                                     </AuthRoute>
                                 }
                             />
                         </Route>
+                        <Route
+                            path="performance-tracking"
+                            element={
+                                <AuthRoute>
+                                    <PerformanceTracking />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="notification-preference"
+                            element={
+                                <AuthRoute>
+                                    <NotificationPreference />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="notification-history"
+                            element={
+                                <AuthRoute>
+                                    <NotificationPage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="account"
+                            element={
+                                <AuthRoute>
+                                    <UserTable />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="report"
+                            element={
+                                <AuthRoute>
+                                    <ReportPage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="profile"
+                            element={
+                                <AuthRoute>
+                                    <ProfilePage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="activities"
+                            element={
+                                <AuthRoute>
+                                    <ActivityViewPage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="profile/edit"
+                            element={
+                                <AuthRoute>
+                                    <ProfileForm />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="profile/edit/upload"
+                            element={
+                                <AuthRoute>
+                                    <UploadProfileImage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="livecall"
+                            element={
+                                <AuthRoute>
+                                    <LiveCallTable />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="callback"
+                            element={
+                                <AuthRoute>
+                                    <CallBackTable />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="livechat"
+                            element={
+                                <AuthRoute>
+                                    <LivechatPage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="e-learning"
+                            element={
+                                <AuthRoute>
+                                    <ELearningPage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="e-learning/view/:id"
+                            element={
+                                <AuthRoute>
+                                    <SingleTutorialPage />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="feedback"
+                            element={
+                                <AuthRoute>
+                                    <FeedbackTable />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="ticket"
+                            element={
+                                <AuthRoute>
+                                    <TicketsTable />
+                                </AuthRoute>
+                            }
+                        />
+                        <Route
+                            path="change-password"
+                            element={
+                                <AuthRoute>
+                                    <ChangePasswordForm />
+                                </AuthRoute>
+                            }
+                        />
                     </Route>
                     <Route path="/*" element={<ErrorPage />} />
                 </Routes>
             </Router>
-            <IdleDialog
-                open={open}
-                remaining={remaining}
-                onClose={handleStillHere}
-            />
+
             <ToastContainer />
         </Provider>
     );

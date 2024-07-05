@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { getCurrentUser, reset } from "../../features/auth/authSlice";
-import Container from "../../components/Container";
-import { toast } from "react-toastify";
 import axios from "axios";
+import AuthContainer from "../../layouts/AuthContainer";
+import { getFCMToken } from "../../firebase";
 
 const TwoFactorAuth = () => {
+    const toastRef = useRef(null);
     const [reset, setReset] = useState(0);
     const [remainingTime, setRemainingTime] = useState(0);
     const [data, setData] = useState({
@@ -25,10 +26,10 @@ const TwoFactorAuth = () => {
 
     useEffect(() => {
         if (user) {
-            navigate("/admin/dashboard");
+            navigate("/dashboard");
         }
         if (!isAuthenticated) {
-            navigate("/admin");
+            navigate("/");
         }
     }, [user, isAuthenticated]);
 
@@ -46,10 +47,16 @@ const TwoFactorAuth = () => {
             .post("/two-factor-auth", data)
             .then(() => {
                 dispatch(getCurrentUser());
+                getFCMToken();
             })
             .catch((e) => {
                 setLoading(false);
-                toast.error(e.response.data.message);
+                toastRef.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: e.response.data.message,
+                    life: 5000,
+                });
             });
     };
 
@@ -60,11 +67,21 @@ const TwoFactorAuth = () => {
             .then(() => {
                 setLoading(false);
                 onCodeResend();
-                toast.success("OTP sent successful");
+                toastRef.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "OTP sent successful",
+                    life: 5000,
+                });
             })
             .catch((e) => {
                 setLoading(false);
-                toast.error(e.response.data.message);
+                toastRef.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: e.response.data.message,
+                    life: 5000,
+                });
             });
     };
 
@@ -84,66 +101,64 @@ const TwoFactorAuth = () => {
     const onCodeResend = () => setReset(reset + 1);
 
     return (
-        <Container>
-            <div className="md:tw-p-6 tw-w-full tw-p-3 ">
-                <div className="form-demo">
-                    <div className="card">
-                        <div className="tw-text-center tw-mb-5">
-                            <h2 className="tw-text-3xl tw-font-semibold  tw-mb-2">
-                                Hello, Welcome Back
-                            </h2>
-                            <p className="tw-my-3 tw-text-xl">
-                                Please check your email and enter the 2FA code
-                                received
-                            </p>
-                        </div>
-                        <form onSubmit={onSubmit} className="p-fluid">
-                            <div className="field">
-                                <span className="p-float-label ">
-                                    <InputText
-                                        name="code"
-                                        value={code}
-                                        autoComplete="off"
-                                        onChange={handleOnChange}
-                                    />
-                                    <label htmlFor="code">Code</label>
-                                </span>
-                            </div>
-
-                            <div className="tw-my-4 tw-flex tw-items-center tw-justify-between tw-gap-2">
-                                <Button
-                                    type="submit"
-                                    label="Verify"
-                                    disabled={loading}
-                                    className="custom-btn "
-                                />
-                                <Button
-                                    type="button"
-                                    label={`Resend OTP (${
-                                        remainingTime === 0
-                                            ? "00:00"
-                                            : `${Math.floor(
-                                                  (remainingTime %
-                                                      (1000 * 60 * 60)) /
-                                                      (1000 * 60)
-                                              )}:${Math.floor(
-                                                  (remainingTime %
-                                                      (1000 * 60)) /
-                                                      1000
-                                              )}`
-                                    })`}
-                                    disabled={Boolean(
-                                        remainingTime > 1000 || loading
-                                    )}
-                                    className="custom-btn p-button-outlined"
-                                    onClick={handleResendToken}
-                                />
-                            </div>
-                        </form>
+        <AuthContainer toast={toastRef}>
+            <div className="form-demo">
+                <div className="card">
+                    <div className="tw-text-center tw-mb-6">
+                        <h2 className="tw-font-semibold  tw-m-0">Enter OTP</h2>
                     </div>
+                    <form onSubmit={onSubmit} className="p-fluid">
+                        <div className="field">
+                            <span className="p-float-label ">
+                                <InputText
+                                    name="code"
+                                    value={code}
+                                    autoComplete="new code"
+                                    onChange={handleOnChange}
+                                    placeholder="Enter Verification Code"
+                                />
+                                <label htmlFor="code">Verification Code</label>
+                            </span>
+                        </div>
+
+                        <div className="tw-my-4 tw-flex tw-items-center tw-justify-between tw-gap-2">
+                            <Button
+                                type="submit"
+                                label="Verify Code"
+                                loading={loading}
+                                className="custom-btn "
+                                pt={{
+                                    root: {
+                                        className:
+                                            "tw-bg-[#293986] tw-border-[#293986]",
+                                    },
+                                }}
+                            />
+                            <Button
+                                type="button"
+                                label={`Resend OTP (${
+                                    remainingTime === 0
+                                        ? "00:00"
+                                        : `${Math.floor(
+                                              (remainingTime %
+                                                  (1000 * 60 * 60)) /
+                                                  (1000 * 60)
+                                          )}:${Math.floor(
+                                              (remainingTime % (1000 * 60)) /
+                                                  1000
+                                          )}`
+                                })`}
+                                loading={Boolean(
+                                    remainingTime > 1000 || loading
+                                )}
+                                className="custom-btn p-button-outlined"
+                                onClick={handleResendToken}
+                            />
+                        </div>
+                    </form>
                 </div>
             </div>
-        </Container>
+        </AuthContainer>
     );
 };
 

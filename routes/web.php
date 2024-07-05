@@ -31,19 +31,15 @@ use App\Http\Controllers\VideoRoomController;
 Route::middleware(['guest'])->group(function () {
     //
     //Route::post('/login', [LoginController::class, 'authenticate']);
-    Route::get('admin', function () {
+    Route::get('', function () {
         return view('welcome');
     })->name('home');
 
-    Route::get('admin/password/reset/{token}', function () {
+    Route::get('password/reset/{token}', function () {
         return view('welcome');
     })->name('password.reset');
 
-    Route::get('admin/forgot-password', function () {
-        return view('welcome');
-    });
-
-    Route::get('/', function () {
+    Route::get('forgot-password', function () {
         return view('welcome');
     });
 
@@ -65,39 +61,39 @@ Route::middleware(['guest'])->group(function () {
 
 });
 
-Route::get('admin/two-factor-auth', [TwoFactorAuthController::class, 'index'])->name('2fa.index')->middleware("auth");
+Route::get('two-factor-auth', [TwoFactorAuthController::class, 'index'])->name('2fa.index')->middleware("auth");
 
 Route::post('two-factor-auth', [TwoFactorAuthController::class, 'store'])->name('2fa.store')->middleware('auth');
 
 Route::get('two-factor-auth/resend', [TwoFactorAuthController::class, 'resend'])->name('2fa.resend')->middleware("auth");
 
-Route::get('admin/logout', function () {
+Route::get('logout', function () {
     return view('welcome');
 })->name('logout');
 
 Route::middleware(['auth', '2fa'])->group(function () {
 
-    Route::get('admin/dashboard', function () {
+    Route::get('dashboard', function () {
         return view('welcome');
     })->name('dashboard');
 
-    Route::get('admin/dashboard/{name?}', function () {
+    Route::get('dashboard/{name?}', function () {
         return view('welcome');
     })->where('name', '.*')->name('dashboard.*');
 
-    Route::get('admin/dashboard/agent/{id}', function () {
+    Route::get('dashboard/agent/{id}', function () {
         return view('welcome');
     })->name('dashboard.agent.single');
 
-    Route::get('admin/dashboard/e-learning/view/{id}', function () {
+    Route::get('dashboard/e-learning/view/{id}', function () {
         return view('welcome');
     })->name('dashboard.e-learning.single');
 
-    Route::get('admin/dashboard/profile/edit', function () {
+    Route::get('dashboard/profile/edit', function () {
         return view('welcome');
     })->name('dashboard.profile.edit');
 
-    Route::get('admin/dashboard/profile/edit/upload', function () {
+    Route::get('dashboard/profile/edit/upload', function () {
         return view('welcome');
     })->name('dashboard.profile.edit.upload');
 
@@ -125,7 +121,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
-    Route::get('admin/dashboard/account', function () {
+    Route::get('dashboard/account', function () {
         return view('welcome');
     })->name('dashboard.accout');
 });

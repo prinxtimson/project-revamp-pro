@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -6,10 +6,10 @@ import { Password } from "primereact/password";
 import { Checkbox } from "primereact/checkbox";
 import { Link, useNavigate } from "react-router-dom";
 import { login, reset } from "../../features/auth/authSlice";
-import Container from "../../components/Container";
-import { toast } from "react-toastify";
+import AuthContainer from "../../layouts/AuthContainer";
 
 const LoginForm = () => {
+    const toastRef = useRef(null);
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -41,11 +41,12 @@ const LoginForm = () => {
 
     useEffect(() => {
         if (isError && type == "auth/login/rejected") {
-            toast.error(message);
-        }
-
-        if (isSuccess && type == "auth/logout/fulfilled") {
-            toast.success("Logout successful");
+            toastRef.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: message,
+                life: 5000,
+            });
         }
 
         if (isSuccess && type == "auth/login/fulfilled") {
@@ -56,76 +57,74 @@ const LoginForm = () => {
     }, [isError, isSuccess, message, navigate, dispatch]);
 
     return (
-        <Container>
-            <div className="tw-p-3 md:tw-p-6 tw-w-full">
-                <div className="form-demo">
-                    <div className="card">
-                        <div className="tw-text-center tw-mb-5">
-                            <h2 className="tw-text-3xl tw-font-semibold  tw-mb-2">
-                                Hello, Welcome Back
-                            </h2>
-                            <p className="tw-my-3 tw-text-xl">
-                                Please enter your log in credentials
-                            </p>
+        <AuthContainer toast={toastRef}>
+            <div className="form-demo">
+                <div className="card">
+                    <div className="tw-text-center tw-mb-6">
+                        <h2 className="tw-font-semibold  tw-m-0">Login</h2>
+                    </div>
+                    <form onSubmit={onSubmit} className="p-fluid">
+                        <div className="field">
+                            <span className="p-float-label p-input-icon-right">
+                                <i className="pi pi-envelope" />
+                                <InputText
+                                    name="email"
+                                    value={email}
+                                    autoComplete="off"
+                                    onChange={handleOnChange}
+                                />
+                                <label htmlFor="email">Email *</label>
+                            </span>
                         </div>
-                        <form onSubmit={onSubmit} className="p-fluid">
-                            <div className="field">
-                                <span className="p-float-label p-input-icon-right">
-                                    <i className="pi pi-envelope" />
-                                    <InputText
-                                        name="email"
-                                        value={email}
-                                        autoComplete="off"
-                                        onChange={handleOnChange}
-                                    />
-                                    <label htmlFor="email">Email *</label>
-                                </span>
-                            </div>
-                            <div className="field">
-                                <span className="p-float-label">
-                                    <Password
-                                        name="password"
-                                        toggleMask
-                                        value={password}
-                                        autoComplete="off"
-                                        feedback={false}
-                                        onChange={handleOnChange}
-                                    />
+                        <div className="field">
+                            <span className="p-float-label">
+                                <Password
+                                    name="password"
+                                    toggleMask
+                                    value={password}
+                                    autoComplete="off"
+                                    feedback={false}
+                                    onChange={handleOnChange}
+                                />
 
-                                    <label htmlFor="password">Password *</label>
-                                </span>
-                            </div>
-                            <div className="tw-flex tw-mb-4 tw-justify-between">
-                                <div className="field-checked tw-text-gray-900">
-                                    <Checkbox
-                                        name="remember"
-                                        value={remember}
-                                        onChange={handleOnChange}
-                                        checked={data.remember}
-                                        className="tw-mr-2"
-                                    />
+                                <label htmlFor="password">Password *</label>
+                            </span>
+                        </div>
+                        <div className="tw-flex tw-mb-4 tw-justify-between">
+                            <div className="field-checked tw-text-gray-900">
+                                {/* <Checkbox
+                                    name="remember"
+                                    onChange={handleOnChange}
+                                    checked={data.remember}
+                                    className="tw-mr-2"
+                                />
 
-                                    <label htmlFor="accept">Remember me</label>
-                                </div>
-                                <Link
-                                    to="forgot-password"
-                                    className="tw-underline tw-text-sm tw-text-blue-500 hover:tw-text-blue-800 tw-float-right"
-                                >
-                                    Forgot your password?
-                                </Link>
+                                <label htmlFor="accept">Remember me</label> */}
                             </div>
-                            <div className="tw-mb-5"></div>
+                            <Link
+                                to="forgot-password"
+                                className="tw-underline tw-text-sm tw-text-blue-500 hover:tw-text-blue-800 tw-float-right"
+                            >
+                                Forgot your password?
+                            </Link>
+                        </div>
+                        <div className="tw-mb-5">
                             <Button
                                 type="submit"
-                                label="LOGIN"
-                                disabled={isLoading}
-                                className="custom-btn "
+                                label="Login"
+                                loading={isLoading}
+                                pt={{
+                                    root: {
+                                        className:
+                                            "tw-bg-[#293986] tw-border-[#293986]",
+                                    },
+                                }}
                             />
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </Container>
+        </AuthContainer>
     );
 };
 

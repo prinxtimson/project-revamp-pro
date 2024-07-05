@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import Container from "../../components/Container";
 import { forgotPass, reset } from "../../features/auth/authSlice";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import AuthContainer from "../../layouts/AuthContainer";
 
 const ForgotPasswordForm = () => {
+    const toastRef = useRef(null);
     const [data, setData] = useState({
         email: "",
     });
@@ -20,11 +21,21 @@ const ForgotPasswordForm = () => {
 
     useEffect(() => {
         if (isError && type == "auth/forgot-password/rejected") {
-            toast.error(message);
+            toastRef.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: message,
+                life: 5000,
+            });
         }
 
         if (isSuccess && type == "auth/forgot-password/fulfilled") {
-            toast.success(message);
+            toastRef.current.show({
+                severity: "success",
+                summary: "Success",
+                detail: message,
+                life: 5000,
+            });
             setData({
                 email: "",
             });
@@ -43,56 +54,57 @@ const ForgotPasswordForm = () => {
     };
 
     return (
-        <Container>
-            <div className="tw-w-full tw-p-3 md:tw-p-6">
-                <div className="form-demo">
-                    <div className="card">
-                        <div className="tw-text-center tw-mb-6">
-                            <h2 className="tw-text-3xl tw-font-semibold  tw-mb-2">
-                                Hello, Welcome Back
-                            </h2>
-                            <p className="tw-my-3 tw-text-xl">
-                                Forgot Password
-                            </p>
-                        </div>
-
-                        <form onSubmit={submit} className="p-fluid">
-                            <div className="field">
-                                <span className="p-float-label p-input-icon-right custom-label">
-                                    <i className="pi pi-envelope" />
-                                    <InputText
-                                        name="email"
-                                        value={data.email}
-                                        autoFocus
-                                        onChange={onHandleChange}
-                                        required
-                                    />
-                                    <label htmlFor="email">Email *</label>
-                                </span>
-                            </div>
-                            <Button
-                                className="tw-mb-2 custom-btn"
-                                type="submit"
-                                label="Reset Password"
-                                disabled={isLoading}
-                            />
-                            <div className="tw-mb-5"></div>
-                            <div className="">
-                                <span className="">
-                                    Remember password?{" "}
-                                    <Link
-                                        to="/admin"
-                                        className="tw-underline tw-text-blue-500 hover:tw-text-blue-800"
-                                    >
-                                        Sign-in
-                                    </Link>
-                                </span>
-                            </div>
-                        </form>
+        <AuthContainer toast={toastRef}>
+            <div className="form-demo">
+                <div className="card">
+                    <div className="tw-text-center tw-mb-6">
+                        <h2 className="tw-font-semibold tw-m-0">
+                            Forgot Password
+                        </h2>
                     </div>
+
+                    <form onSubmit={submit} className="p-fluid">
+                        <div className="field">
+                            <span className="p-float-label p-input-icon-right custom-label">
+                                <i className="pi pi-envelope" />
+                                <InputText
+                                    name="email"
+                                    value={data.email}
+                                    autoFocus
+                                    onChange={onHandleChange}
+                                    required
+                                />
+                                <label htmlFor="email">Email *</label>
+                            </span>
+                        </div>
+                        <Button
+                            className="tw-mb-2 custom-btn"
+                            type="submit"
+                            label="Reset Password"
+                            loading={isLoading}
+                            pt={{
+                                root: {
+                                    className:
+                                        "tw-bg-[#293986] tw-border-[#293986]",
+                                },
+                            }}
+                        />
+                        <div className="tw-mb-5"></div>
+                        <div className="">
+                            <span className="">
+                                Remember password?{" "}
+                                <Link
+                                    to="/"
+                                    className="tw-underline tw-text-blue-500 hover:tw-text-blue-800"
+                                >
+                                    Sign-in
+                                </Link>
+                            </span>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </Container>
+        </AuthContainer>
     );
 };
 
